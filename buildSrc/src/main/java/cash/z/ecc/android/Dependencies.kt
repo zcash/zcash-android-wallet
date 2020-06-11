@@ -78,7 +78,7 @@ object Deps {
     }
     object Zcash {
         const val ANDROID_WALLET_PLUGINS =   "cash.z.ecc.android:zcash-android-wallet-plugins:1.0.0"
-        const val KOTLIN_BIP39 =            "cash.z.ecc.android:kotlin-bip39:1.0.0-beta08"
+        const val KOTLIN_BIP39 =            "cash.z.ecc.android:kotlin-bip39:1.0.0-beta09"
         object Sdk :            Version("1.1.0-beta02") {
             val MAINNET =                    "cash.z.ecc.android:sdk-mainnet:$version"
             val TESTNET =                    "cash.z.ecc.android:sdk-testnet:$version"
