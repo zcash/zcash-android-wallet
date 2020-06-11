@@ -8,16 +8,20 @@ Please take note: the wallet is not an official product by ECC, but rather a too
 
 ### Setup
 
+To run, clone the repo, open it in Android Studio and press play. It should just work.™
+
 #### Requirements
-- [the code](https://github.com/zcash/zcash-android-wallet)
-- [Android Studio](https://developer.android.com/studio/index.html) and/or adb with a phone or emulator
-- anything else TBD
+- [The code](https://github.com/zcash/zcash-android-wallet)
+- [Android Studio](https://developer.android.com/studio/index.html) or [adb](https://www.xda-developers.com/what-is-adb/)
+- A device or emulator
 
+### Install from Android Studio
+1. Download Android studio and setup an emulator
+2. `Import` the zcash-android-wallet folder.  
+    It will be recognized as an Android project.
+3. Press play (once it is done opening and indexing)
 
-1. Open Android Studio and setup an emulator or connect your device
-2. Clone the repo
-3. Open the project and press play. It should just work.
-
+### OR Install from the command line
 To build from the command line, [setup ADB](https://www.xda-developers.com/install-adb-windows-macos-linux/) and connect your device. Then simply run this and it will both build and install the app:
 ```bash
 cd /path/to/zcash-android-wallet
