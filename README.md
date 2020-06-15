@@ -16,7 +16,8 @@ To run, clone the repo, open it in Android Studio and press play. It should just
 - A device or emulator
 
 ### Install from Android Studio
-1. Download Android studio and setup an emulator
+1. [Install Android studio](https://developer.android.com/studio/install) and setup an emulator    
+    1a. If using a device, be sure to [put it in developer mode](https://developer.android.com/studio/debug/dev-options) to enable side-loading apps
 2. `Import` the zcash-android-wallet folder.  
     It will be recognized as an Android project.
 3. Press play (once it is done opening and indexing)
