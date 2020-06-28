@@ -90,7 +90,7 @@ class FeedbackCoordinator(val feedback: Feedback, defaultObservers: Set<Feedback
     }
 
     inline fun <reified T: FeedbackObserver> findObserver(): T? {
-        return observers.firstOrNull { it::class == T::class } as T
+        return observers.firstOrNull { it::class == T::class } as T?
     }
 
     private fun observeMetrics(onMetricListener: (Feedback.Metric) -> Unit) {
