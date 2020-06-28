@@ -14,7 +14,7 @@ inline fun TextInputEditText.limitDecimalPlaces(max: Int) {
         }
         doAfterTextChanged {
             var textStr = text.toString()
-            if (textStr.contains(Regex("[.,]"))) {
+            if (textStr.contains('.') || textStr.contains(',')) {
                 if (textStr.first() == '.' || textStr.first() == ',') {
                     textStr = "0$textStr"
                 }
@@ -44,16 +44,21 @@ inline fun TextInputEditText.limitDecimalPlaces(max: Int) {
                 }
             }
 
-            val textView = this.findViewById<EditText>(R.id.input_zcash_amount)
-            val oldText = textView.text.toString()
+            val oldText = this.text.toString()
 
-            textStr = textStr.replaceFirst("^0+(?!$)(?![.,])".toRegex(), "")
+            for (i in 1 until textStr.length) {
+                if (textStr[i-1] != '0') {
+                    break
+                } else if (textStr[i] != '.') {
+                    textStr = textStr.removeRange(0, i)
+                }
+            }
 
             if (oldText != textStr) {
-                val cursorPosition = textView.selectionEnd;
-                textView.setText(textStr)
-                textView.setSelection(
-                    (cursorPosition - (oldText.length - textStr.length)).coerceIn(0, textStr.length)
+                val cursorPosition = this.selectionEnd;
+                this.setText(textStr)
+                this.setSelection(
+                    (cursorPosition - (oldText.length - textStr.length)).coerceIn(0, this.text.toString().length)
                 )
             }
         }
