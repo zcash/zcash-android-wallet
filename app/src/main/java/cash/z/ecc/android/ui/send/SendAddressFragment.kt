@@ -67,6 +67,8 @@ class SendAddressFragment : BaseFragment<FragmentSendAddressBinding>(),
         binding.inputZcashAddress.onEditorActionDone(::onSubmit).also { tapped(SEND_ADDRESS_DONE_ADDRESS) }
         binding.inputZcashAmount.onEditorActionDone(::onSubmit).also { tapped(SEND_ADDRESS_DONE_AMOUNT) }
 
+        binding.inputZcashAmount.limitDecimalPlaces(8)
+
         binding.inputZcashAddress.apply {
             doAfterTextChanged {
                 val textStr = text.toString()
