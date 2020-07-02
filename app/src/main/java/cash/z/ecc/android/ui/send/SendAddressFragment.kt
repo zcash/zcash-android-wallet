@@ -36,7 +36,7 @@ class SendAddressFragment : BaseFragment<FragmentSendAddressBinding>(),
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.backButtonHitArea.onClickNavTo(R.id.action_nav_send_address_to_nav_home) { tapped(SEND_ADDRESS_BACK) }
+        binding.backButtonHitArea.onClickNavUp { tapped(SEND_ADDRESS_BACK) }
         binding.buttonNext.setOnClickListener {
             onSubmit().also { tapped(SEND_ADDRESS_NEXT) }
         }
