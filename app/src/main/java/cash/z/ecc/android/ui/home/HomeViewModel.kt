@@ -45,7 +45,7 @@ class HomeViewModel @Inject constructor() : ViewModel() {
                         || (c == '<' && acc == "0")
                         || (c == '.' && acc.contains('.')) -> {twig("triggered: 1  acc: $acc  c: $c")
                     acc
-               }
+                }
                 c == '<' && acc.length <= 1 -> {twig("triggered: 2 $typedChars")
                     "0"
                 }
@@ -55,7 +55,11 @@ class HomeViewModel @Inject constructor() : ViewModel() {
                 acc == "0" && c != '.' -> {twig("triggered: 4 $typedChars")
                     c.toString()
                 }
-                else -> {twig("triggered: 5  $typedChars")
+                acc.contains('.') && acc.length - acc.indexOf('.') > 8 -> {
+                    twig("triggered: 5 $typedChars")
+                    acc
+                }
+                else -> {twig("triggered: 6  $typedChars")
                     "$acc$c"
                 }
             }

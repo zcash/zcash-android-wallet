@@ -52,7 +52,7 @@ class SendAddressFragment : BaseFragment<FragmentSendAddressBinding>(),
 
         // Apply View Model
         if (sendViewModel.zatoshiAmount > 0L) {
-            sendViewModel.zatoshiAmount.convertZatoshiToZecString(8).let { amount ->
+            sendViewModel.zatoshiAmount.convertZatoshiToZecStringUniform(8).let { amount ->
                 binding.inputZcashAmount.setText(amount)
             }
         } else {
@@ -66,6 +66,8 @@ class SendAddressFragment : BaseFragment<FragmentSendAddressBinding>(),
 
         binding.inputZcashAddress.onEditorActionDone(::onSubmit).also { tapped(SEND_ADDRESS_DONE_ADDRESS) }
         binding.inputZcashAmount.onEditorActionDone(::onSubmit).also { tapped(SEND_ADDRESS_DONE_AMOUNT) }
+
+        binding.inputZcashAmount.limitDecimalPlaces(8)
 
         binding.inputZcashAddress.apply {
             doAfterTextChanged {
