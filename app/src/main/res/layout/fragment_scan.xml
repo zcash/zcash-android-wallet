@@ -150,6 +150,23 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.3" />
 
+    <TextView
+        android:id="@+id/text_scan_error"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fontFamily="@font/inconsolata"
+        android:gravity="center"
+        android:textColor="@color/text_light_dimmed"
+        android:textSize="16dp"
+        android:ellipsize="end"
+        android:paddingBottom="16dp"
+        android:paddingTop="8dp"
+        app:layout_constraintBottom_toTopOf="@id/button_receive"
+        app:layout_constraintEnd_toEndOf="@id/scan_frame"
+        app:layout_constraintStart_toStartOf="@id/scan_frame"
+        app:layout_constraintTop_toBottomOf="@id/scan_frame"
+        tools:text="invalid:\nz98yz9uhz98uyz988yz98hzu8hgziouzgi9uzg9z8uogozuz z98yz9uhz98uyz988yz98hzu8hgziouzgi9uzg9z8uogozuzz98yz9uhz98uyz988yz98hzu8hgziouzgi9uzg9z8uogozuzz98yz9uhz98uyz988yz98hzu8hgziouzgi9uzg9z8uogozuzz98yz9uhz98uyz988yz98hzu8hgziouzgi9uzg9z8uogozuzz98yz9uhz98uyz988yz98hzu8hgziouzgi9uzg9z8uogozuzz98yz9uhz98uyz988yz98hzu8hgziouzgi9uzg9z8uogozuz" />
+
     <com.google.android.material.button.MaterialButton
         android:id="@+id/button_receive"
         android:layout_width="0dp"
