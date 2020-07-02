@@ -25,6 +25,7 @@ import kotlinx.coroutines.launch
 import okio.Okio
 import java.io.File
 import java.io.IOException
+import java.lang.IllegalArgumentException
 
 
 class ProfileFragment : BaseFragment<FragmentProfileBinding>() {
@@ -110,7 +111,12 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>() {
     private fun writeLogcat(): File? {
         try {
             val outputFile = File("${ZcashWalletApp.instance.filesDir}/logs", "developer_log.txt")
-            val cmd = arrayOf("/bin/sh", "-c", "logcat -v time -d | grep \"@TWIG\" > ${outputFile.absolutePath}")
+            if (!outputFile.parentFile.isFile) {
+                // addresses security finding in issue #121
+                throw IllegalArgumentException("Invalid path: ${outputFile.absolutePath}. Verify" +
+                        " that the default files directory is not being manipulated.")
+            }
+            val cmd = arrayOf("/bin/sh", "-c", "logcat -v time -d | grep \"@TWIG\" > \"${outputFile.absolutePath}\"")
             Runtime.getRuntime().exec(cmd)
             return outputFile
         } catch (e: IOException) {
