@@ -15,6 +15,7 @@ import cash.z.ecc.android.feedback.Report
 import cash.z.ecc.android.feedback.Report.Funnel.Send
 import cash.z.ecc.android.feedback.Report.Tap.*
 import cash.z.ecc.android.ui.base.BaseFragment
+import cash.z.ecc.android.ui.util.INCLUDE_MEMO_PREFIX
 
 class SendMemoFragment : BaseFragment<FragmentSendMemoBinding>() {
     override val screen = Report.Screen.SEND_MEMO
@@ -55,7 +56,7 @@ class SendMemoFragment : BaseFragment<FragmentSendMemoBinding>() {
         }
 
         sendViewModel.afterInitFromAddress {
-            binding.textIncludedAddress.text = "sent from ${sendViewModel.fromAddress}"
+            binding.textIncludedAddress.text = "$INCLUDE_MEMO_PREFIX ${sendViewModel.fromAddress}"
         }
 
         binding.textIncludedAddress.gone()

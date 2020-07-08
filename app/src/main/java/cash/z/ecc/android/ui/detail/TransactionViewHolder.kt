@@ -2,14 +2,12 @@ package cash.z.ecc.android.ui.detail
 
 import android.view.View
 import android.widget.TextView
-import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import cash.z.ecc.android.R
 import cash.z.ecc.android.ext.goneIf
 import cash.z.ecc.android.ext.toAppColor
 import cash.z.ecc.android.ui.MainActivity
-import cash.z.ecc.android.ui.send.SendViewModel
 import cash.z.ecc.android.ui.util.INCLUDE_MEMO_PREFIX
 import cash.z.ecc.android.ui.util.toUtf8Memo
 import cash.z.ecc.android.sdk.db.entity.ConfirmedTransaction
@@ -102,25 +100,22 @@ class TransactionViewHolder<T : ConfirmedTransaction>(itemView: View) : Recycler
 
     private suspend fun getSender(transaction: ConfirmedTransaction): String {
         val memo = transaction.memo.toUtf8Memo()
-        return when {
-            memo.contains(INCLUDE_MEMO_PREFIX) -> {
-                val address = memo.split(INCLUDE_MEMO_PREFIX)[1].trim().validateAddress() ?: "Unknown"
-                "${address.toAbbreviatedAddress()} paid you"
-            }
-            memo.contains("eply to:") -> {
-                val address = memo.split("eply to:")[1].trim().validateAddress() ?: "Unknown"
-                "${address.toAbbreviatedAddress()} paid you"
-            }
-            memo.contains("zs") -> {
-                val who = extractAddress(memo).validateAddress()?.toAbbreviatedAddress() ?: "Unknown"
-                "$who paid you"
-            }
-            else -> "Unknown paid you"
-        }
+        val who = extractValidAddress(memo, INCLUDE_MEMO_PREFIX)
+            ?: extractValidAddress(memo, "sent from:")
+            ?: "Unknown"
+
+        return "$who paid you"
     }
 
     private fun extractAddress(memo: String?) =
         addressRegex.findAll(memo ?: "").lastOrNull()?.value
+
+    private suspend fun extractValidAddress(memo: String?, delimiter: String): String? {
+        // note: cannot use substringAfterLast because we need to ignore case
+        return memo?.lastIndexOf(delimiter, ignoreCase = true)?.let { i ->
+            memo.substring(i + delimiter.length).trimStart()
+        }?.validateAddress()
+    }
 
     private fun onTransactionClicked(transaction: ConfirmedTransaction) {
         val txId = transaction.rawTransactionId.toTxId()
