@@ -110,13 +110,14 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>() {
 
     private fun writeLogcat(): File? {
         try {
-            val outputFile = File("${ZcashWalletApp.instance.filesDir}/logs", "developer_log.txt")
-            if (!outputFile.parentFile.isFile) {
+            // Note: the /logs directory has been configured as a file provider under @xml/file_paths which allows the temporary sharing of this file
+            val outputFile = File("${ZcashWalletApp.instance.filesDir}/logs", "developer_log.txt").also { it.parentFile.mkdirs() }
+            if (!outputFile.parentFile.isDirectory) {
                 // addresses security finding in issue #121
-                throw IllegalArgumentException("Invalid path: ${outputFile.absolutePath}. Verify" +
+                throw IllegalArgumentException("Invalid path: ${outputFile.parentFile}. Verify" +
                         " that the default files directory is not being manipulated.")
             }
-            val cmd = arrayOf("/bin/sh", "-c", "logcat -v time -d | grep \"@TWIG\" > \"${outputFile.absolutePath}\"")
+            val cmd = arrayOf("/bin/sh", "-c", "logcat -v time -d | grep '@TWIG' > '${outputFile.absolutePath}'")
             Runtime.getRuntime().exec(cmd)
             return outputFile
         } catch (e: IOException) {
