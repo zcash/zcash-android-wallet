@@ -3,7 +3,7 @@ package cash.z.ecc.android.ui.util
 import java.nio.charset.StandardCharsets
 
 
-const val INCLUDE_MEMO_PREFIX = "sent from"
+const val INCLUDE_MEMO_PREFIX = "Reply-To:"
 
 inline fun ByteArray?.toUtf8Memo(): String {
 // TODO: make this more official but for now, this will do
