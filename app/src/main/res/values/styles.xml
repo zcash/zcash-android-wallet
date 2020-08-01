@@ -40,6 +40,10 @@
         <item name="strokeColor">@color/zcashWhite</item>
     </style>
 
+    <style name="Zcash.TextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.FilledBox">
+        <item name="boxBackgroundColor">@android:color/transparent</item>
+    </style>
+
     <!-- Text Appearances -->
 
     <style name="Zcash.TextAppearance.NumberPad" parent="TextAppearance.MaterialComponents.Body1">
@@ -85,9 +89,10 @@
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">0dp</item>
     </style>
-    
+
     <!-- Theme Overlays -->
     <style name="Zcash.Overlay.TextInputLayout" parent="ThemeOverlay.MaterialComponents">
         <item name="shapeAppearanceSmallComponent">@style/Zcash.ShapeAppearance.TextInputLayout</item>
+        <item name="textInputStyle">@style/Zcash.TextInputLayout</item>
     </style>
 </resources>

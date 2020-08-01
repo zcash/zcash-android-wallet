@@ -30,10 +30,10 @@ class SendConfirmFragment : BaseFragment<FragmentSendConfirmBinding>() {
         binding.buttonNext.setOnClickListener {
             onSend().also { tapped(SEND_CONFIRM_NEXT) }
         }
-        R.id.action_nav_send_confirm_to_nav_send_memo.let {
-            binding.backButtonHitArea.onClickNavTo(it) { tapped(SEND_CONFIRM_BACK) }
-            onBackPressNavTo(it) { tapped(SEND_CONFIRM_BACK) }
-        }
+//        R.id.action_nav_send_confirm_to_nav_send_memo.let {
+//            binding.backButtonHitArea.onClickNavTo(it) { tapped(SEND_CONFIRM_BACK) }
+//            onBackPressNavTo(it) { tapped(SEND_CONFIRM_BACK) }
+//        }
         mainActivity?.lifecycleScope?.launch {
             binding.textConfirmation.text =
                 "Send ${sendViewModel.zatoshiAmount.convertZatoshiToZecString(8)} ZEC to ${sendViewModel?.toAddress.toAbbreviatedAddress()}?"
@@ -46,6 +46,6 @@ class SendConfirmFragment : BaseFragment<FragmentSendConfirmBinding>() {
 
     private fun onSend() {
         sendViewModel.funnel(Send.ConfirmPageComplete)
-        mainActivity?.safeNavigate(R.id.action_nav_send_confirm_to_send_final)
+//        mainActivity?.safeNavigate(R.id.action_nav_send_confirm_to_send_final)
     }
 }

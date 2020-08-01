@@ -106,18 +106,18 @@ class SendAddressFragment : BaseFragment<FragmentSendAddressBinding>(),
     private fun onSubmit(unused: EditText? = null) {
         sendViewModel.toAddress = binding.inputZcashAddress.text.toString()
         binding.inputZcashAmount.convertZecToZatoshi()?.let { sendViewModel.zatoshiAmount = it }
-        sendViewModel.validate(maxZatoshi).onFirstWith(resumedScope) {
-            if (it == null) {
-                sendViewModel.funnel(Send.AddressPageComplete)
-                mainActivity?.safeNavigate(R.id.action_nav_send_address_to_send_memo)
-            } else {
-                resumedScope.launch {
-                    binding.textAddressError.text = it
-                    delay(1500L)
-                    binding.textAddressError.text = ""
-                }
-            }
-        }
+//        sendViewModel.validate(maxZatoshi).onFirstWith(resumedScope) {
+//            if (it == null) {
+//                sendViewModel.funnel(Send.AddressPageComplete)
+////                mainActivity?.safeNavigate(R.id.action_nav_send_address_to_send_memo)
+//            } else {
+//                resumedScope.launch {
+//                    binding.textAddressError.text = it
+//                    delay(1500L)
+//                    binding.textAddressError.text = ""
+//                }
+//            }
+//        }
     }
 
     private fun onMax() {

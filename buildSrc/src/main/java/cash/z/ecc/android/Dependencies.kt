@@ -13,6 +13,7 @@ object Deps {
     object AndroidX {
         const val ANNOTATION =              "androidx.annotation:annotation:1.1.0"
         const val APPCOMPAT =               "androidx.appcompat:appcompat:1.1.0"
+        const val BIOMETRICS =              "androidx.biometric:biometric:1.1.0-alpha01"
         const val CONSTRAINT_LAYOUT =       "androidx.constraintlayout:constraintlayout:1.1.3"
         const val CORE_KTX =                "androidx.core:core-ktx:1.1.0"
         const val FRAGMENT_KTX =            "androidx.fragment:fragment-ktx:1.1.0-beta01"
@@ -79,7 +80,7 @@ object Deps {
     object Zcash {
         const val ANDROID_WALLET_PLUGINS =   "cash.z.ecc.android:zcash-android-wallet-plugins:1.0.0"
         const val KOTLIN_BIP39 =            "cash.z.ecc.android:kotlin-bip39:1.0.0-beta09"
-        object Sdk :            Version("1.1.0-beta02") {
+        object Sdk :            Version("1.1.0-beta03") {
             val MAINNET =                    "cash.z.ecc.android:sdk-mainnet:$version"
             val TESTNET =                    "cash.z.ecc.android:sdk-testnet:$version"
         }

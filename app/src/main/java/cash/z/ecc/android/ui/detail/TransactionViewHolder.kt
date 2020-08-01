@@ -7,11 +7,15 @@ import androidx.recyclerview.widget.RecyclerView
 import cash.z.ecc.android.R
 import cash.z.ecc.android.ext.goneIf
 import cash.z.ecc.android.ext.toAppColor
-import cash.z.ecc.android.ui.MainActivity
-import cash.z.ecc.android.ui.util.INCLUDE_MEMO_PREFIX
-import cash.z.ecc.android.ui.util.toUtf8Memo
 import cash.z.ecc.android.sdk.db.entity.ConfirmedTransaction
-import cash.z.ecc.android.sdk.ext.*
+import cash.z.ecc.android.sdk.db.entity.PendingTransactionEntity
+import cash.z.ecc.android.sdk.ext.ZcashSdk
+import cash.z.ecc.android.sdk.ext.convertZatoshiToZecString
+import cash.z.ecc.android.sdk.ext.isShielded
+import cash.z.ecc.android.sdk.ext.toAbbreviatedAddress
+import cash.z.ecc.android.ui.MainActivity
+import cash.z.ecc.android.ui.util.INCLUDE_MEMO_PREFIXES_RECOGNIZED
+import cash.z.ecc.android.ui.util.toUtf8Memo
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.launch
 import java.nio.charset.Charset
@@ -55,6 +59,8 @@ class TransactionViewHolder<T : ConfirmedTransaction>(itemView: View) : Recycler
                     !toAddress.isNullOrEmpty() -> {
                         lineOne = "You paid ${toAddress?.toAbbreviatedAddress()}"
                         lineTwo = if (isMined) "Sent $timestamp" else "Pending confirmation"
+                        // TODO: this logic works but is sloppy. Find a more robust solution to displaying information about expiration (such as expires in 1 block, etc). Then if it is way beyond expired, remove it entirely. Perhaps give the user a button for that (swipe to dismiss?)
+                        if(!isMined && (expiryHeight != null) && (expiryHeight!! < (itemView.context as MainActivity).latestHeight ?: -1)) lineTwo = "Expired"
                         amountDisplay = "- $amountZec"
                         if (isMined) {
                             amountColor = R.color.zcashRed
@@ -94,32 +100,42 @@ class TransactionViewHolder<T : ConfirmedTransaction>(itemView: View) : Recycler
             bottomText.setTextColor(lineTwoColor.toAppColor())
             val context = itemView.context
             indicator.background = context.resources.getDrawable(indicatorBackground)
+
+            // TODO: change this so we see the shield if it is a z-addr in the address line but verify the intended design/behavior, first
             shieldIcon.goneIf((transaction?.raw != null || transaction?.expiryHeight != null) && !transaction?.toAddress.isShielded())
         }
     }
 
     private suspend fun getSender(transaction: ConfirmedTransaction): String {
         val memo = transaction.memo.toUtf8Memo()
-        val who = extractValidAddress(memo, INCLUDE_MEMO_PREFIX)
-            ?: extractValidAddress(memo, "sent from:")
-            ?: "Unknown"
-
+        val who = extractValidAddress(memo)?.toAbbreviatedAddress() ?: "Unknown"
         return "$who paid you"
     }
 
     private fun extractAddress(memo: String?) =
         addressRegex.findAll(memo ?: "").lastOrNull()?.value
 
-    private suspend fun extractValidAddress(memo: String?, delimiter: String): String? {
+    private suspend fun extractValidAddress(memo: String?): String? {
+        if (memo == null || memo.length < 25) return null
+
         // note: cannot use substringAfterLast because we need to ignore case
-        return memo?.lastIndexOf(delimiter, ignoreCase = true)?.let { i ->
-            memo.substring(i + delimiter.length).trimStart()
-        }?.validateAddress()
+        try {
+            INCLUDE_MEMO_PREFIXES_RECOGNIZED.forEach { prefix ->
+                memo.lastIndexOf(prefix, ignoreCase = true).takeUnless { it == -1 }?.let { lastIndex ->
+                    memo.substring(lastIndex + prefix.length).trimStart().validateAddress()?.let { address ->
+                        return@extractValidAddress address
+                    }
+                }
+            }
+        } catch(t: Throwable) { }
+
+        return null
     }
 
     private fun onTransactionClicked(transaction: ConfirmedTransaction) {
         val txId = transaction.rawTransactionId.toTxId()
         val detailsMessage: String = "Zatoshi amount: ${transaction.value}\n\n" +
+                "Mined height: ${transaction.minedHeight}\n\n" +
                 "Transaction: $txId" +
                 "${if (transaction.toAddress != null) "\n\nTo: ${transaction.toAddress}" else ""}" +
                 "${if (transaction.memo != null) "\n\nMemo: \n${String(transaction.memo!!, Charset.forName("UTF-8"))}" else ""}"

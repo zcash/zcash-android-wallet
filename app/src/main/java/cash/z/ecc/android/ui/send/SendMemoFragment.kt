@@ -9,13 +9,12 @@ import cash.z.ecc.android.databinding.FragmentSendMemoBinding
 import cash.z.ecc.android.di.viewmodel.activityViewModel
 import cash.z.ecc.android.ext.gone
 import cash.z.ecc.android.ext.goneIf
-import cash.z.ecc.android.ext.onClickNavTo
 import cash.z.ecc.android.ext.onEditorActionDone
 import cash.z.ecc.android.feedback.Report
 import cash.z.ecc.android.feedback.Report.Funnel.Send
 import cash.z.ecc.android.feedback.Report.Tap.*
 import cash.z.ecc.android.ui.base.BaseFragment
-import cash.z.ecc.android.ui.util.INCLUDE_MEMO_PREFIX
+import cash.z.ecc.android.ui.util.INCLUDE_MEMO_PREFIX_STANDARD
 
 class SendMemoFragment : BaseFragment<FragmentSendMemoBinding>() {
     override val screen = Report.Screen.SEND_MEMO
@@ -37,10 +36,10 @@ class SendMemoFragment : BaseFragment<FragmentSendMemoBinding>() {
             onClearMemo().also { tapped(SEND_MEMO_CLEAR) }
         }
 
-        R.id.action_nav_send_memo_to_nav_send_address.let {
-            binding.backButtonHitArea.onClickNavTo(it) { tapped(SEND_MEMO_BACK) }
-            onBackPressNavTo(it) { tapped(SEND_MEMO_BACK) }
-        }
+//        R.id.action_nav_send_memo_to_nav_send_address.let {
+//            binding.backButtonHitArea.onClickNavTo(it) { tapped(SEND_MEMO_BACK) }
+//            onBackPressNavTo(it) { tapped(SEND_MEMO_BACK) }
+//        }
 
         binding.checkIncludeAddress.setOnCheckedChangeListener { _, _->
             onIncludeMemo(binding.checkIncludeAddress.isChecked)
@@ -56,7 +55,7 @@ class SendMemoFragment : BaseFragment<FragmentSendMemoBinding>() {
         }
 
         sendViewModel.afterInitFromAddress {
-            binding.textIncludedAddress.text = "$INCLUDE_MEMO_PREFIX ${sendViewModel.fromAddress}"
+            binding.textIncludedAddress.text = "$INCLUDE_MEMO_PREFIX_STANDARD ${sendViewModel.fromAddress}"
         }
 
         binding.textIncludedAddress.gone()
@@ -103,7 +102,7 @@ class SendMemoFragment : BaseFragment<FragmentSendMemoBinding>() {
             sendViewModel.memo = binding.inputMemo.text.toString()
             onNext()
         } else {
-            mainActivity?.safeNavigate(R.id.action_nav_send_memo_to_nav_send_address)
+//            mainActivity?.safeNavigate(R.id.action_nav_send_memo_to_nav_send_address)
         }
     }
 
@@ -116,6 +115,6 @@ class SendMemoFragment : BaseFragment<FragmentSendMemoBinding>() {
 
     private fun onNext() {
         sendViewModel.funnel(Send.MemoPageComplete)
-        mainActivity?.safeNavigate(R.id.action_nav_send_memo_to_send_confirm)
+//        mainActivity?.safeNavigate(R.id.action_nav_send_memo_to_send_confirm)
     }
 }

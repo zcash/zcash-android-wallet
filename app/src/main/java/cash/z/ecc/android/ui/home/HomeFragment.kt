@@ -115,12 +115,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
         }
 
         if (::uiModel.isInitialized) {
-            twig("uiModel exists!")
-            onModelUpdated(null, uiModel)
+            twig("uiModel exists! it has pendingSend=${uiModel.pendingSend} ZEC while the sendViewModel=${sendViewModel.zatoshiAmount} zats")
+            // if the model already existed, cool but let the sendViewModel be the source of truth for the amount
+            onModelUpdated(null, uiModel.copy(pendingSend = sendViewModel.zatoshiAmount.coerceAtLeast(0).convertZatoshiToZecStringUniform(8)))
         }
     }
 
     private fun onClearAmount() {
+        twig("onClearAmount()")
         if (::uiModel.isInitialized) {
             resumedScope.launch {
                 binding.textSendAmount.text.apply {
@@ -228,6 +230,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
      * @param amount the amount to send represented as ZEC, without the dollar sign.
      */
     fun setSendAmount(amount: String, updateModel: Boolean = true) {
+        twig("setSendAmount($amount, $updateModel)")
         binding.textSendAmount.text = "\$$amount".toColoredSpan(R.color.text_light_dimmed, "$")
         if (updateModel) {
             sendViewModel.zatoshiAmount = amount.safelyConvertToBigDecimal().convertZecToZatoshi()

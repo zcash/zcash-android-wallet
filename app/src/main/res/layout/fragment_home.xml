@@ -343,13 +343,30 @@
         app:layout_constraintTop_toTopOf="@id/guideline_hit_area_top" />
 
     <TextView
+        android:id="@+id/text_title"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:text="@string/home_title"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+        android:textColor="@color/text_light"
+        android:gravity="center"
+        android:maxLines="1"
+        app:autoSizeMaxTextSize="16sp"
+        app:autoSizeMinTextSize="2sp"
+        app:autoSizeTextType="uniform"
+        app:layout_constraintTop_toTopOf="@id/icon_logo"
+        app:layout_constraintBottom_toBottomOf="@id/icon_logo"
+        app:layout_constraintStart_toEndOf="@id/hit_area_scan"
+        app:layout_constraintEnd_toStartOf="@id/hit_area_receive" />
+
+    <TextView
         android:id="@+id/text_detail"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="12dp"
         android:elevation="6dp"
         android:layout_marginTop="12dp"
-        android:text="Wallet History"
+        android:text="@string/home_detail_button_text"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
         android:textColor="@color/colorAccent"
         android:tint="@color/colorAccent"
