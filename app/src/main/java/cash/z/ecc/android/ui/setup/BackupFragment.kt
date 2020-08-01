@@ -19,12 +19,15 @@ import cash.z.ecc.android.feedback.Report.Tap.BACKUP_DONE
 import cash.z.ecc.android.feedback.Report.Tap.BACKUP_VERIFY
 import cash.z.ecc.android.feedback.measure
 import cash.z.ecc.android.lockbox.LockBox
+import cash.z.ecc.android.sdk.ext.ZcashSdk
+import cash.z.ecc.android.sdk.ext.twig
 import cash.z.ecc.android.ui.base.BaseFragment
 import cash.z.ecc.android.ui.setup.WalletSetupViewModel.LockBoxKey
 import cash.z.ecc.android.ui.setup.WalletSetupViewModel.WalletSetupState.SEED_WITH_BACKUP
 import cash.z.ecc.android.ui.util.AddressPartNumberSpan
 import cash.z.ecc.kotlin.mnemonic.Mnemonics
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -82,8 +85,20 @@ class BackupFragment : BaseFragment<FragmentBackupBinding>() {
     override fun onResume() {
         super.onResume()
         resumedScope.launch {
-            binding.textBirtdate.text = "Birthday Height: %,d".format(walletSetup.loadBirthdayHeight())
+            binding.textBirtdate.text = "Birthday Height: %,d".format(calculateBirthday())
         }
+    }
+
+    private suspend fun calculateBirthday(): Int {
+        var storedBirthday: Int = 0
+        var oldestTransactionHeight:Int = 0
+        try {
+            storedBirthday = walletSetup.loadBirthdayHeight()
+            oldestTransactionHeight = mainActivity?.synchronizerComponent?.synchronizer()?.receivedTransactions?.first()?.last()?.minedHeight ?: 0
+        } catch (t: Throwable) {
+            twig("failed to calculate birthday due to: $t")
+        }
+        return maxOf(storedBirthday, oldestTransactionHeight, ZcashSdk.SAPLING_ACTIVATION_HEIGHT)
     }
 
     private fun onEnterWallet(showMessage: Boolean = !this.hasBackUp) {
