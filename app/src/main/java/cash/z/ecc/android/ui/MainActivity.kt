@@ -78,6 +78,12 @@ class MainActivity : AppCompatActivity() {
             Manifest.permission.CAMERA
         ) == PackageManager.PERMISSION_GRANTED
 
+    val latestHeight: Int? get() = if (::synchronizerComponent.isInitialized) {
+        synchronizerComponent.synchronizer().latestHeight
+    } else {
+        null
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         component = ZcashWalletApp.component.mainActivitySubcomponent().create(this).also {
             it.inject(this)
