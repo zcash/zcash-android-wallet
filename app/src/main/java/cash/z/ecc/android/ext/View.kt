@@ -6,9 +6,19 @@ import cash.z.ecc.android.ui.MainActivity
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.channelFlow
 
-fun View.gone() = goneIf(true)
+fun View.gone() {
+    visibility = GONE
+}
 
-fun View.invisible() = invisibleIf(true)
+fun View.invisible() {
+    visibility = INVISIBLE
+}
+
+fun View.visible() {
+    visibility = VISIBLE
+}
+
+// NOTE:  avoid `visibleIf` function because the false case is ambiguous: would it be gone or invisible?
 
 fun View.goneIf(isGone: Boolean) {
     visibility = if (isGone) GONE else VISIBLE
