@@ -8,7 +8,7 @@ import cash.z.ecc.android.R
 import cash.z.ecc.android.ext.goneIf
 import cash.z.ecc.android.ext.toAppColor
 import cash.z.ecc.android.ui.MainActivity
-import cash.z.ecc.android.ui.util.INCLUDE_MEMO_PREFIX
+import cash.z.ecc.android.ui.util.INCLUDE_MEMO_PREFIXES_RECOGNIZED
 import cash.z.ecc.android.ui.util.toUtf8Memo
 import cash.z.ecc.android.sdk.db.entity.ConfirmedTransaction
 import cash.z.ecc.android.sdk.ext.*
@@ -100,21 +100,28 @@ class TransactionViewHolder<T : ConfirmedTransaction>(itemView: View) : Recycler
 
     private suspend fun getSender(transaction: ConfirmedTransaction): String {
         val memo = transaction.memo.toUtf8Memo()
-        val who = extractValidAddress(memo, INCLUDE_MEMO_PREFIX)
-            ?: extractValidAddress(memo, "sent from:")
-            ?: "Unknown"
-
+        val who = extractValidAddress(memo)?.toAbbreviatedAddress() ?: "Unknown"
         return "$who paid you"
     }
 
     private fun extractAddress(memo: String?) =
         addressRegex.findAll(memo ?: "").lastOrNull()?.value
 
-    private suspend fun extractValidAddress(memo: String?, delimiter: String): String? {
+    private suspend fun extractValidAddress(memo: String?): String? {
+        if (memo == null || memo.length < 25) return null
+
         // note: cannot use substringAfterLast because we need to ignore case
-        return memo?.lastIndexOf(delimiter, ignoreCase = true)?.let { i ->
-            memo.substring(i + delimiter.length).trimStart()
-        }?.validateAddress()
+        try {
+            INCLUDE_MEMO_PREFIXES_RECOGNIZED.forEach { prefix ->
+                memo.lastIndexOf(prefix, ignoreCase = true).takeUnless { it == -1 }?.let { lastIndex ->
+                    memo.substring(lastIndex + prefix.length).trimStart().validateAddress()?.let { address ->
+                        return@extractValidAddress address
+                    }
+                }
+            }
+        } catch(t: Throwable) { }
+
+        return null
     }
 
     private fun onTransactionClicked(transaction: ConfirmedTransaction) {
