@@ -13,7 +13,7 @@ import cash.z.ecc.android.feedback.Report.MetricType
 import cash.z.ecc.android.feedback.Report.MetricType.*
 import cash.z.ecc.android.lockbox.LockBox
 import cash.z.ecc.android.ui.setup.WalletSetupViewModel
-import cash.z.ecc.android.ui.util.INCLUDE_MEMO_PREFIX
+import cash.z.ecc.android.ui.util.INCLUDE_MEMO_PREFIX_STANDARD
 import cash.z.ecc.android.sdk.Initializer
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.db.entity.*
@@ -23,6 +23,7 @@ import cash.z.ecc.android.sdk.ext.twig
 import cash.z.ecc.android.sdk.validate.AddressType
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -73,11 +74,17 @@ class SendViewModel @Inject constructor() : ViewModel() {
             toAddress,
             memoToSend.chunked(ZcashSdk.MAX_MEMO_SIZE).firstOrNull() ?: ""
         ).onEach {
-            twig(it.toString())
+            twig("Received pending txUpdate: ${it?.toString()}")
         }
     }
 
-    fun createMemoToSend() = if (includeFromAddress) "$memo\n$INCLUDE_MEMO_PREFIX\n$fromAddress" else memo
+    fun cancel(pendingId: Long) {
+        viewModelScope.launch {
+            synchronizer.cancelSpend(pendingId)
+        }
+    }
+
+    fun createMemoToSend() = if (includeFromAddress) "$memo\n$INCLUDE_MEMO_PREFIX_STANDARD\n$fromAddress" else memo
 
     private fun reportIssues(memoToSend: String) {
         if (toAddress == fromAddress) feedback.report(Issue.SelfSend)
@@ -97,17 +104,26 @@ class SendViewModel @Inject constructor() : ViewModel() {
     suspend fun validateAddress(address: String): AddressType =
         synchronizer.validateAddress(address)
 
-    fun validate(maxZatoshi: Long?) = flow<String?> {
+    fun validate(availableZatoshi: Long?, maxZatoshi: Long?) = flow<String?> {
 
         when {
             synchronizer.validateAddress(toAddress).isNotValid -> {
                 emit("Please enter a valid address.")
             }
             zatoshiAmount < 1 -> {
-                emit("Please enter at least 1 Zatoshi.")
+                emit("Please go back and enter at least 1 Zatoshi.")
+            }
+            availableZatoshi == null -> {
+                emit("Available funds not found. Please try again in a moment.")
+            }
+            availableZatoshi == 0L -> {
+                emit("No funds available to send.")
+            }
+            availableZatoshi > 0 && availableZatoshi < ZcashSdk.MINERS_FEE_ZATOSHI -> {
+                emit("Insufficient funds to cover miner's fee.")
             }
             maxZatoshi != null && zatoshiAmount > maxZatoshi -> {
-                emit( "Please enter no more than ${maxZatoshi.convertZatoshiToZecString(8)} ZEC.")
+                emit( "Please go back and enter no more than ${maxZatoshi.convertZatoshiToZecString(8)} ZEC.")
             }
             createMemoToSend().length > ZcashSdk.MAX_MEMO_SIZE -> {
                 emit( "Memo must be less than ${ZcashSdk.MAX_MEMO_SIZE} in length.")

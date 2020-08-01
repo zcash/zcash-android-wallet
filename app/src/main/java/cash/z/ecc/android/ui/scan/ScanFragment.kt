@@ -133,7 +133,7 @@ class ScanFragment : BaseFragment<FragmentScanBinding>() {
             } else {  /* continue scanning*/
                 binding.textScanError.text = ""
                 sendViewModel.toAddress = qrContent
-                mainActivity?.safeNavigate(R.id.action_nav_scan_to_nav_send_address)
+                mainActivity?.safeNavigate(R.id.action_nav_scan_to_nav_send)
             }
         }
     }

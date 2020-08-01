@@ -140,6 +140,7 @@ object Report {
         SEND_ADDRESS_MAX("send.address.max"),
         SEND_ADDRESS_NEXT("send.address.next"),
         SEND_ADDRESS_PASTE("send.address.paste"),
+        SEND_ADDRESS_REUSE("send.address.reuse"),
         SEND_ADDRESS_BACK("send.address.back"),
         SEND_ADDRESS_DONE_ADDRESS("send.address.done.address"),
         SEND_ADDRESS_DONE_AMOUNT("send.address.done.amount"),
@@ -155,6 +156,8 @@ object Report {
         SEND_MEMO_SKIP("send.memo.skip"),
         SEND_MEMO_CLEAR("send.memo.clear"),
         SEND_MEMO_BACK("send.memo.back"),
+
+        SEND_SUBMIT("send.submit"),
 
         // General events
         COPY_ADDRESS("copy.address");

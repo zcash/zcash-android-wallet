@@ -1,0 +1,489 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background_home">
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_content_top"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.18" />
+
+    <!-- Back Button -->
+    <ImageView
+        android:id="@+id/back_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:tint="@color/text_light"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.05"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.065"
+        app:srcCompat="@drawable/ic_arrow_back_black_24dp" />
+
+    <View
+        android:id="@+id/back_button_hit_area"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:clickable="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.01"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.045" />
+
+    <TextView
+        android:id="@+id/text_send_amount"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:elevation="6dp"
+        android:gravity="bottom|center_horizontal"
+        android:includeFontPadding="false"
+        android:maxLines="1"
+        android:paddingBottom="0dp"
+        android:paddingEnd="16dp"
+        android:paddingStart="16dp"
+        android:paddingTop="0dp"
+        android:text="$20.1"
+        android:textAppearance="@style/Zcash.TextAppearance.Zec"
+        android:textSize="200sp"
+        app:autoSizeMaxTextSize="40sp"
+        app:autoSizeMinTextSize="8sp"
+        app:autoSizeTextType="uniform"
+        app:layout_constraintBottom_toTopOf="@id/text_banner_message_start"
+        app:layout_constraintEnd_toStartOf="@id/button_send"
+        app:layout_constraintStart_toEndOf="@id/spacer_title"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+    <TextView
+        android:id="@+id/text_banner_message_start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:elevation="6dp"
+        android:text="from your "
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+        android:textColor="@color/text_light"
+        app:layout_constraintBottom_toTopOf="@id/guideline_content_top"
+        app:layout_constraintEnd_toStartOf="@id/text_banner_wallet_type"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/text_send_amount" />
+
+    <TextView
+        android:id="@+id/text_banner_wallet_type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:elevation="6dp"
+        android:text="shielded"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+        android:textColor="@color/colorPrimary"
+        app:layout_constraintBaseline_toBaselineOf="@id/text_banner_message_start"
+        app:layout_constraintEnd_toStartOf="@id/text_banner_message_end"
+        app:layout_constraintStart_toEndOf="@id/text_banner_message_start" />
+
+    <TextView
+        android:id="@+id/text_banner_message_end"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:elevation="6dp"
+        android:text=" wallet"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+        android:textColor="@color/text_light"
+        app:layout_constraintBaseline_toBaselineOf="@id/text_banner_message_start"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/text_banner_wallet_type" />
+
+    <!-- Down Arrow -->
+    <ImageView
+        android:id="@+id/image_down_arrow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:tint="@color/colorPrimary"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/text_banner_message_end"
+        app:layout_constraintStart_toEndOf="@id/text_banner_message_end"
+        app:layout_constraintTop_toTopOf="@id/text_banner_message_end"
+        app:srcCompat="@drawable/ic_baseline_keyboard_arrow_down_24" />
+
+    <!-- spacer to help with centering the title yet giving it maximum available size -->
+    <Space
+        android:id="@+id/spacer_title"
+        android:layout_width="72dp"
+        android:layout_height="38dp"
+        app:layout_constraintBottom_toBottomOf="@id/button_send"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.05"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/button_send" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/button_send"
+        android:layout_width="74dp"
+        android:layout_height="38dp"
+        android:text="Send"
+        android:textColor="@color/text_dark"
+        app:layout_constraintBottom_toBottomOf="@id/back_button"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.95"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/back_button" />
+
+    <TextView
+        android:id="@+id/text_address_error"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:autoSizeMaxTextSize="12sp"
+        app:autoSizeMinTextSize="6sp"
+        app:autoSizeTextType="uniform"
+        android:fontFamily="@font/inconsolata"
+        android:paddingEnd="8dp"
+        android:paddingStart="8dp"
+        android:textColor="@color/zcashRed"
+        android:maxLines="1"
+        android:textSize="14sp"
+        android:gravity="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/text_banner_message_start"
+        tools:text="Please enter a larger amount of money also please enter a shorter sentence" />
+
+    <ScrollView
+        android:id="@+id/scroll_content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/text_address_error">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <!-- Input: Address -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/text_layout_address"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:hint="To"
+                android:theme="@style/Zcash.Overlay.TextInputLayout"
+                app:endIconDrawable="@drawable/ic_qrcode_24dp"
+                app:endIconMode="custom"
+                app:helperText="Enter a valid Zcash address"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.08"
+                app:layout_constraintWidth_percent="0.84">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/input_zcash_address"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@android:color/transparent"
+                    android:imeOptions="actionDone"
+                    android:inputType="textNoSuggestions"
+                    android:maxLength="255"
+                    android:singleLine="true"
+                    android:textColor="@color/text_light"
+                    android:textColorHint="@color/text_light_dimmed" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Input: Memo -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/text_layout_memo"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:hint="Memo"
+                android:theme="@style/Zcash.Overlay.TextInputLayout"
+                app:endIconMode="clear_text"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/text_layout_address"
+                app:layout_constraintWidth_percent="0.84"
+                tools:helperText="You have 23.23 ZEC available">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/input_zcash_memo"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@android:color/transparent"
+                    android:imeActionLabel="add memo"
+                    android:imeOptions="actionDone"
+                    android:inputType="textMultiLine"
+                    android:maxLength="512"
+                    android:maxLines="3"
+                    android:textColor="@color/text_light"
+                    android:textColorHint="@color/text_light_dimmed"
+                    tools:text="WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+<!--            <ImageView-->
+<!--                android:id="@+id/clear_memo"-->
+<!--                android:layout_width="24dp"-->
+<!--                android:layout_height="24dp"-->
+<!--                android:layout_marginEnd="10dp"-->
+<!--                android:layout_marginTop="6dp"-->
+<!--                android:elevation="6dp"-->
+<!--                android:src="@drawable/ic_close_black_24dp"-->
+<!--                android:tint="@color/text_light"-->
+<!--                app:layout_constraintEnd_toEndOf="@id/text_layout_memo"-->
+<!--                app:layout_constraintTop_toTopOf="@id/text_layout_memo" />-->
+
+            <!-- Spacer to help position checkbox under the memo line -->
+            <Space
+                android:id="@+id/space_checkbox"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginBottom="18dp"
+                app:layout_constraintBottom_toBottomOf="@id/text_layout_memo"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/text_layout_memo" />
+
+
+            <CheckBox
+                android:id="@+id/check_include_address"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="0dp"
+                android:scaleX="0.84"
+                android:scaleY="0.84"
+                android:text="include reply-to"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+                android:textColor="@color/text_light_dimmed"
+                android:textSize="14sp"
+                android:translationY="-10dp"
+                app:layout_constraintEnd_toEndOf="@id/text_layout_memo"
+                app:layout_constraintTop_toBottomOf="@id/space_checkbox" />
+
+
+            <!--                 -->
+            <!-- Clipboard items -->
+            <!--                 -->
+
+            <View
+                android:id="@+id/background_clipboard"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:background="@color/zcashWhite_12"
+                app:layout_constraintBottom_toBottomOf="@id/divider_clipboard"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/divider_clipboard" />
+
+            <TextView
+                android:id="@+id/divider_clipboard"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="1dp"
+                android:text="On clipboard"
+                android:textAllCaps="true"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.08"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/check_include_address" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/container_clipboard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="16dp"
+                android:paddingTop="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/divider_clipboard">
+
+                <ImageView
+                    android:id="@+id/image_shield"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:src="@drawable/ic_shield"
+                    android:tint="@color/colorPrimary"
+                    app:layout_constraintBottom_toBottomOf="@id/clipboard_address_label"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.06"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/clipboard_address_label" />
+
+                <TextView
+                    android:id="@+id/clipboard_address_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:text="Unknown"
+                    android:textColor="@color/colorPrimary"
+                    app:layout_constraintBottom_toTopOf="@id/clipboard_address"
+                    app:layout_constraintStart_toEndOf="@id/image_shield"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_goneMarginStart="0dp" />
+
+                <TextView
+                    android:id="@+id/clipboard_address"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="zasdfaksfjaslfjaslfkjaslk;kfjaslkfjasld;kfjaslfjdasflja"
+                    android:textColor="@color/text_light"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="@id/image_shield"
+                    app:layout_constraintTop_toBottomOf="@id/clipboard_address_label" />
+
+                <ImageView
+                    android:id="@+id/image_clipboard_address_selected"
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:src="@drawable/ic_baseline_done_24"
+                    android:tint="@color/colorPrimary"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias=".95"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+            <!--                 -->
+            <!-- Last Used items -->
+            <!--                 -->
+
+            <View
+                android:id="@+id/background_last_used"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:background="@color/zcashWhite_12"
+                app:layout_constraintBottom_toBottomOf="@id/divider_last_used"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/divider_last_used" />
+
+            <TextView
+                android:id="@+id/divider_last_used"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="1dp"
+                android:text="last used"
+                android:textAllCaps="true"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.08"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/container_clipboard" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/container_last_used"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/divider_last_used">
+
+                <ImageView
+                    android:id="@+id/image_last_used_shield"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:src="@drawable/ic_shield"
+                    android:tint="@color/colorPrimary"
+                    app:layout_constraintBottom_toBottomOf="@id/last_used_address_label"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.06"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/last_used_address_label" />
+
+                <TextView
+                    android:id="@+id/last_used_address_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="16dp"
+                    android:text="Unknown"
+                    android:textColor="@color/colorPrimary"
+                    app:layout_constraintBottom_toTopOf="@id/last_used_address"
+                    app:layout_constraintStart_toEndOf="@id/image_last_used_shield"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_goneMarginStart="0dp" />
+
+                <TextView
+                    android:id="@+id/last_used_address"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="zasdfaksfjaslfjaslfkjaslk;kfjaslkfjasld;kfjaslfjdasflja"
+                    android:textColor="@color/text_light"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="@id/image_last_used_shield"
+                    app:layout_constraintTop_toBottomOf="@id/last_used_address_label" />
+
+                <ImageView
+                    android:id="@+id/image_last_used_address_selected"
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:src="@drawable/ic_baseline_done_24"
+                    android:tint="@color/colorPrimary"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias=".95"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <!--            <TextView-->
+            <!--                android:id="@+id/text_max"-->
+            <!--                android:layout_width="wrap_content"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:layout_marginBottom="6dp"-->
+            <!--                android:fontFamily="@font/inconsolata"-->
+            <!--                android:padding="16dp"-->
+            <!--                android:text="MAX"-->
+            <!--                android:textStyle="bold"-->
+            <!--                app:layout_constraintBottom_toBottomOf="@id/text_layout_memo"-->
+            <!--                app:layout_constraintEnd_toEndOf="@id/text_layout_memo"-->
+            <!--                app:layout_constraintTop_toTopOf="@id/text_layout_memo" />-->
+
+
+            <!-- Scan QR code -->
+            <ImageView
+                android:id="@+id/image_scan_qr"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="24dp"
+                android:paddingEnd="1dp"
+                android:paddingStart="6dp"
+                android:paddingTop="10dp"
+                android:tint="@color/zcashWhite"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="@id/text_layout_address"
+                app:layout_constraintEnd_toEndOf="@id/text_layout_address"
+                app:layout_constraintTop_toTopOf="@id/text_layout_address"
+                app:srcCompat="@drawable/ic_qrcode_24dp" />
+
+            <androidx.constraintlayout.widget.Group
+                android:id="@+id/group_clipboard"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                app:constraint_referenced_ids="background_clipboard,divider_clipboard,container_clipboard"
+                tools:visibility="visible" />
+
+            <androidx.constraintlayout.widget.Group
+                android:id="@+id/group_last_used"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                app:constraint_referenced_ids="background_last_used,divider_last_used,container_last_used"
+                tools:visibility="visible" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>
