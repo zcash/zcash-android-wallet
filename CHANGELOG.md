@@ -1,6 +1,31 @@
 Change Log
 ==========
 
+Version 1.0.0-alpha33 *(2020-08-13)*
+------------------------------------
+New: Fully removed crashlytics, in favor of bugsnag.
+New: Change the default lightwalletd server.
+New: Switched to the latest SDK.
+
+Version 1.0.0-alpha32 *(2020-08-01)*
+------------------------------------
+- New: entirely revamped send flow
+- New: added biometric authentication support
+- New: add robust support for tx cancellation
+- New: support precise birthday heights for faster restore
+- New: switched to Reply-To standard for memos
+- New: improved feedback while scanning QRs
+- New: more compatible with memo reply-to formats
+- New: update to latest librustzcash crates
+- New: checkpoints
+- Fix: amount not clearing on return to home screen
+- Fix: address cursor resetting while typing
+- Fix: app crash when opening application logs
+- Fix: limit decimal places to 8 places
+- Fix: wallet history now scrolls to the top
+- Fix: consistent currency formatting
+- Fix: security finding around compromised file system
+
 Version 1.0.0-alpha23 *(2020-02-21)*
 ------------------------------------
 - Fix: reorg improvements, squashing critical bugs that disabled wallets
