@@ -27,6 +27,7 @@ android {
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
         testInstrumentationRunnerArguments clearPackageData: 'true'
         multiDexEnabled true
+        resValue 'string', 'bugsnag_api_key', "${(project.findProperty('BUGSNAG_API_KEY') ?: System.getenv('BUGSNAG_API_KEY')) ?: ''}"
     }
     flavorDimensions 'network'
     productFlavors {
@@ -147,6 +148,7 @@ dependencies {
     // Analytics (for dogfooding/crash-reporting/feedback only on internal team builds)
     implementation Deps.Analytics.CRASHLYTICS
     implementation Deps.Analytics.MIXPANEL
+    implementation Deps.Analytics.BUGSNAG
 
     // Misc.
     implementation Deps.Misc.LOTTIE

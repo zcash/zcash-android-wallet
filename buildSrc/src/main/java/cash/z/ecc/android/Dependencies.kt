@@ -62,6 +62,7 @@ object Deps {
         val STUB =                          "io.grpc:grpc-stub:$version"
     }
     object Analytics { // for dogfooding/crash-reporting/feedback only on internal team builds
+        val BUGSNAG =                       "com.bugsnag:bugsnag-android:5.0.1"
         val CRASHLYTICS =                   "com.google.firebase:firebase-crashlytics:17.0.1"
         val MIXPANEL =                      "com.mixpanel.android:mixpanel-android:5.6.3"
     }

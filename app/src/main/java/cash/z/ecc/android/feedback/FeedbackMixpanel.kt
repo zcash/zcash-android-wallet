@@ -7,8 +7,12 @@ import com.mixpanel.android.mpmetrics.MixpanelAPI
 
 class FeedbackMixpanel : FeedbackCoordinator.FeedbackObserver {
 
-    private val mixpanel =
-        MixpanelAPI.getInstance(ZcashWalletApp.instance, R.string.mixpanel_project.toAppString())
+    private lateinit var mixpanel: MixpanelAPI
+
+    override fun initialize(): FeedbackCoordinator.FeedbackObserver = apply {
+        mixpanel =
+            MixpanelAPI.getInstance(ZcashWalletApp.instance, R.string.mixpanel_project.toAppString())
+    }
 
     override fun onMetric(metric: Feedback.Metric) {
         track(metric.key, metric.toMap())

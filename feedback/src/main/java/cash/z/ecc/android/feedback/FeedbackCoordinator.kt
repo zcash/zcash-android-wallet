@@ -38,6 +38,7 @@ class FeedbackCoordinator(val feedback: Feedback, defaultObservers: Set<Feedback
     private val jobs = CompositeJob()
     val observers = mutableSetOf<FeedbackObserver>()
 
+
     /**
      * Wait for any in-flight listeners to complete.
      */
@@ -83,7 +84,7 @@ class FeedbackCoordinator(val feedback: Feedback, defaultObservers: Set<Feedback
      */
     fun addObserver(observer: FeedbackObserver) {
         feedback.onStart {
-            observers += observer
+            observers += observer.initialize()
             observeMetrics(observer::onMetric)
             observeActions(observer::onAction)
         }
@@ -119,6 +120,7 @@ class FeedbackCoordinator(val feedback: Feedback, defaultObservers: Set<Feedback
     }
 
     interface FeedbackObserver {
+        fun initialize(): FeedbackObserver { return this }
         fun onMetric(metric: Feedback.Metric) {}
         fun onAction(action: Feedback.Action) {}
         fun flush() {}

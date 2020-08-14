@@ -79,5 +79,5 @@ class AppModule {
     @Provides
     @Singleton
     @IntoSet
-    fun provideFeedbackCrashlytics(): FeedbackCoordinator.FeedbackObserver = FeedbackCrashlytics()
+    fun provideFeedbackBugsnag(): FeedbackCoordinator.FeedbackObserver = FeedbackBugsnag()
 }
