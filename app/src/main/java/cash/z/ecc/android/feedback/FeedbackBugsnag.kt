@@ -2,12 +2,9 @@ package cash.z.ecc.android.feedback
 
 import cash.z.ecc.android.R
 import cash.z.ecc.android.ZcashWalletApp
-import cash.z.ecc.android.ext.toAppString
 import cash.z.ecc.android.sdk.ext.twig
 import com.bugsnag.android.Bugsnag
 import com.bugsnag.android.Configuration
-import com.google.firebase.crashlytics.FirebaseCrashlytics
-import com.mixpanel.android.mpmetrics.MixpanelAPI
 
 class FeedbackBugsnag : FeedbackCoordinator.FeedbackObserver {
 

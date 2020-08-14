@@ -5,7 +5,6 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'com.google.gms.google-services'
-apply plugin: 'com.google.firebase.crashlytics'
 //apply plugin: 'com.github.ben-manes.versions'
 
 archivesBaseName = 'zcash-android-wallet'
@@ -146,7 +145,6 @@ dependencies {
     implementation Deps.JavaX.JAVA_ANNOTATION
 
     // Analytics (for dogfooding/crash-reporting/feedback only on internal team builds)
-    implementation Deps.Analytics.CRASHLYTICS
     implementation Deps.Analytics.MIXPANEL
     implementation Deps.Analytics.BUGSNAG
 

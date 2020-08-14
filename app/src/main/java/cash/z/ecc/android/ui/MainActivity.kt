@@ -442,7 +442,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
-        twig("MainActivity has received an error${if (notified) " and notified the user" else ""} and reported it to crashlytics and mixpanel.")
+        twig("MainActivity has received an error${if (notified) " and notified the user" else ""} and reported it to bugsnag and mixpanel.")
         feedback.report(error)
         return true
     }
