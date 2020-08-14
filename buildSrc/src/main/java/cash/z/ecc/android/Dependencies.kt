@@ -62,7 +62,7 @@ object Deps {
         val STUB =                          "io.grpc:grpc-stub:$version"
     }
     object Analytics { // for dogfooding/crash-reporting/feedback only on internal team builds
-        val CRASHLYTICS =                   "com.google.firebase:firebase-crashlytics:17.0.1"
+        val BUGSNAG =                       "com.bugsnag:bugsnag-android:5.0.1"
         val MIXPANEL =                      "com.mixpanel.android:mixpanel-android:5.6.3"
     }
     object JavaX {
@@ -80,7 +80,7 @@ object Deps {
     object Zcash {
         const val ANDROID_WALLET_PLUGINS =   "cash.z.ecc.android:zcash-android-wallet-plugins:1.0.0"
         const val KOTLIN_BIP39 =            "cash.z.ecc.android:kotlin-bip39:1.0.0-beta09"
-        object Sdk :            Version("1.1.0-beta03") {
+        object Sdk :            Version("1.1.0-beta04") {
             val MAINNET =                    "cash.z.ecc.android:sdk-mainnet:$version"
             val TESTNET =                    "cash.z.ecc.android:sdk-testnet:$version"
         }

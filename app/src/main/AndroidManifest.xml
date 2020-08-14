@@ -33,8 +33,6 @@
 
         <!-- Firebase options -->
         <meta-data android:name="com.google.firebase.ml.vision.DEPENDENCIES" android:value="barcode" />
-        <!-- All reporting is opt-in, only -->
-        <meta-data android:name="firebase_crashlytics_collection_enabled" android:value="false" />
 
         <!-- Mixpanel options -->
         <meta-data android:name="com.mixpanel.android.MPConfig.AutoShowMixpanelUpdates" android:value="false" />

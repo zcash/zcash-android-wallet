@@ -11,8 +11,10 @@ class FeedbackFile(fileName: String = "user_log.txt") :
     val file = File("${ZcashWalletApp.instance.filesDir}/logs", fileName)
     private val format = SimpleDateFormat("MM-dd HH:mm:ss.SSS")
 
-    init {
-        if (!file.parentFile.exists()) file.parentFile.mkdirs()
+    override fun initialize(): FeedbackCoordinator.FeedbackObserver = apply {
+        file.parentFile?.apply {
+            if (!exists()) mkdirs()
+        }
     }
 
     override fun onMetric(metric: Feedback.Metric) {
