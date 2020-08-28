@@ -17,7 +17,6 @@ import cash.z.ecc.android.ext.onClickNavBack
 import cash.z.ecc.android.ext.onClickNavTo
 import cash.z.ecc.android.feedback.Report
 import cash.z.ecc.android.feedback.Report.Tap.SCAN_BACK
-import cash.z.ecc.android.feedback.Report.Tap.SCAN_RECEIVE
 import cash.z.ecc.android.sdk.ext.ZcashSdk
 import cash.z.ecc.android.sdk.ext.twig
 import cash.z.ecc.android.ui.base.BaseFragment
@@ -45,7 +44,6 @@ class ScanFragment : BaseFragment<FragmentScanBinding>() {
         if (cameraExecutor != null) cameraExecutor?.shutdown()
         cameraExecutor = Executors.newSingleThreadExecutor()
 
-        binding.buttonReceive.onClickNavTo(R.id.action_nav_scan_to_nav_receive) { tapped(SCAN_RECEIVE) }
         binding.backButtonHitArea.onClickNavBack() { tapped(SCAN_BACK) }
     }
 
@@ -204,22 +202,6 @@ class ScanFragment : BaseFragment<FragmentScanBinding>() {
 
         if (allNeededPermissions.isNotEmpty()) {
             requestPermissions(allNeededPermissions.toTypedArray(), CAMERA_PERMISSION_REQUEST)
-        }
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (allPermissionsGranted()) {
-//            view!!.postDelayed(
-//                {
-//                    onStartCamera()
-//                },
-//                2000L
-//            ) // TODO: remove this temp hack to sidestep crash when permissions were not available
         }
     }
 

@@ -2,8 +2,11 @@ package cash.z.ecc.android.ui.receive
 
 import android.content.Context
 import android.os.Bundle
+import android.text.SpannableString
+import android.text.Spanned
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.TextView
 import cash.z.android.qrecycler.QRecycler
 import cash.z.ecc.android.R
 import cash.z.ecc.android.databinding.FragmentReceiveNewBinding
@@ -15,6 +18,7 @@ import cash.z.ecc.android.feedback.Report.Tap.*
 import cash.z.ecc.android.ui.base.BaseFragment
 import cash.z.ecc.android.sdk.ext.toAbbreviatedAddress
 import cash.z.ecc.android.sdk.ext.twig
+import cash.z.ecc.android.ui.util.AddressPartNumberSpan
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
@@ -25,26 +29,24 @@ class ReceiveFragment : BaseFragment<FragmentReceiveNewBinding>() {
 
     lateinit var qrecycler: QRecycler
 
-//    lateinit var addressParts: Array<TextView>
+    lateinit var addressParts: Array<TextView>
 
     override fun inflate(inflater: LayoutInflater): FragmentReceiveNewBinding =
         FragmentReceiveNewBinding.inflate(inflater)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-//        addressParts = arrayOf(
-//            text_address_part_1,
-//            text_address_part_2,
-//            text_address_part_3,
-//            text_address_part_4,
-//            text_address_part_5,
-//            text_address_part_6,
-//            text_address_part_7,
-//            text_address_part_8
-//        )
-        binding.buttonScan.setOnClickListener {
-            mainActivity?.maybeOpenScan(R.id.action_nav_receive_to_nav_scan).also { tapped(RECEIVE_SCAN) }
-        }
+        addressParts = arrayOf(
+            binding.textAddressPart1,
+            binding.textAddressPart2,
+            binding.textAddressPart3,
+            binding.textAddressPart4,
+            binding.textAddressPart5,
+            binding.textAddressPart6,
+            binding.textAddressPart7,
+            binding.textAddressPart8
+        )
+
         binding.backButtonHitArea.onClickNavBack() { tapped(RECEIVE_BACK) }
     }
 
@@ -67,11 +69,9 @@ class ReceiveFragment : BaseFragment<FragmentReceiveNewBinding>() {
             .withCorrectionLevel(QRecycler.CorrectionLevel.MEDIUM)
             .into(binding.receiveQrCode)
 
-        binding.receiveAddress.text = address.toAbbreviatedAddress(12, 12)
-
-//        address.distribute(8) { i, part ->
-//            setAddressPart(i, part)
-//        }
+        address.distribute(8) { i, part ->
+            setAddressPart(i, part)
+        }
     }
 
     private fun <T> String.distribute(chunks: Int, block: (Int, String) -> T) {
@@ -88,13 +88,13 @@ class ReceiveFragment : BaseFragment<FragmentReceiveNewBinding>() {
         }
     }
 
-//    private fun setAddressPart(index: Int, addressPart: String) {
-//        Log.e("TWIG", "setting address for part $index) $addressPart")
-//        val thinSpace = "\u2005" // 0.25 em space
-//        val textSpan = SpannableString("${index + 1}$thinSpace$addressPart")
-//
-//        textSpan.setSpan(AddressPartNumberSpan(), 0, 2, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-//
-//        addressParts[index].text = textSpan
-//    }
+    private fun setAddressPart(index: Int, addressPart: String) {
+        twig("setting address for part $index) $addressPart")
+        val thinSpace = "\u2005" // 0.25 em space
+        val textSpan = SpannableString("${index + 1}$thinSpace$addressPart")
+
+        textSpan.setSpan(AddressPartNumberSpan(), 0, 2, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+
+        addressParts[index].text = textSpan
+    }
 }
