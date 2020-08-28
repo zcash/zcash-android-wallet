@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import cash.z.ecc.android.ext.Const
 import cash.z.ecc.android.lockbox.LockBox
 import cash.z.ecc.android.sdk.Synchronizer
+import cash.z.ecc.android.sdk.db.entity.ConfirmedTransaction
 import cash.z.ecc.android.sdk.ext.twig
 import javax.inject.Inject
 import javax.inject.Named
@@ -19,6 +20,10 @@ class HistoryViewModel @Inject constructor() : ViewModel() {
 
     val transactions get() = synchronizer.clearedTransactions
     val balance get() = synchronizer.balances
+    val latestHeight get() = synchronizer.latestHeight
+
+    var selectedTransaction: ConfirmedTransaction? = null
+
 
     suspend fun getAddress() = synchronizer.getAddress()
 

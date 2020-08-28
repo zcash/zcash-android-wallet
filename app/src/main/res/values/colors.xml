@@ -70,4 +70,12 @@
     <color name="text_dark_dimmed">@color/zcashBlack_54</color>
     <color name="text_shadow">@color/zcashBlack_40</color>
 
+    <!-- text : pending design review -->
+    <!-- these are colors found in designs that fall near but outside the palette but may want to
+         replace existing palette colors, after design review -->
+    <color name="tx_text_light_dimmed">#9B9B9B</color>
+    <color name="tx_text_light_dimmed_less">#D3D3D3</color>
+    <color name="tx_circle_icon_bg">#494A4C</color>
+    <color name="tx_primary">#F5A623</color>
+
 </resources>

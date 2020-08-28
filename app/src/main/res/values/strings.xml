@@ -2,11 +2,19 @@
     <!-- Common -->
     <string name="done">Done</string>
     <string name="cancel">Cancel</string>
+    <string name="unknown">Unknown</string>
+    <string name="blank"></string>
 
     <!-- Home -->
     <string name="home_history_button_text">View History</string>
     <string name="home_title">Enter an amount to send</string>
 
+    <!-- Transaction details -->
+    <string name="transaction_title">Transaction Details</string>
+    <string name="transaction_block_height_prefix">"from block "</string>
+    <string name="transaction_with_memo">with a memo</string>
+    <string name="transaction_prefix_from">reply-to</string>
+    <string name="transaction_prefix_to">to</string>
 
     <!-- Send Flow -->
     <string name="send_hint_input_zcash_address">Enter a shielded Zcash address</string>
@@ -16,6 +24,13 @@
     <string name="send_pending_button_text">Cancel</string>
     <string name="send_failed_button_text">Retry</string>
     <string name="send_complete_button_text">See Details</string>
+    <string name="send_banner_address_user">Your shielded address</string>
+    <string name="send_banner_address_unknown">@string/unknown</string>
+
+    <!-- Address -->
+    <string name="address_label_shielded">Your Shielded Address</string>
+    <string name="scan_address_title">Scan Recipient Address</string>
+    <string name="receive_address_title">Receive Funds</string>
 
     <!-- Feedback -->
     <string name="feedback_question_1">Any details you\'d like to share?</string>
@@ -25,9 +40,16 @@
     <string name="feedback_hint_2">My balance was . . .</string>
     <string name="feedback_hint_3">I\'d like . . .</string>
 
+    <!-- Dialogs -->
+    <string name="dialog_not_again">Don\'t show me again</string>
+    <string name="dialog_first_use_view_tx_title">Potential Privacy Risk</string>
+    <string name="dialog_first_use_view_tx_positive">View Tx</string>
+    <string name="dialog_first_use_view_tx_negative">Cancel</string>
+    <string name="dialog_first_use_view_tx_message">Are you sure you\'d like to leave the app? This could reduce privacy, if you do not trust the destination.</string>
+
     <!-- Misc -->
     <string name="app_name">ECC Wallet</string>
     <string name="mixpanel_project">a178e1ef062133fc121079cb12fa43c7</string>
-    <string name="receive_address_title">Your Shielded Address</string>
+
 
 </resources>

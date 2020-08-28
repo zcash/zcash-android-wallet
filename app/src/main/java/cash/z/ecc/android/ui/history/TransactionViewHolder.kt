@@ -8,17 +8,13 @@ import cash.z.ecc.android.R
 import cash.z.ecc.android.ext.goneIf
 import cash.z.ecc.android.ext.toAppColor
 import cash.z.ecc.android.sdk.db.entity.ConfirmedTransaction
-import cash.z.ecc.android.sdk.db.entity.PendingTransactionEntity
 import cash.z.ecc.android.sdk.ext.ZcashSdk
 import cash.z.ecc.android.sdk.ext.convertZatoshiToZecString
 import cash.z.ecc.android.sdk.ext.isShielded
 import cash.z.ecc.android.sdk.ext.toAbbreviatedAddress
 import cash.z.ecc.android.ui.MainActivity
-import cash.z.ecc.android.ui.util.INCLUDE_MEMO_PREFIXES_RECOGNIZED
 import cash.z.ecc.android.ui.util.toUtf8Memo
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.launch
-import java.nio.charset.Charset
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -29,10 +25,10 @@ class TransactionViewHolder<T : ConfirmedTransaction>(itemView: View) : Recycler
     private val bottomText = itemView.findViewById<TextView>(R.id.text_transaction_bottom)
     private val shieldIcon = itemView.findViewById<View>(R.id.image_shield)
     private val formatter = SimpleDateFormat("M/d h:mma", Locale.getDefault())
-    private val addressRegex = """zs\d\w{65,}""".toRegex()
 
     fun bindTo(transaction: T?) {
-        (itemView.context as MainActivity).lifecycleScope.launch {
+        val mainActivity = itemView.context as MainActivity
+        mainActivity.lifecycleScope.launch {
             // update view
             var lineOne: String = ""
             var lineTwo: String = ""
@@ -60,7 +56,7 @@ class TransactionViewHolder<T : ConfirmedTransaction>(itemView: View) : Recycler
                         lineOne = "You paid ${toAddress?.toAbbreviatedAddress()}"
                         lineTwo = if (isMined) "Sent $timestamp" else "Pending confirmation"
                         // TODO: this logic works but is sloppy. Find a more robust solution to displaying information about expiration (such as expires in 1 block, etc). Then if it is way beyond expired, remove it entirely. Perhaps give the user a button for that (swipe to dismiss?)
-                        if(!isMined && (expiryHeight != null) && (expiryHeight!! < (itemView.context as MainActivity).latestHeight ?: -1)) lineTwo = "Expired"
+                        if(!isMined && (expiryHeight != null) && (expiryHeight!! < mainActivity.latestHeight ?: -1)) lineTwo = "Expired"
                         amountDisplay = "- $amountZec"
                         if (isMined) {
                             amountColor = R.color.zcashRed
@@ -71,7 +67,7 @@ class TransactionViewHolder<T : ConfirmedTransaction>(itemView: View) : Recycler
                         }
                     }
                     toAddress.isNullOrEmpty() && value > 0L && minedHeight > 0 -> {
-                        lineOne = getSender(transaction)
+                        lineOne = "${mainActivity.getSender(transaction)} paid you"
                         lineTwo = "Received $timestamp"
                         amountDisplay = "+ $amountZec"
                         amountColor = R.color.zcashGreen
@@ -91,7 +87,6 @@ class TransactionViewHolder<T : ConfirmedTransaction>(itemView: View) : Recycler
                 }
             }
 
-
             topText.text = lineOne
             bottomText.text = lineTwo
             amountText.text = amountDisplay
@@ -106,71 +101,20 @@ class TransactionViewHolder<T : ConfirmedTransaction>(itemView: View) : Recycler
         }
     }
 
-    private suspend fun getSender(transaction: ConfirmedTransaction): String {
-        val memo = transaction.memo.toUtf8Memo()
-        val who = extractValidAddress(memo)?.toAbbreviatedAddress() ?: "Unknown"
-        return "$who paid you"
-    }
-
-    private fun extractAddress(memo: String?) =
-        addressRegex.findAll(memo ?: "").lastOrNull()?.value
-
-    private suspend fun extractValidAddress(memo: String?): String? {
-        if (memo == null || memo.length < 25) return null
-
-        // note: cannot use substringAfterLast because we need to ignore case
-        try {
-            INCLUDE_MEMO_PREFIXES_RECOGNIZED.forEach { prefix ->
-                memo.lastIndexOf(prefix, ignoreCase = true).takeUnless { it == -1 }?.let { lastIndex ->
-                    memo.substring(lastIndex + prefix.length).trimStart().validateAddress()?.let { address ->
-                        return@extractValidAddress address
-                    }
-                }
-            }
-        } catch(t: Throwable) { }
-
-        return null
-    }
-
     private fun onTransactionClicked(transaction: ConfirmedTransaction) {
-        val txId = transaction.rawTransactionId.toTxId()
-        val detailsMessage: String = "Zatoshi amount: ${transaction.value}\n\n" +
-                "Mined height: ${transaction.minedHeight}\n\n" +
-                "Transaction: $txId" +
-                "${if (transaction.toAddress != null) "\n\nTo: ${transaction.toAddress}" else ""}" +
-                "${if (transaction.memo != null) "\n\nMemo: \n${String(transaction.memo!!, Charset.forName("UTF-8"))}" else ""}"
-
-        MaterialAlertDialogBuilder(itemView.context)
-            .setMessage(detailsMessage)
-            .setTitle("Transaction Details")
-            .setCancelable(true)
-            .setPositiveButton("Ok") { dialog, _ ->
-                dialog.dismiss()
-            }
-            .setNegativeButton("Copy TX") { dialog, _ ->
-                (itemView.context as MainActivity).copyText(txId, "Transaction Id")
-                dialog.dismiss()
-            }
-            .show()
-    }
-
-    private fun onTransactionLongPressed(transaction: ConfirmedTransaction) {
-        (transaction.toAddress ?: extractAddress(transaction.memo.toUtf8Memo()))?.let {
-            (itemView.context as MainActivity).copyText(it, "Transaction Address")
+        (itemView.context as MainActivity).apply {
+            historyViewModel.selectedTransaction = transaction
+            safeNavigate(R.id.action_nav_history_to_nav_transaction)
         }
     }
 
-    private suspend fun String?.validateAddress(): String? {
-        if (this == null) return null
-        return if ((itemView.context as MainActivity).isValidAddress(this)) this else null
+    private fun onTransactionLongPressed(transaction: ConfirmedTransaction) {
+        val mainActivity = itemView.context as MainActivity
+        (transaction.toAddress ?: mainActivity.extractAddress(transaction.memo.toUtf8Memo()))?.let {
+            mainActivity.copyText(it, "Transaction Address")
+        }
     }
+    
 }
 
-private fun ByteArray.toTxId(): String {
-    val sb = StringBuilder(size * 2)
-    for(i in (size - 1) downTo 0) {
-        sb.append(String.format("%02x", this[i]))
-    }
-    return sb.toString()
-}
 
