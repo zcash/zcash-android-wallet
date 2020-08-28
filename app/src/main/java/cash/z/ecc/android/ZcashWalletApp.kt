@@ -7,10 +7,8 @@ import androidx.camera.camera2.Camera2Config
 import androidx.camera.core.CameraXConfig
 import cash.z.ecc.android.di.component.AppComponent
 import cash.z.ecc.android.di.component.DaggerAppComponent
+import cash.z.ecc.android.ext.tryWithWarning
 import cash.z.ecc.android.feedback.FeedbackCoordinator
-import cash.z.ecc.android.sdk.ext.SilentTwig
-import cash.z.ecc.android.sdk.ext.TroubleshootingTwig
-import cash.z.ecc.android.sdk.ext.Twig
 import cash.z.ecc.android.sdk.ext.twig
 import kotlinx.coroutines.*
 import javax.inject.Inject
@@ -68,19 +66,34 @@ class ZcashWalletApp : Application(), CameraXConfig.Provider {
      * is complete, we can lazily initialize all the feedback objects at this moment so that we
      * don't have to add any time to startup.
      */
-    inner class ExceptionReporter(private val ogHandler: Thread.UncaughtExceptionHandler) : Thread.UncaughtExceptionHandler {
+    inner class ExceptionReporter(private val ogHandler: Thread.UncaughtExceptionHandler) :
+        Thread.UncaughtExceptionHandler {
         override fun uncaughtException(t: Thread?, e: Throwable?) {
             twig("Uncaught Exception: $e caused by: ${e?.cause}")
-            // these are the only reported crashes that are considered fatal
-            coordinator.feedback.report(e, true)
-            coordinator.flush()
-            // can do this if necessary but first verify that we need it
-            runBlocking {
-                coordinator.await()
-                coordinator.feedback.stop()
+            // Things can get pretty crazy during a fatal exception
+            // so be cautious here to avoid freezing the app
+            tryWithWarning("Unable to report fatal crash") {
+                // note: these are the only reported crashes that set isFatal=true
+                coordinator.feedback.report(e, true)
             }
-            ogHandler.uncaughtException(t, e)
-            Thread.sleep(2000L)
+            tryWithWarning("Unable to flush the feedback coordinator") {
+                coordinator.flush()
+            }
+
+            try {
+                // can do this if necessary but first verify that we need it
+                runBlocking {
+                    coordinator.await()
+                    coordinator.feedback.stop()
+                }
+            } catch (t: Throwable) {
+                twig("WARNING: failed to wait for the feedback observers to complete.")
+            } finally {
+                // it's important that this always runs so we use the finally clause here
+                // rather than another tryWithWarning block
+                ogHandler.uncaughtException(t, e)
+                Thread.sleep(2000L)
+            }
         }
     }
 }
