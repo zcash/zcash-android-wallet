@@ -3,6 +3,7 @@ package cash.z.ecc.android.di.component
 import androidx.lifecycle.ViewModelProvider
 import cash.z.ecc.android.di.annotation.SynchronizerScope
 import cash.z.ecc.android.di.module.SynchronizerModule
+import cash.z.ecc.android.ext.Const
 import cash.z.ecc.android.sdk.Initializer
 import cash.z.ecc.android.sdk.Synchronizer
 import dagger.BindsInstance
@@ -15,7 +16,7 @@ interface SynchronizerSubcomponent {
 
     fun synchronizer(): Synchronizer
 
-    @Named("Synchronizer") fun viewModelFactory(): ViewModelProvider.Factory
+    @Named(Const.Name.SYNCHRONIZER) fun viewModelFactory(): ViewModelProvider.Factory
 
     @Subcomponent.Factory
     interface Factory {

@@ -19,6 +19,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.IdRes
+import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.biometric.BiometricConstants
 import androidx.biometric.BiometricPrompt
@@ -30,8 +31,11 @@ import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import cash.z.ecc.android.R
 import cash.z.ecc.android.ZcashWalletApp
+import cash.z.ecc.android.databinding.DialogFirstUseMessageBinding
 import cash.z.ecc.android.di.component.MainActivitySubcomponent
 import cash.z.ecc.android.di.component.SynchronizerSubcomponent
+import cash.z.ecc.android.di.viewmodel.activityViewModel
+import cash.z.ecc.android.ext.Const
 import cash.z.ecc.android.feedback.Feedback
 import cash.z.ecc.android.feedback.FeedbackCoordinator
 import cash.z.ecc.android.feedback.LaunchMetric
@@ -60,6 +64,8 @@ class MainActivity : AppCompatActivity() {
 
     @Inject
     lateinit var clipboard: ClipboardManager
+
+    val historyViewModel: HistoryViewModel by activityViewModel()
 
     private val mediaPlayer: MediaPlayer = MediaPlayer()
     private var snackbar: Snackbar? = null
@@ -472,5 +478,47 @@ class MainActivity : AppCompatActivity() {
                 if (pendingWork !== noWork) throttle(key, delay, pendingWork)
             }
         }, delay)
+    }
+    fun showFirstUseWarning(
+        prefKey: String,
+        @StringRes titleResId: Int = R.string.blank,
+        @StringRes msgResId: Int = R.string.blank,
+        @StringRes positiveResId: Int = android.R.string.ok,
+        @StringRes negativeResId: Int = android.R.string.cancel,
+        action: MainActivity.() -> Unit = {}
+    ) {
+        historyViewModel.prefs.getBoolean(prefKey).let { doNotWarnAgain ->
+            if (doNotWarnAgain) {
+                action()
+                return@showFirstUseWarning
+            }
+        }
+
+        val dialogViewBinding = DialogFirstUseMessageBinding.inflate(layoutInflater)
+
+        fun savePref() {
+            dialogViewBinding.dialogFirstUseCheckbox.isChecked.let { wasChecked ->
+                historyViewModel.prefs.setBoolean(prefKey, wasChecked)
+            }
+        }
+
+        dialogViewBinding.dialogMessage.setText(msgResId)
+        if (dialog != null) dialog?.dismiss()
+        dialog = MaterialAlertDialogBuilder(this)
+            .setTitle(titleResId)
+            .setView(dialogViewBinding.root)
+            .setCancelable(false)
+            .setPositiveButton(positiveResId) { d, _ ->
+                d.dismiss()
+                dialog = null
+                savePref()
+                action()
+            }
+            .setNegativeButton(negativeResId) { d, _ ->
+                d.dismiss()
+                dialog = null
+                savePref()
+            }
+            .show()
     }
 }

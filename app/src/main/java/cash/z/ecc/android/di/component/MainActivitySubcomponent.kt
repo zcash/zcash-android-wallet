@@ -4,6 +4,7 @@ import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.ViewModelProvider
 import cash.z.ecc.android.di.annotation.ActivityScope
 import cash.z.ecc.android.di.module.MainActivityModule
+import cash.z.ecc.android.ext.Const
 import cash.z.ecc.android.ui.MainActivity
 import dagger.BindsInstance
 import dagger.Subcomponent
@@ -15,7 +16,7 @@ interface MainActivitySubcomponent {
 
     fun inject(activity: MainActivity)
 
-    @Named("BeforeSynchronizer") fun viewModelFactory(): ViewModelProvider.Factory
+    @Named(Const.Name.BEFORE_SYNCHRONIZER) fun viewModelFactory(): ViewModelProvider.Factory
 
     @Subcomponent.Factory
     interface Factory {
