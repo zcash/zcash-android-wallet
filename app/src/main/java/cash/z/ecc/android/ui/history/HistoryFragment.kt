@@ -1,4 +1,4 @@
-package cash.z.ecc.android.ui.detail
+package cash.z.ecc.android.ui.history
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,41 +7,41 @@ import androidx.lifecycle.lifecycleScope
 import androidx.paging.PagedList
 import androidx.recyclerview.widget.LinearLayoutManager
 import cash.z.ecc.android.R
-import cash.z.ecc.android.databinding.FragmentDetailBinding
-import cash.z.ecc.android.di.viewmodel.viewModel
-import cash.z.ecc.android.ext.goneIf
-import cash.z.ecc.android.ext.onClickNavUp
+import cash.z.ecc.android.databinding.FragmentHistoryBinding
 import cash.z.ecc.android.ext.toColoredSpan
 import cash.z.ecc.android.feedback.Report
-import cash.z.ecc.android.feedback.Report.Tap.DETAIL_BACK
-import cash.z.ecc.android.ui.base.BaseFragment
+import cash.z.ecc.android.feedback.Report.Tap.HISTORY_BACK
 import cash.z.ecc.android.sdk.block.CompactBlockProcessor.WalletBalance
 import cash.z.ecc.android.sdk.db.entity.ConfirmedTransaction
 import cash.z.ecc.android.sdk.ext.collectWith
 import cash.z.ecc.android.sdk.ext.convertZatoshiToZecString
 import cash.z.ecc.android.sdk.ext.toAbbreviatedAddress
 import cash.z.ecc.android.sdk.ext.twig
+import cash.z.ecc.android.ui.base.BaseFragment
 import kotlinx.coroutines.launch
 
 
-class WalletDetailFragment : BaseFragment<FragmentDetailBinding>() {
-    override val screen = Report.Screen.DETAIL
-    private val viewModel: WalletDetailViewModel by viewModel()
+class HistoryFragment : BaseFragment<FragmentHistoryBinding>() {
+    override val screen = Report.Screen.HISTORY
 
-    private lateinit var adapter: TransactionAdapter<ConfirmedTransaction>
+    private val viewModel: HistoryViewModel by activityViewModel()
 
-    override fun inflate(inflater: LayoutInflater): FragmentDetailBinding =
-        FragmentDetailBinding.inflate(inflater)
+
+    override fun inflate(inflater: LayoutInflater): FragmentHistoryBinding =
+        FragmentHistoryBinding.inflate(inflater)
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        twig("HistoryFragment.onViewCreated")
         super.onViewCreated(view, savedInstanceState)
-        binding.backButtonHitArea.onClickNavUp { tapped(DETAIL_BACK) }
+        binding.backButtonHitArea.onClickNavUp { tapped(HISTORY_BACK) }
         lifecycleScope.launch {
             binding.textAddress.text = viewModel.getAddress().toAbbreviatedAddress()
         }
     }
 
     override fun onResume() {
+        twig("HistoryFragment.onResume")
         super.onResume()
         initTransactionUI()
         viewModel.balance.collectWith(resumedScope) {
@@ -72,7 +72,7 @@ class WalletDetailFragment : BaseFragment<FragmentDetailBinding>() {
     }
 
     private fun onTransactionsUpdated(transactions: PagedList<ConfirmedTransaction>) {
-        twig("got a new paged list of transactions")
+        twig("HistoryFragment.onTransactionsUpdated")
         transactions.size.let { newCount ->
             binding.groupEmptyViews.goneIf(newCount > 0)
             val preSize = adapter.itemCount

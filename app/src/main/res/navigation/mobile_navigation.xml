@@ -14,9 +14,8 @@
             android:id="@+id/action_nav_home_to_nav_receive"
             app:destination="@id/nav_receive" />
         <action
-            android:id="@+id/action_nav_home_to_nav_detail"
-            app:destination="@id/nav_detail"
-            app:enterAnim="@anim/anim_enter_from_bottom" />
+            android:id="@+id/action_nav_home_to_nav_history"
+            app:destination="@id/nav_history" />
         <action
             android:id="@+id/action_nav_home_to_create_wallet"
             app:destination="@id/nav_landing" />
@@ -151,10 +150,10 @@
             app:popUpTo="@id/nav_home"
             app:popUpToInclusive="false"/>
         <action
-            android:id="@+id/action_nav_send_final_to_nav_detail"
-            app:destination="@id/nav_detail"
-            app:popUpTo="@id/nav_send"
-            app:popUpToInclusive="true"/>
+            android:id="@+id/action_nav_send_final_to_nav_history"
+            app:destination="@id/nav_history"
+            app:popUpTo="@id/nav_home"
+            app:popUpToInclusive="false"/>
     </fragment>
 
 

@@ -1,11 +1,11 @@
-package cash.z.ecc.android.ui.detail
+package cash.z.ecc.android.ui.history
 
 import androidx.lifecycle.ViewModel
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.ext.twig
 import javax.inject.Inject
 
-class WalletDetailViewModel @Inject constructor() : ViewModel() {
+class HistoryViewModel @Inject constructor() : ViewModel() {
 
     @Inject
     lateinit var synchronizer: Synchronizer
@@ -17,6 +17,6 @@ class WalletDetailViewModel @Inject constructor() : ViewModel() {
 
     override fun onCleared() {
         super.onCleared()
-        twig("WalletDetailViewModel cleared!")
+        twig("HistoryViewModel cleared!")
     }
 }

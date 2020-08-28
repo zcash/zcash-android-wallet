@@ -1,4 +1,4 @@
-package cash.z.ecc.android.ui.detail
+package cash.z.ecc.android.ui.history
 //
 //import android.content.Context
 //import android.graphics.Canvas

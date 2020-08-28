@@ -265,7 +265,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/guide_keys"
-        app:layout_constraintBottom_toTopOf="@id/text_detail"
+        app:layout_constraintBottom_toTopOf="@id/text_history"
         app:layout_constraintVertical_bias="0.2"
         app:layout_constraintVertical_chainStyle="packed"
         android:visibility="invisible"
@@ -360,13 +360,13 @@
         app:layout_constraintEnd_toStartOf="@id/hit_area_receive" />
 
     <TextView
-        android:id="@+id/text_detail"
+        android:id="@+id/text_history"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="12dp"
         android:elevation="6dp"
         android:layout_marginTop="12dp"
-        android:text="@string/home_detail_button_text"
+        android:text="@string/home_history_button_text"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
         android:textColor="@color/colorAccent"
         android:tint="@color/colorAccent"

@@ -4,7 +4,7 @@
     <string name="cancel">Cancel</string>
 
     <!-- Home -->
-    <string name="home_detail_button_text">View History</string>
+    <string name="home_history_button_text">View History</string>
     <string name="home_title">Enter an amount to send</string>
 
 
