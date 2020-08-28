@@ -27,6 +27,10 @@ android {
         testInstrumentationRunnerArguments clearPackageData: 'true'
         multiDexEnabled true
         resValue 'string', 'bugsnag_api_key', "${(project.findProperty('BUGSNAG_API_KEY') ?: System.getenv('BUGSNAG_API_KEY')) ?: ''}"
+
+        // this setting allows using color resources in vector drawables, rather than hardcoded values (note: only works when minApi is 21)
+        // per https://google.github.io/android-gradle-dsl/current/com.android.build.gradle.internal.dsl.VectorDrawablesOptions.html: If set to an empty collection, all special handling of vector drawables will be disabled.
+        vectorDrawables.generatedDensities = []
     }
     flavorDimensions 'network'
     productFlavors {
