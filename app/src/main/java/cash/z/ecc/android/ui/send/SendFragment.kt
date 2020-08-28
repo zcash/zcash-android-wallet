@@ -7,9 +7,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.EditText
-import androidx.biometric.BiometricConstants.*
-import androidx.biometric.BiometricPrompt
-import androidx.core.content.ContextCompat
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.constraintlayout.widget.Group
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.widget.ImageViewCompat
@@ -28,7 +28,6 @@ import cash.z.ecc.android.ui.base.BaseFragment
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import java.util.concurrent.Executor
 
 class SendFragment : BaseFragment<FragmentSendBinding>(),
     ClipboardManager.OnPrimaryClipChangedListener {
@@ -137,7 +136,9 @@ class SendFragment : BaseFragment<FragmentSendBinding>(),
 
     private fun onAddressChanged(address: String) {
         resumedScope.launch {
-            var type = when (sendViewModel.validateAddress(address)) {
+            val validation = sendViewModel.validateAddress(address)
+            binding.buttonSend.isActivated = !validation.isNotValid
+            var type = when (validation) {
                 is AddressType.Transparent -> "This is a valid transparent address" to R.color.zcashGreen
                 is AddressType.Shielded -> "This is a valid shielded address" to R.color.zcashGreen
                 is AddressType.Invalid -> "This address appears to be invalid" to R.color.zcashRed
@@ -178,7 +179,7 @@ class SendFragment : BaseFragment<FragmentSendBinding>(),
             } else {
                 resumedScope.launch {
                     binding.textAddressError.text = errorMessage
-                    delay(1500L)
+                    delay(2500L)
                     binding.textAddressError.text = ""
                 }
             }
@@ -234,28 +235,60 @@ class SendFragment : BaseFragment<FragmentSendBinding>(),
     }
 
     private fun updateClipboardBanner(selected: Boolean = false, address: String? = loadAddressFromClipboard()) {
-        if (address == null) {
-            binding.groupClipboard.gone()
-        } else {
-            binding.groupClipboard.visible()
-            binding.clipboardAddress.text = address.toAbbreviatedAddress(16, 16)
-            binding.imageClipboardAddressSelected.goneIf(!selected)
-            ImageViewCompat.setImageTintList(binding.imageShield, ColorStateList.valueOf(if (selected) R.color.colorPrimary.toAppColor() else R.color.zcashWhite_12.toAppColor()))
-            binding.clipboardAddressLabel.setTextColor(if(selected) R.color.colorPrimary.toAppColor() else R.color.text_light.toAppColor())
-            binding.clipboardAddress.setTextColor(if(selected) R.color.text_light.toAppColor() else R.color.text_light_dimmed.toAppColor())
+        binding.apply {
+            updateAddressBanner(
+                groupClipboard,
+                clipboardAddress,
+                imageClipboardAddressSelected,
+                imageShield,
+                clipboardAddressLabel,
+                selected,
+                address
+            )
         }
+//        binding.dividerClipboard.text = "On Clipboard"
     }
 
-    private fun updateLastUsedBanner(selected: Boolean = false, address: String? = loadLastUsedAddress()) {
-        if (address == null || address == loadAddressFromClipboard()) {
-            binding.groupLastUsed.gone()
-        } else {
-            binding.groupLastUsed.visible()
-            binding.lastUsedAddress.text = address.toAbbreviatedAddress(16, 16)
-            binding.imageLastUsedAddressSelected.goneIf(!selected)
-            ImageViewCompat.setImageTintList(binding.imageLastUsedShield, ColorStateList.valueOf(if (selected) R.color.colorPrimary.toAppColor() else R.color.zcashWhite_12.toAppColor()))
-            binding.lastUsedAddressLabel.setTextColor(if(selected) R.color.colorPrimary.toAppColor() else R.color.text_light.toAppColor())
-            binding.lastUsedAddress.setTextColor(if(selected) R.color.text_light.toAppColor() else R.color.text_light_dimmed.toAppColor())
+    private fun updateLastUsedBanner(
+        selected: Boolean = false,
+        address: String? = loadLastUsedAddress()
+    ) {
+        val isBoth = address == loadAddressFromClipboard()
+        binding.apply {
+            updateAddressBanner(
+                groupLastUsed,
+                lastUsedAddress,
+                imageLastUsedAddressSelected,
+                imageLastUsedShield,
+                lastUsedAddressLabel,
+                selected,
+                address.takeUnless { isBoth })
+        }
+        binding.dividerClipboard.text = if (isBoth) "Last Used and On Clipboard" else "On Clipboard"
+    }
+
+    private fun updateAddressBanner(
+        group: Group,
+        addressTextView: TextView,
+        checkIcon: ImageView,
+        shieldIcon: ImageView,
+        addressLabel: TextView,
+        selected: Boolean = false,
+        address: String? = loadLastUsedAddress()
+    ) {
+        resumedScope.launch {
+            if (address == null) {
+                group.gone()
+            } else {
+                val userAddress = sendViewModel.synchronizer.getAddress()
+                group.visible()
+                addressTextView.text = address.toAbbreviatedAddress(16, 16)
+                checkIcon.goneIf(!selected)
+                ImageViewCompat.setImageTintList(shieldIcon, ColorStateList.valueOf(if (selected) R.color.colorPrimary.toAppColor() else R.color.zcashWhite_12.toAppColor()))
+                addressLabel.setText(if (address == userAddress) R.string.send_banner_address_user else R.string.send_banner_address_unknown)
+                addressLabel.setTextColor(if(selected) R.color.colorPrimary.toAppColor() else R.color.text_light.toAppColor())
+                addressTextView.setTextColor(if(selected) R.color.text_light.toAppColor() else R.color.text_light_dimmed.toAppColor())
+            }
         }
     }
 

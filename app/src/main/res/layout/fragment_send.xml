@@ -131,6 +131,7 @@
         android:layout_height="38dp"
         android:text="Send"
         android:textColor="@color/text_dark"
+        android:backgroundTint="@color/selector_primary_button_activatable"
         app:layout_constraintBottom_toBottomOf="@id/back_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.95"
@@ -170,6 +171,16 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+
+            <Space
+                android:id="@+id/spacer_lower_content"
+                android:layout_width="1dp"
+                android:layout_height="0dp"
+                app:layout_constraintHeight_percent="0.04"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/check_include_address" />
+
             <!-- Input: Address -->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/text_layout_address"
@@ -177,7 +188,7 @@
                 android:layout_height="wrap_content"
                 android:hint="To"
                 android:theme="@style/Zcash.Overlay.TextInputLayout"
-                app:endIconDrawable="@drawable/ic_qrcode_24dp"
+                app:endIconDrawable="@drawable/ic_qr_scan"
                 app:endIconMode="custom"
                 app:helperText="Enter a valid Zcash address"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -220,7 +231,7 @@
                     android:background="@android:color/transparent"
                     android:imeActionLabel="add memo"
                     android:imeOptions="actionDone"
-                    android:inputType="textMultiLine"
+                    android:inputType="textMultiLine|textNoSuggestions"
                     android:maxLength="512"
                     android:maxLines="3"
                     android:textColor="@color/text_light"
@@ -293,7 +304,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.08"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/check_include_address" />
+                app:layout_constraintTop_toBottomOf="@id/spacer_lower_content" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/container_clipboard"
@@ -309,7 +320,7 @@
                     android:id="@+id/image_shield"
                     android:layout_width="16dp"
                     android:layout_height="16dp"
-                    android:src="@drawable/ic_shield"
+                    android:src="@drawable/ic_shielded"
                     android:tint="@color/colorPrimary"
                     app:layout_constraintBottom_toBottomOf="@id/clipboard_address_label"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -343,9 +354,8 @@
                     android:id="@+id/image_clipboard_address_selected"
                     android:layout_width="22dp"
                     android:layout_height="22dp"
-                    android:src="@drawable/ic_baseline_done_24"
+                    android:src="@drawable/ic_check_shielded"
                     android:tint="@color/colorPrimary"
-                    android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias=".95"
@@ -393,7 +403,7 @@
                     android:id="@+id/image_last_used_shield"
                     android:layout_width="16dp"
                     android:layout_height="16dp"
-                    android:src="@drawable/ic_shield"
+                    android:src="@drawable/ic_shielded"
                     android:tint="@color/colorPrimary"
                     app:layout_constraintBottom_toBottomOf="@id/last_used_address_label"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -428,7 +438,7 @@
                     android:id="@+id/image_last_used_address_selected"
                     android:layout_width="22dp"
                     android:layout_height="22dp"
-                    android:src="@drawable/ic_baseline_done_24"
+                    android:src="@drawable/ic_check_shielded"
                     android:tint="@color/colorPrimary"
                     android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="parent"
