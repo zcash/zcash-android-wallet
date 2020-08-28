@@ -138,8 +138,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
     override fun onResume() {
         super.onResume()
         twig("HomeFragment.onResume  resumeScope.isActive: ${resumedScope.isActive}  $resumedScope")
-        viewModel.initializeMaybe()
-        onClearAmount()
+        val existingAmount = sendViewModel.zatoshiAmount.coerceAtLeast(0)
+        viewModel.initializeMaybe(existingAmount.convertZatoshiToZecStringUniform(8))
+        if (existingAmount == 0L) onClearAmount()
         viewModel.uiModels.scanReduce { old, new ->
             onModelUpdated(old, new)
             new

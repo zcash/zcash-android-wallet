@@ -25,7 +25,7 @@ class HomeViewModel @Inject constructor() : ViewModel() {
 
     var initialized = false
 
-    fun initializeMaybe() {
+    fun initializeMaybe(preTypedChars: String = "0") {
         twig("init called")
         if (initialized) {
             twig("Warning already initialized HomeViewModel. Ignoring call to initialize.")
@@ -38,7 +38,7 @@ class HomeViewModel @Inject constructor() : ViewModel() {
         _typedChars = ConflatedBroadcastChannel()
         val typedChars = _typedChars.asFlow()
 
-        val zec = typedChars.scan("0") { acc, c ->
+        val zec = typedChars.scan(preTypedChars) { acc, c ->
             when {
                 // no-op cases
                 acc == "0" && c == '0'
