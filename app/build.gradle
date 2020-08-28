@@ -119,6 +119,7 @@ dependencies {
     implementation Deps.AndroidX.FRAGMENT_KTX
     implementation Deps.AndroidX.LEGACY
     implementation Deps.AndroidX.PAGING
+    implementation Deps.AndroidX.RECYCLER
     implementation Deps.AndroidX.CameraX.CAMERA2
     implementation Deps.AndroidX.CameraX.CORE
     implementation Deps.AndroidX.CameraX.LIFECYCLE
