@@ -6,7 +6,8 @@ import androidx.lifecycle.ViewModelProvider
 import cash.z.ecc.android.di.annotation.SynchronizerScope
 import cash.z.ecc.android.di.annotation.ViewModelKey
 import cash.z.ecc.android.di.viewmodel.ViewModelFactory
-import cash.z.ecc.android.ui.detail.WalletDetailViewModel
+import cash.z.ecc.android.ext.Const
+import cash.z.ecc.android.ui.history.HistoryViewModel
 import cash.z.ecc.android.ui.home.HomeViewModel
 import cash.z.ecc.android.ui.profile.ProfileViewModel
 import cash.z.ecc.android.ui.receive.ReceiveViewModel
@@ -37,8 +38,8 @@ abstract class ViewModelsSynchronizerModule {
     @SynchronizerScope
     @Binds
     @IntoMap
-    @ViewModelKey(WalletDetailViewModel::class)
-    abstract fun bindWalletDetailViewModel(implementation: WalletDetailViewModel): ViewModel
+    @ViewModelKey(HistoryViewModel::class)
+    abstract fun bindHistoryViewModel(implementation: HistoryViewModel): ViewModel
 
     @SynchronizerScope
     @Binds
@@ -64,7 +65,7 @@ abstract class ViewModelsSynchronizerModule {
      * that live within the scope of the Synchronizer.
      */
     @SynchronizerScope
-    @Named("Synchronizer")
+    @Named(Const.Name.SYNCHRONIZER)
     @Binds
     abstract fun bindViewModelFactory(viewModelFactory: ViewModelFactory): ViewModelProvider.Factory
 }

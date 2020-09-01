@@ -127,7 +127,6 @@ class FeedbackCoordinator(val feedback: Feedback, defaultObservers: Set<Feedback
     }
 
     companion object {
-        const val ENABLED = "setting.feedbackcoordinater.enabled"
         private val mutex: Mutex = Mutex()
     }
 }

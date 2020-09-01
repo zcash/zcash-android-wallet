@@ -265,7 +265,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/guide_keys"
-        app:layout_constraintBottom_toTopOf="@id/text_detail"
+        app:layout_constraintBottom_toTopOf="@id/text_history"
         app:layout_constraintVertical_bias="0.2"
         app:layout_constraintVertical_chainStyle="packed"
         android:visibility="invisible"
@@ -294,20 +294,20 @@
         android:id="@+id/icon_scan"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:padding="2dp"
         android:elevation="6dp"
         app:tint="@color/colorAccent"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/icon_profile"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_percent="0.052"
+        app:layout_constraintHeight_percent="0.038"
         app:layout_constraintHorizontal_bias="0.088"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0574"
+        app:layout_constraintTop_toTopOf="@id/icon_profile"
         app:layout_constraintWidth_percent="0.0887"
-        app:srcCompat="@drawable/ic_qrcode_24dp" />
+        app:srcCompat="@drawable/ic_address_qr" />
 
     <ImageView
-        android:id="@+id/icon_logo"
+        android:id="@+id/icon_profile"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:elevation="6dp"
@@ -322,7 +322,7 @@
         app:srcCompat="@drawable/ic_account_circle" />
 
     <View
-        android:id="@+id/hit_area_scan"
+        android:id="@+id/hit_area_receive"
         android:layout_width="68dp"
         android:layout_height="68dp"
         android:layout_marginStart="24dp"
@@ -333,7 +333,7 @@
         app:layout_constraintTop_toTopOf="@id/guideline_hit_area_top" />
 
     <View
-        android:id="@+id/hit_area_receive"
+        android:id="@+id/hit_area_profile"
         android:layout_width="68dp"
         android:layout_height="68dp"
         android:layout_marginEnd="24dp"
@@ -354,19 +354,19 @@
         app:autoSizeMaxTextSize="16sp"
         app:autoSizeMinTextSize="2sp"
         app:autoSizeTextType="uniform"
-        app:layout_constraintTop_toTopOf="@id/icon_logo"
-        app:layout_constraintBottom_toBottomOf="@id/icon_logo"
-        app:layout_constraintStart_toEndOf="@id/hit_area_scan"
-        app:layout_constraintEnd_toStartOf="@id/hit_area_receive" />
+        app:layout_constraintTop_toTopOf="@id/icon_profile"
+        app:layout_constraintBottom_toBottomOf="@id/icon_profile"
+        app:layout_constraintStart_toEndOf="@id/hit_area_receive"
+        app:layout_constraintEnd_toStartOf="@id/hit_area_profile" />
 
     <TextView
-        android:id="@+id/text_detail"
+        android:id="@+id/text_history"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="12dp"
         android:elevation="6dp"
         android:layout_marginTop="12dp"
-        android:text="@string/home_detail_button_text"
+        android:text="@string/home_history_button_text"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
         android:textColor="@color/colorAccent"
         android:tint="@color/colorAccent"
@@ -411,7 +411,7 @@
         android:text="No Balance"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
         android:textColor="@color/text_light"
-        app:layout_constraintEnd_toEndOf="@id/icon_logo"
+        app:layout_constraintEnd_toEndOf="@id/icon_profile"
         app:layout_constraintStart_toStartOf="@id/icon_scan"
         app:layout_constraintTop_toBottomOf="@id/text_send_amount" />
 

@@ -1,4 +1,4 @@
-package cash.z.ecc.android.ui.detail
+package cash.z.ecc.android.ui.history
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -24,6 +24,10 @@ class TransactionAdapter<T : ConfirmedTransaction> :
         }
     ) {
 
+    init {
+        setHasStableIds(true)
+    }
+
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -35,4 +39,8 @@ class TransactionAdapter<T : ConfirmedTransaction> :
         holder: TransactionViewHolder<T>,
         position: Int
     ) = holder.bindTo(getItem(position))
+
+    override fun getItemId(position: Int): Long {
+        return getItem(position)?.id ?: -1
+    }
 }

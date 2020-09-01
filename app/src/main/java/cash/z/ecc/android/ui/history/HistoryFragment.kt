@@ -1,4 +1,4 @@
-package cash.z.ecc.android.ui.detail
+package cash.z.ecc.android.ui.history
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -6,47 +6,55 @@ import android.view.View
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.PagedList
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import cash.z.ecc.android.R
-import cash.z.ecc.android.databinding.FragmentDetailBinding
-import cash.z.ecc.android.di.viewmodel.viewModel
+import cash.z.ecc.android.databinding.FragmentHistoryBinding
+import cash.z.ecc.android.di.viewmodel.activityViewModel
 import cash.z.ecc.android.ext.goneIf
 import cash.z.ecc.android.ext.onClickNavUp
 import cash.z.ecc.android.ext.toColoredSpan
 import cash.z.ecc.android.feedback.Report
-import cash.z.ecc.android.feedback.Report.Tap.DETAIL_BACK
-import cash.z.ecc.android.ui.base.BaseFragment
+import cash.z.ecc.android.feedback.Report.Tap.HISTORY_BACK
 import cash.z.ecc.android.sdk.block.CompactBlockProcessor.WalletBalance
 import cash.z.ecc.android.sdk.db.entity.ConfirmedTransaction
 import cash.z.ecc.android.sdk.ext.collectWith
 import cash.z.ecc.android.sdk.ext.convertZatoshiToZecString
 import cash.z.ecc.android.sdk.ext.toAbbreviatedAddress
 import cash.z.ecc.android.sdk.ext.twig
+import cash.z.ecc.android.ui.base.BaseFragment
 import kotlinx.coroutines.launch
 
 
-class WalletDetailFragment : BaseFragment<FragmentDetailBinding>() {
-    override val screen = Report.Screen.DETAIL
-    private val viewModel: WalletDetailViewModel by viewModel()
+class HistoryFragment : BaseFragment<FragmentHistoryBinding>() {
+    override val screen = Report.Screen.HISTORY
 
-    private lateinit var adapter: TransactionAdapter<ConfirmedTransaction>
+    private val viewModel: HistoryViewModel by activityViewModel()
 
-    override fun inflate(inflater: LayoutInflater): FragmentDetailBinding =
-        FragmentDetailBinding.inflate(inflater)
+    private lateinit var transactionAdapter: TransactionAdapter<ConfirmedTransaction>
+
+    private var isInitialized = false
+
+    override fun inflate(inflater: LayoutInflater): FragmentHistoryBinding =
+        FragmentHistoryBinding.inflate(inflater)
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        twig("HistoryFragment.onViewCreated")
         super.onViewCreated(view, savedInstanceState)
-        binding.backButtonHitArea.onClickNavUp { tapped(DETAIL_BACK) }
+        initTransactionUI()
+        binding.backButtonHitArea.onClickNavUp { tapped(HISTORY_BACK) }
         lifecycleScope.launch {
             binding.textAddress.text = viewModel.getAddress().toAbbreviatedAddress()
         }
     }
 
     override fun onResume() {
+        twig("HistoryFragment.onResume")
         super.onResume()
-        initTransactionUI()
         viewModel.balance.collectWith(resumedScope) {
             onBalanceUpdated(it)
         }
+        viewModel.transactions.collectWith(resumedScope) { onTransactionsUpdated(it) }
     }
 
     private fun onBalanceUpdated(balance: WalletBalance) {
@@ -60,29 +68,25 @@ class WalletDetailFragment : BaseFragment<FragmentDetailBinding>() {
     }
 
     private fun initTransactionUI() {
-        adapter = TransactionAdapter()
+        twig("HistoryFragment.initTransactionUI")
+        transactionAdapter = TransactionAdapter()
+        transactionAdapter.stateRestorationPolicy =
+            RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
+
         binding.recyclerTransactions.apply {
-            layoutManager =
-                LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
+            layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
             addItemDecoration(TransactionsFooter(binding.recyclerTransactions.context))
-            adapter = this@WalletDetailFragment.adapter
-            scrollToTop()
+            adapter = transactionAdapter
         }
-        viewModel.transactions.collectWith(resumedScope) { onTransactionsUpdated(it) }
     }
 
     private fun onTransactionsUpdated(transactions: PagedList<ConfirmedTransaction>) {
-        twig("got a new paged list of transactions")
+        twig("HistoryFragment.onTransactionsUpdated")
         transactions.size.let { newCount ->
+            twig("got a new paged list of transactions of length $newCount")
             binding.groupEmptyViews.goneIf(newCount > 0)
-            val preSize = adapter.itemCount
-            adapter.submitList(transactions)
-            // don't rescroll while the user is looking at the list, unless it's initialization
-            // using 4 here because there might be headers or other things that make 0 a bad pick
-            // 4 is about how many can fit before scrolling becomes necessary on many screens
-            if (preSize < 4 && newCount > preSize) {
-                scrollToTop()
-            }
+            val preSize = transactionAdapter.itemCount
+            transactionAdapter.submitList(transactions)
         }
     }
 

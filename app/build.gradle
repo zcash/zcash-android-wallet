@@ -9,7 +9,7 @@ apply plugin: 'com.google.gms.google-services'
 
 archivesBaseName = 'zcash-android-wallet'
 group = 'cash.z.ecc.android'
-version = '1.0.0-alpha33'
+version = '1.0.0-alpha34'
 
 android {
     ndkVersion "21.1.6352462"
@@ -20,13 +20,17 @@ android {
         applicationId 'cash.z.ecc.android'
         minSdkVersion Deps.minSdkVersion
         targetSdkVersion Deps.targetSdkVersion
-        versionCode = 1_00_00_033
+        versionCode = 1_00_00_034
         // last digits are alpha(0XX) beta(2XX) rc(4XX) release(8XX) dev(9XX). Ex: 1_08_04_401 is an release candidate build of version 1.8.4 and 1_08_04_800 would be the final release.
         versionName = "$version"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
         testInstrumentationRunnerArguments clearPackageData: 'true'
         multiDexEnabled true
         resValue 'string', 'bugsnag_api_key', "${(project.findProperty('BUGSNAG_API_KEY') ?: System.getenv('BUGSNAG_API_KEY')) ?: ''}"
+
+        // this setting allows using color resources in vector drawables, rather than hardcoded values (note: only works when minApi is 21)
+        // per https://google.github.io/android-gradle-dsl/current/com.android.build.gradle.internal.dsl.VectorDrawablesOptions.html: If set to an empty collection, all special handling of vector drawables will be disabled.
+        vectorDrawables.generatedDensities = []
     }
     flavorDimensions 'network'
     productFlavors {
@@ -115,6 +119,7 @@ dependencies {
     implementation Deps.AndroidX.FRAGMENT_KTX
     implementation Deps.AndroidX.LEGACY
     implementation Deps.AndroidX.PAGING
+    implementation Deps.AndroidX.RECYCLER
     implementation Deps.AndroidX.CameraX.CAMERA2
     implementation Deps.AndroidX.CameraX.CORE
     implementation Deps.AndroidX.CameraX.LIFECYCLE

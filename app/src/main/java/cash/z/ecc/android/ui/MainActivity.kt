@@ -5,9 +5,11 @@ import android.app.Dialog
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.media.MediaPlayer
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Vibrator
@@ -19,6 +21,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.IdRes
+import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.biometric.BiometricConstants
 import androidx.biometric.BiometricPrompt
@@ -27,11 +30,15 @@ import androidx.core.content.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
+import androidx.navigation.Navigator
 import androidx.navigation.findNavController
 import cash.z.ecc.android.R
 import cash.z.ecc.android.ZcashWalletApp
+import cash.z.ecc.android.databinding.DialogFirstUseMessageBinding
 import cash.z.ecc.android.di.component.MainActivitySubcomponent
 import cash.z.ecc.android.di.component.SynchronizerSubcomponent
+import cash.z.ecc.android.di.viewmodel.activityViewModel
+import cash.z.ecc.android.ext.Const
 import cash.z.ecc.android.feedback.Feedback
 import cash.z.ecc.android.feedback.FeedbackCoordinator
 import cash.z.ecc.android.feedback.LaunchMetric
@@ -41,9 +48,14 @@ import cash.z.ecc.android.feedback.Report.NonUserAction.FEEDBACK_STOPPED
 import cash.z.ecc.android.feedback.Report.NonUserAction.SYNC_START
 import cash.z.ecc.android.feedback.Report.Tap.COPY_ADDRESS
 import cash.z.ecc.android.sdk.Initializer
+import cash.z.ecc.android.sdk.db.entity.ConfirmedTransaction
 import cash.z.ecc.android.sdk.exception.CompactBlockProcessorException
 import cash.z.ecc.android.sdk.ext.ZcashSdk
+import cash.z.ecc.android.sdk.ext.toAbbreviatedAddress
 import cash.z.ecc.android.sdk.ext.twig
+import cash.z.ecc.android.ui.history.HistoryViewModel
+import cash.z.ecc.android.ui.util.INCLUDE_MEMO_PREFIXES_RECOGNIZED
+import cash.z.ecc.android.ui.util.toUtf8Memo
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
@@ -60,6 +72,10 @@ class MainActivity : AppCompatActivity() {
 
     @Inject
     lateinit var clipboard: ClipboardManager
+
+    val isInitialized get() = ::synchronizerComponent.isInitialized
+
+    val historyViewModel: HistoryViewModel by activityViewModel()
 
     private val mediaPlayer: MediaPlayer = MediaPlayer()
     private var snackbar: Snackbar? = null
@@ -78,7 +94,7 @@ class MainActivity : AppCompatActivity() {
             Manifest.permission.CAMERA
         ) == PackageManager.PERMISSION_GRANTED
 
-    val latestHeight: Int? get() = if (::synchronizerComponent.isInitialized) {
+    val latestHeight: Int? get() = if (isInitialized) {
         synchronizerComponent.synchronizer().latestHeight
     } else {
         null
@@ -153,27 +169,41 @@ class MainActivity : AppCompatActivity() {
         navInitListeners.clear()
     }
 
-    fun safeNavigate(@IdRes destination: Int) {
+    fun safeNavigate(@IdRes destination: Int, extras: Navigator.Extras? = null) {
         if (navController == null) {
             navInitListeners.add {
                 try {
-                    navController?.navigate(destination)
+                    navController?.navigate(destination, null, null, extras)
                 } catch (t: Throwable) {
-                    twig("WARNING: during callback, did not navigate to destination: R.id.${resources.getResourceEntryName(destination)} due to: $t")
+                    twig(
+                        "WARNING: during callback, did not navigate to destination: R.id.${
+                            resources.getResourceEntryName(
+                                destination
+                            )
+                        } due to: $t"
+                    )
                 }
             }
         } else {
             try {
-                navController?.navigate(destination)
+                navController?.navigate(destination, null, null, extras)
             } catch (t: Throwable) {
-                twig("WARNING: did not immediately navigate to destination: R.id.${resources.getResourceEntryName(destination)} due to: $t")
+                twig(
+                    "WARNING: did not immediately navigate to destination: R.id.${
+                        resources.getResourceEntryName(
+                            destination
+                        )
+                    } due to: $t"
+                )
             }
         }
     }
 
     fun startSync(initializer: Initializer) {
-        if (!::synchronizerComponent.isInitialized) {
-            synchronizerComponent = ZcashWalletApp.component.synchronizerSubcomponent().create(initializer)
+        if (!isInitialized) {
+            synchronizerComponent = ZcashWalletApp.component.synchronizerSubcomponent().create(
+                initializer
+            )
             feedback.report(SYNC_START)
             synchronizerComponent.synchronizer().let { synchronizer ->
                 synchronizer.onProcessorErrorHandler = ::onProcessorError
@@ -307,7 +337,13 @@ class MainActivity : AppCompatActivity() {
                 .setAction(action) { /*auto-close*/ }
 
                 val snackBarView = snacks.view as ViewGroup
-                val navigationBarHeight = resources.getDimensionPixelSize(resources.getIdentifier("navigation_bar_height", "dimen", "android"))
+                val navigationBarHeight = resources.getDimensionPixelSize(
+                    resources.getIdentifier(
+                        "navigation_bar_height",
+                        "dimen",
+                        "android"
+                    )
+                )
                 val params = snackBarView.getChildAt(0).layoutParams as ViewGroup.MarginLayoutParams
                 params.setMargins(
                     params.leftMargin,
@@ -472,5 +508,102 @@ class MainActivity : AppCompatActivity() {
                 if (pendingWork !== noWork) throttle(key, delay, pendingWork)
             }
         }, delay)
+    }
+
+
+
+    fun toTxId(tx: ByteArray?): String? {
+        if (tx == null) return null
+        val sb = StringBuilder(tx.size * 2)
+        for(i in (tx.size - 1) downTo 0) {
+            sb.append(String.format("%02x", tx[i]))
+        }
+        return sb.toString()
+    }
+
+    /* Memo functions that might possibly get moved to MemoUtils */
+
+    private val addressRegex = """zs\d\w{65,}""".toRegex()
+
+    suspend fun getSender(transaction: ConfirmedTransaction?): String {
+        if (transaction == null) return getString(R.string.unknown)
+        val memo = transaction.memo.toUtf8Memo()
+        return extractValidAddress(memo)?.toAbbreviatedAddress() ?: getString(R.string.unknown)
+    }
+
+    fun extractAddress(memo: String?) = addressRegex.findAll(memo ?: "").lastOrNull()?.value
+
+    suspend fun extractValidAddress(memo: String?): String? {
+        if (memo == null || memo.length < 25) return null
+
+        // note: cannot use substringAfterLast because we need to ignore case
+        try {
+            INCLUDE_MEMO_PREFIXES_RECOGNIZED.forEach { prefix ->
+                memo.lastIndexOf(prefix, ignoreCase = true).takeUnless { it == -1 }?.let { lastIndex ->
+                    memo.substring(lastIndex + prefix.length).trimStart().validateAddress()?.let { address ->
+                        return@extractValidAddress address
+                    }
+                }
+            }
+        } catch (t: Throwable) { }
+
+        return null
+    }
+
+    suspend fun String?.validateAddress(): String? {
+        if (this == null) return null
+        return if (isValidAddress(this)) this else null
+    }
+
+    fun showFirstUseWarning(
+        prefKey: String,
+        @StringRes titleResId: Int = R.string.blank,
+        @StringRes msgResId: Int = R.string.blank,
+        @StringRes positiveResId: Int = android.R.string.ok,
+        @StringRes negativeResId: Int = android.R.string.cancel,
+        action: MainActivity.() -> Unit = {}
+    ) {
+        historyViewModel.prefs.getBoolean(prefKey).let { doNotWarnAgain ->
+            if (doNotWarnAgain) {
+                action()
+                return@showFirstUseWarning
+            }
+        }
+
+        val dialogViewBinding = DialogFirstUseMessageBinding.inflate(layoutInflater)
+
+        fun savePref() {
+            dialogViewBinding.dialogFirstUseCheckbox.isChecked.let { wasChecked ->
+                historyViewModel.prefs.setBoolean(prefKey, wasChecked)
+            }
+        }
+
+        dialogViewBinding.dialogMessage.setText(msgResId)
+        if (dialog != null) dialog?.dismiss()
+        dialog = MaterialAlertDialogBuilder(this)
+            .setTitle(titleResId)
+            .setView(dialogViewBinding.root)
+            .setCancelable(false)
+            .setPositiveButton(positiveResId) { d, _ ->
+                d.dismiss()
+                dialog = null
+                savePref()
+                action()
+            }
+            .setNegativeButton(negativeResId) { d, _ ->
+                d.dismiss()
+                dialog = null
+                savePref()
+            }
+            .show()
+    }
+
+    fun onLaunchUrl(url: String) {
+        try {
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+        } catch (t: Throwable) {
+            Toast.makeText(this, "Failed to open browser.", Toast.LENGTH_LONG).show()
+            twig("Warning: failed to open browser due to $t")
+        }
     }
 }

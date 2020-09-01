@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModelProvider
 import cash.z.ecc.android.di.annotation.ActivityScope
 import cash.z.ecc.android.di.annotation.ViewModelKey
 import cash.z.ecc.android.di.viewmodel.ViewModelFactory
+import cash.z.ecc.android.ext.Const
 import cash.z.ecc.android.ui.setup.WalletSetupViewModel
 import dagger.Binds
 import dagger.Module
@@ -34,7 +35,7 @@ abstract class ViewModelsActivityModule {
      * view models yet.
      */
     @ActivityScope
-    @Named("BeforeSynchronizer")
+    @Named(Const.Name.BEFORE_SYNCHRONIZER)
     @Binds
     abstract fun bindViewModelFactory(viewModelFactory: ViewModelFactory): ViewModelProvider.Factory
 

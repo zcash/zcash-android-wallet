@@ -101,7 +101,7 @@ class SendFinalFragment : BaseFragment<FragmentSendFinalBinding>() {
 
     private fun onSeeDetails() {
         sendViewModel.reset()
-        mainActivity?.safeNavigate(R.id.action_nav_send_final_to_nav_detail)
+        mainActivity?.safeNavigate(R.id.action_nav_send_final_to_nav_history)
     }
 
     private fun PendingTransaction.toUiModel() = UiModel().also { model ->

@@ -20,6 +20,7 @@ object Deps {
         const val LEGACY =                  "androidx.legacy:legacy-support-v4:1.0.0"
         const val MULTIDEX =                "androidx.multidex:multidex:2.0.1"
         const val PAGING =                  "androidx.paging:paging-runtime-ktx:2.1.2"
+        const val RECYCLER =                "androidx.recyclerview:recyclerview:1.2.0-alpha05"
         object CameraX :         Version("1.0.0-beta04") {
             val CAMERA2 =                   "androidx.camera:camera-camera2:1.0.0-beta04"
             val CORE =                      "androidx.camera:camera-core:1.0.0-beta04"
