@@ -18,10 +18,7 @@ import cash.z.ecc.android.di.viewmodel.activityViewModel
 import cash.z.ecc.android.ext.*
 import cash.z.ecc.android.feedback.Report
 import cash.z.ecc.android.sdk.db.entity.ConfirmedTransaction
-import cash.z.ecc.android.sdk.ext.ZcashSdk
-import cash.z.ecc.android.sdk.ext.convertZatoshiToZecString
-import cash.z.ecc.android.sdk.ext.toAbbreviatedAddress
-import cash.z.ecc.android.sdk.ext.twig
+import cash.z.ecc.android.sdk.ext.*
 import cash.z.ecc.android.ui.MainActivity
 import cash.z.ecc.android.ui.base.BaseFragment
 import cash.z.ecc.android.ui.util.toUtf8Memo
@@ -69,6 +66,7 @@ class TransactionFragment : BaseFragment<FragmentTransactionBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         binding.apply {
             ViewCompat.setTransitionName(topBoxValue, "test_amount_anim_${viewModel.selectedTransaction!!.id}")
             ViewCompat.setTransitionName(topBoxBackground, "test_bg_anim_${viewModel.selectedTransaction!!.id}")
@@ -249,7 +247,7 @@ class TransactionFragment : BaseFragment<FragmentTransactionBinding>() {
                     topLabel = "You Received"
                     bottomLabel = "Total Received"
                     bottomValue = "\$${tx?.value.convertZatoshiToZecString()}"
-                    iconRotation = -45f
+                    iconRotation = 315f
                     source = "to your shielded wallet"
                     address = mainActivity.extractValidAddress(tx?.memo.toUtf8Memo())
                 }
