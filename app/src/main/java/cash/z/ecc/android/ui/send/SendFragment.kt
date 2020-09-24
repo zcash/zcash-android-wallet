@@ -172,7 +172,7 @@ class SendFragment : BaseFragment<FragmentSendBinding>(),
         sendViewModel.toAddress = binding.inputZcashAddress.text.toString()
         sendViewModel.validate(availableZatoshi, maxZatoshi).onFirstWith(resumedScope) { errorMessage ->
             if (errorMessage == null) {
-                mainActivity?.authenticate("Please confirm that you want to send ${sendViewModel.zatoshiAmount.convertZatoshiToZecString(8)} ZEC to\n${sendViewModel.toAddress.toAbbreviatedAddress()}") {
+                mainActivity?.authenticate("Please confirm that you want to send\n${sendViewModel.zatoshiAmount.convertZatoshiToZecString(8)} ZEC to\n${sendViewModel.toAddress.toAbbreviatedAddress()}") {
 //                    sendViewModel.funnel(Send.AddressPageComplete)
                     mainActivity?.safeNavigate(R.id.action_nav_send_to_nav_send_final)
                 }

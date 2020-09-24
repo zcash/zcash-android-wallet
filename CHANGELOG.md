@@ -1,6 +1,17 @@
 Change Log
 ==========
 
+Version 1.0.0-alpha34 *(2020-08-28)*
+------------------------------------
+- New: Implemented transaction detail view.
+- New: Updated receive screen and scan screen.
+- New: Added optional blockchain explorer with privacy warning.
+- Fix: Update key dependencies for performance.
+- Fix: Iterated on send flow with lots of improvements and fixes.
+- Fix: Trim improperly parsed characters from memos.
+- Fix: Keypad stops working when navigating back to home screen.
+- Fix: Prevent black screen after failed initialization.
+
 Version 1.0.0-alpha33 *(2020-08-13)*
 ------------------------------------
 - New: Fully removed crashlytics, in favor of bugsnag.
