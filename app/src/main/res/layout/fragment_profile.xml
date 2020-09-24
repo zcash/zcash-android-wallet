@@ -35,6 +35,33 @@
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.85" />
 
+    <View
+        android:id="@+id/hit_area_settings"
+        android:layout_width="68dp"
+        android:layout_height="68dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:alpha="0.3"
+        android:background="@android:color/transparent"
+        android:elevation="6dp"
+        app:layout_constraintStart_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/guideline_hit_area_top" />
+
+    <ImageView
+        android:id="@+id/icon_settings"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="44dp"
+        android:elevation="6dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintDimensionRatio="H,1:1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.064"
+        app:layout_constraintWidth_percent="0.08"
+        app:srcCompat="@drawable/ic_settings" />
+
     <ImageView
         android:id="@+id/icon_close"
         android:layout_width="0dp"
@@ -81,24 +108,23 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         style="@style/TextAppearance.AppCompat.Body1"
-        android:textSize="20dp"
-        android:text="Shielded User"
+        android:textSize="20sp"
+        android:text="@string/profile_shielded_user"
         app:layout_constraintTop_toBottomOf="@id/icon_profile"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        />
+        app:layout_constraintStart_toStartOf="parent" />
+
     <TextView
         android:id="@+id/text_address"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         style="@style/Zcash.TextAppearance.AddressPart"
-        android:textSize="16dp"
-        android:text="zs1g7cqw...9qmvyzgm"
+        android:textSize="16sp"
+        tools:text="zs1g7cqw...9qmvyzgm"
         android:textColor="@color/text_light_dimmed"
         app:layout_constraintTop_toBottomOf="@id/text_username"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <ImageView
         android:id="@+id/image_copy"
@@ -129,7 +155,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         style="@style/Zcash.Button"
-        android:text="Send Feedback"
+        android:text="@string/profile_send_feedback"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
         android:textColor="#000000"
         android:gravity="center"
@@ -145,7 +171,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         style="@style/Zcash.Button.OutlinedButton"
-        android:text="Backup Wallet"
+        android:text="@string/profile_backup_wallet"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
         android:textColor="@color/text_light"
         android:gravity="center"
@@ -161,7 +187,7 @@
         android:layout_marginTop="16dp"
         style="@style/TextAppearance.AppCompat.Body1"
         android:textSize="16sp"
-        android:text="See Application Logs"
+        android:text="@string/profile_see_application_logs"
         android:textColor="@color/selector_button_text_light_dimmed"
         app:layout_constraintTop_toBottomOf="@id/button_backup"
         app:layout_constraintEnd_toEndOf="parent"
@@ -180,7 +206,7 @@
         android:paddingBottom="8dp"
         android:paddingStart="16dp"
         android:paddingTop="8dp"
-        android:text="ECC Wallet"
+        android:text="@string/profile_ecc_wallet"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
         android:textColor="@color/selector_button_text_light"
         app:layout_constraintEnd_toEndOf="@id/guideline_content_end"
@@ -194,9 +220,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
-        android:text="v1.0.0-alpha05"
+        android:text="@string/profile_app_version"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
         android:textColor="@color/text_light_dimmed"
         app:layout_constraintBaseline_toBaselineOf="@id/text_banner_message"
         app:layout_constraintEnd_toEndOf="@id/text_banner_message" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

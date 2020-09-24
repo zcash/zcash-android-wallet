@@ -69,11 +69,18 @@
         <action
             android:id="@+id/action_nav_profile_to_nav_feedback"
             app:destination="@id/nav_feedback" />
+        <action
+            android:id="@+id/action_nav_profile_to_nav_settings"
+            app:destination="@id/nav_settings" />
     </fragment>
     <fragment
         android:id="@+id/nav_feedback"
         android:name="cash.z.ecc.android.ui.profile.FeedbackFragment"
         tools:layout="@layout/fragment_feedback" />
+    <fragment
+        android:id="@+id/nav_settings"
+        android:name="cash.z.ecc.android.ui.settings.SettingsFragment"
+        tools:layout="@layout/fragment_settings" />
 
     <!--                 -->
     <!-- Send Navigation -->

@@ -38,6 +38,7 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.hitAreaSettings.onClickNavTo(R.id.action_nav_profile_to_nav_settings)
         binding.hitAreaClose.onClickNavBack() { tapped(PROFILE_CLOSE) }
         binding.buttonBackup.onClickNavTo(R.id.action_nav_profile_to_nav_backup) { tapped(PROFILE_BACKUP) }
         binding.buttonFeedback.onClickNavTo(R.id.action_nav_profile_to_nav_feedback) {

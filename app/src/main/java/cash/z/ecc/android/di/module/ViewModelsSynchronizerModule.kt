@@ -13,6 +13,7 @@ import cash.z.ecc.android.ui.profile.ProfileViewModel
 import cash.z.ecc.android.ui.receive.ReceiveViewModel
 import cash.z.ecc.android.ui.scan.ScanViewModel
 import cash.z.ecc.android.ui.send.SendViewModel
+import cash.z.ecc.android.ui.settings.SettingsViewModel
 import dagger.Binds
 import dagger.Module
 import dagger.multibindings.IntoMap
@@ -58,6 +59,12 @@ abstract class ViewModelsSynchronizerModule {
     @IntoMap
     @ViewModelKey(ProfileViewModel::class)
     abstract fun bindProfileViewModel(implementation: ProfileViewModel): ViewModel
+
+    @SynchronizerScope
+    @Binds
+    @IntoMap
+    @ViewModelKey(SettingsViewModel::class)
+    abstract fun bindSettingsViewModel(implementation: SettingsViewModel): ViewModel
     
     /**
      * Factory for view models that are not created until the Synchronizer exists. Only VMs that

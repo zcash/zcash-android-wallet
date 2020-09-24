@@ -40,6 +40,21 @@
     <string name="feedback_hint_2">My balance was . . .</string>
     <string name="feedback_hint_3">I\'d like . . .</string>
 
+    <!-- Profile -->
+    <string name="profile_shielded_user">Shielded User</string>
+    <string name="profile_send_feedback">Send Feedback</string>
+    <string name="profile_backup_wallet">Backup Wallet</string>
+    <string name="profile_see_application_logs">See Application Logs</string>
+    <string name="profile_ecc_wallet">ECC Wallet</string>
+    <string name="profile_app_version">v1.0.0-alpha05</string>
+
+    <!-- Settings-->
+    <string name="settings_change_lightwalletd_server">Change lightwalletd server:</string>
+    <string name="settings_server_address">Server Address</string>
+    <string name="settings_server_port">Server Port</string>
+    <string name="settings_update">Update</string>
+    <string name="settings_reset_to_default_host">Reset to Default Host</string>
+
     <!-- Dialogs -->
     <string name="dialog_not_again">Don\'t show me again</string>
     <string name="dialog_first_use_view_tx_title">Potential Privacy Risk</string>
@@ -50,6 +65,5 @@
     <!-- Misc -->
     <string name="app_name">ECC Wallet</string>
     <string name="mixpanel_project">a178e1ef062133fc121079cb12fa43c7</string>
-
 
 </resources>

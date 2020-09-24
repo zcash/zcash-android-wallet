@@ -17,5 +17,7 @@ object Const {
     object Pref {
         const val FIRST_USE_VIEW_TX = "const.pref.first_use_view_tx"
         const val FEEDBACK_ENABLED = "const.pref.feedback_enabled"
+        const val SERVER_NAME = "const.pref.server_name"
+        const val SERVER_PORT = "const.pref.server_port"
     }
 }
