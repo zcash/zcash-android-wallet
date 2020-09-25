@@ -88,6 +88,10 @@ android {
             arg 'dagger.gradle.incremental'
         }
     }
+    packagingOptions {
+        exclude 'META-INF/AL2.0'
+        exclude 'META-INF/LGPL2.1'
+    }
     applicationVariants.all { variant ->
         variant.outputs.all {
             outputFileName = "$archivesBaseName-v${defaultConfig.versionName}-${variant.buildType.name}.apk"

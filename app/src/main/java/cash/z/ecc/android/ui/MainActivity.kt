@@ -104,7 +104,11 @@ class MainActivity : AppCompatActivity() {
         component = ZcashWalletApp.component.mainActivitySubcomponent().create(this).also {
             it.inject(this)
         }
+        lifecycleScope.launch {
+            feedback.start()
+        }
         super.onCreate(savedInstanceState)
+
         setContentView(R.layout.main_activity)
         initNavigation()
 
@@ -117,9 +121,7 @@ class MainActivity : AppCompatActivity() {
         setWindowFlag(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, false)
         setWindowFlag(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION, false)
 
-        lifecycleScope.launch {
-            feedback.start()
-        }
+
     }
 
     override fun onResume() {
