@@ -13,19 +13,19 @@ import cash.z.ecc.android.di.viewmodel.viewModel
 import cash.z.ecc.android.ext.*
 import cash.z.ecc.android.feedback.Report
 import cash.z.ecc.android.feedback.Report.Tap.*
+import cash.z.ecc.android.sdk.Synchronizer.Status.*
+import cash.z.ecc.android.sdk.ext.*
 import cash.z.ecc.android.ui.base.BaseFragment
 import cash.z.ecc.android.ui.home.HomeFragment.BannerAction.*
 import cash.z.ecc.android.ui.send.SendViewModel
 import cash.z.ecc.android.ui.setup.WalletSetupViewModel
 import cash.z.ecc.android.ui.setup.WalletSetupViewModel.WalletSetupState.NO_SEED
-import cash.z.ecc.android.sdk.Synchronizer.Status.*
-import cash.z.ecc.android.sdk.ext.convertZatoshiToZecString
-import cash.z.ecc.android.sdk.ext.convertZecToZatoshi
-import cash.z.ecc.android.sdk.ext.safelyConvertToBigDecimal
-import cash.z.ecc.android.sdk.ext.twig
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.scanReduce
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
@@ -57,19 +57,17 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
         twig("ZZZ   ===================== HOME FRAGMENT CREATED ==================================")
         super.onAttach(context)
 
-        // this will call startSync either now or later (after initializing with newly created seed)
-        walletSetup.checkSeed().onEach {
-            twig("Checking seed")
+        walletSetup.checkSeed().onFirstWith(lifecycleScope) {
             if (it == NO_SEED) {
                 // interact with user to create, backup and verify seed
                 // leads to a call to startSync(), later (after accounts are created from seed)
-                twig("Seed not found, therefore, launching seed creation flow")
+                twig("Previous wallet not found, therefore, launching seed creation flow")
                 mainActivity?.safeNavigate(R.id.action_nav_home_to_create_wallet)
             } else {
-                twig("Found seed. Re-opening existing wallet")
-                mainActivity?.startSync(walletSetup.openWallet())
+                twig("Previous wallet found. Re-opening it.")
+                mainActivity?.startSync(walletSetup.buildInitializer())
             }
-        }.launchIn(lifecycleScope)
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
