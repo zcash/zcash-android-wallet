@@ -5,7 +5,10 @@ import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.provider.Settings
+import android.view.View
 import androidx.core.content.getSystemService
+import cash.z.ecc.android.sdk.exception.LightWalletException
+import cash.z.ecc.android.ui.MainActivity
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 
@@ -92,6 +95,34 @@ fun Context.showCriticalProcessorError(error: Throwable?, onRetry: () -> Unit = 
         .setNegativeButton("Exit") { dialog, _ ->
             dialog.dismiss()
             throw error ?: RuntimeException("Critical error while processing blocks and the user chose to exit.")
+        }
+        .show()
+}
+
+fun Context.showUpdateServerCriticalError(userFacingMessage: String, onConfirm: () -> Unit = {}): Dialog {
+    return MaterialAlertDialogBuilder(this)
+        .setTitle("Failed to Change Server")
+        .setMessage(userFacingMessage)
+        .setCancelable(false)
+        .setPositiveButton("Ok") { d, _ ->
+            d.dismiss()
+            onConfirm()
+        }
+        .show()
+}
+
+fun Context.showUpdateServerDialog(positiveText: String = "Update", onCancel: () -> Unit = {}, onUpdate: () -> Unit = {}): Dialog {
+    return MaterialAlertDialogBuilder(this)
+        .setTitle("Modify Lightwalletd Server?")
+        .setMessage("WARNING: Entering an invalid or untrusted server might result in misconfiguration or loss of funds!")
+        .setCancelable(false)
+        .setPositiveButton(positiveText) { dialog, _ ->
+            dialog.dismiss()
+            onUpdate()
+        }
+        .setNegativeButton("Cancel") { dialog, _ ->
+            dialog.dismiss()
+            onCancel
         }
         .show()
 }

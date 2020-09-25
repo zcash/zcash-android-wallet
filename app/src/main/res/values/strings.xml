@@ -49,11 +49,13 @@
     <string name="profile_app_version">v1.0.0-alpha05</string>
 
     <!-- Settings-->
-    <string name="settings_change_lightwalletd_server">Change lightwalletd server:</string>
-    <string name="settings_server_address">Server Address</string>
-    <string name="settings_server_port">Server Port</string>
+    <string name="settings_change_lightwalletd_server">Change Lightwalletd Server</string>
+    <string name="settings_server_address">Host</string>
+    <string name="settings_server_port">Port</string>
     <string name="settings_update">Update</string>
-    <string name="settings_reset_to_default_host">Reset to Default Host</string>
+    <string name="settings_reset">Reset</string>
+    <string name="settings_port_helper_text">Enter a valid port number</string>
+    <string name="settings_host_helper_text">Enter a valid host name or IP address</string>
 
     <!-- Dialogs -->
     <string name="dialog_not_again">Don\'t show me again</string>
