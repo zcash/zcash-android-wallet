@@ -19,6 +19,8 @@ import cash.z.ecc.android.ext.*
 import cash.z.ecc.android.feedback.Report
 import cash.z.ecc.android.sdk.db.entity.ConfirmedTransaction
 import cash.z.ecc.android.sdk.ext.*
+import cash.z.ecc.android.sdk.ext.toAbbreviatedAddress
+import cash.z.ecc.android.sdk.ext.twig
 import cash.z.ecc.android.ui.MainActivity
 import cash.z.ecc.android.ui.base.BaseFragment
 import cash.z.ecc.android.ui.util.toUtf8Memo
@@ -116,9 +118,9 @@ class TransactionFragment : BaseFragment<FragmentTransactionBinding>() {
 
                     // TODO: remove logic from sections below and add more fields or extension functions to UiModel
                     uiModel.confirmation?.let {
-                        subwaySpotConfirmations.visible(); subwayLabelConfirmations.visible();
+                        subwaySpotConfirmations.visible(); subwayLabelConfirmations.visible()
                         subwayLabelConfirmations.text = it
-                        if (it.equals("confirmed", true)) {
+                        if (it.equals(getString(R.string.transaction_status_confirmed), true)) {
                             subwayLabelConfirmations.setTextColor(R.color.tx_primary.toAppColor())
                         } else {
                             subwayLabelConfirmations.setTextColor(R.color.tx_text_light_dimmed.toAppColor())
@@ -202,7 +204,7 @@ class TransactionFragment : BaseFragment<FragmentTransactionBinding>() {
             )
             val flags =
                 DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_SHOW_YEAR or DateUtils.FORMAT_ABBREV_MONTH
-            timestamp = if (tx == null) "Details Unavailable" else DateUtils.getRelativeDateTimeString(
+            timestamp = if (tx == null) getString(R.string.transaction_timestamp_unavailable) else DateUtils.getRelativeDateTimeString(
                 ZcashWalletApp.instance,
                 tx.blockTimeInSeconds * 1000,
                 DateUtils.SECOND_IN_MILLIS,
@@ -212,7 +214,7 @@ class TransactionFragment : BaseFragment<FragmentTransactionBinding>() {
 
             // memo logic
             val txMemo = tx?.memo.toUtf8Memo()
-            if (!txMemo.isNullOrEmpty()) {
+            if (!txMemo.isEmpty()) {
                 memo = txMemo
             }
 
@@ -224,18 +226,18 @@ class TransactionFragment : BaseFragment<FragmentTransactionBinding>() {
                     val hasLatestHeight = latestHeight != null && latestHeight > ZcashSdk.SAPLING_ACTIVATION_HEIGHT
                     if (it.minedHeight > 0 && hasLatestHeight) {
                         val confirmations = latestHeight!! - it.minedHeight + 1
-                        confirmation = if (confirmations > 10) "Confirmed" else "$confirmations of 10 Confirmations"
+                        confirmation = if (confirmations >= 10) getString(R.string.transaction_status_confirmed) else "$confirmations ${getString(R.string.transaction_status_confirming)}"
                     } else {
                         if (!hasLatestHeight && isSufficientlyOld(tx)) {
                             twig("Warning: could not load latestheight from server to determine confirmations but this transaction is mined and old enough to be considered confirmed")
-                            confirmation = "Confirmed"
+                            confirmation = getString(R.string.transaction_status_confirmed)
                         } else {
                             twig("Warning: could not determine confirmation text value so it will be left null!")
-                            confirmation = "Confirmation count temporarily unavailable"
+                            confirmation = getString(R.string.transaction_confirmation_count_unavailable)
                         }
                     }
                 } else {
-                    confirmation = "Pending"
+                    confirmation = getString(R.string.transaction_status_pending)
                 }
 
             }
@@ -244,20 +246,20 @@ class TransactionFragment : BaseFragment<FragmentTransactionBinding>() {
             // inbound v. outbound values
             when (isInbound) {
                 true -> {
-                    topLabel = "You Received"
-                    bottomLabel = "Total Received"
                     bottomValue = "\$${tx?.value.convertZatoshiToZecString()}"
+                    topLabel = getString(R.string.transaction_story_inbound)
+                    bottomLabel = getString(R.string.transaction_story_inbound_total)
                     iconRotation = 315f
-                    source = "to your shielded wallet"
+                    source = getString(R.string.transaction_story_to_shielded)
                     address = mainActivity.extractValidAddress(tx?.memo.toUtf8Memo())
                 }
                 false -> {
-                    topLabel = "You Sent"
-                    bottomLabel = "Total Sent"
                     bottomValue = "\$${tx?.value?.plus(ZcashSdk.MINERS_FEE_ZATOSHI).convertZatoshiToZecString()}"
+                    topLabel = getString(R.string.transaction_story_outbound)
+                    bottomLabel = getString(R.string.transaction_story_outbound_total)
                     iconRotation = 135f
                     fee = "+0.0001 network fee"
-                    source = "from your shielded wallet"
+                    source = getString(R.string.transaction_story_from_shielded)
                     address = tx?.toAddress
                 }
                 null -> {

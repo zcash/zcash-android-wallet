@@ -1,7 +1,9 @@
 package cash.z.ecc.android.ui.send
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cash.z.ecc.android.R
 import cash.z.ecc.android.feedback.Feedback
 import cash.z.ecc.android.feedback.Feedback.Keyed
 import cash.z.ecc.android.feedback.Feedback.TimeMetric
@@ -13,6 +15,7 @@ import cash.z.ecc.android.feedback.Report.MetricType
 import cash.z.ecc.android.feedback.Report.MetricType.*
 import cash.z.ecc.android.lockbox.LockBox
 import cash.z.ecc.android.sdk.Synchronizer
+import cash.z.ecc.android.sdk.annotation.OpenForTesting
 import cash.z.ecc.android.sdk.db.entity.*
 import cash.z.ecc.android.sdk.ext.ZcashSdk
 import cash.z.ecc.android.sdk.ext.convertZatoshiToZecString
@@ -31,7 +34,8 @@ import javax.inject.Inject
 
 class SendViewModel @Inject constructor() : ViewModel() {
 
-    private val metrics = mutableMapOf<String, TimeMetric>()
+    // note used in testing
+    val metrics = mutableMapOf<String, TimeMetric>()
 
     @Inject
     lateinit var lockBox: LockBox
@@ -100,29 +104,29 @@ class SendViewModel @Inject constructor() : ViewModel() {
     suspend fun validateAddress(address: String): AddressType =
         synchronizer.validateAddress(address)
 
-    fun validate(availableZatoshi: Long?, maxZatoshi: Long?) = flow<String?> {
+    fun validate(context: Context, availableZatoshi: Long?, maxZatoshi: Long?) = flow<String?> {
 
         when {
             synchronizer.validateAddress(toAddress).isNotValid -> {
-                emit("Please enter a valid address.")
+                emit(context.getString(R.string.send_validation_error_address_invalid))
             }
             zatoshiAmount < 1 -> {
-                emit("Please go back and enter at least 1 Zatoshi.")
+                emit(context.getString(R.string.send_validation_error_amount_minimum))
             }
             availableZatoshi == null -> {
-                emit("Available funds not found. Please try again in a moment.")
+                emit(context.getString(R.string.send_validation_error_unknown_funds))
             }
             availableZatoshi == 0L -> {
-                emit("No funds available to send.")
+                emit(context.getString(R.string.send_validation_error_no_available_funds))
             }
             availableZatoshi > 0 && availableZatoshi < ZcashSdk.MINERS_FEE_ZATOSHI -> {
-                emit("Insufficient funds to cover miner's fee.")
+                emit(context.getString(R.string.send_validation_error_dust))
             }
             maxZatoshi != null && zatoshiAmount > maxZatoshi -> {
                 emit( "Please go back and enter no more than ${maxZatoshi.convertZatoshiToZecString(8)} ZEC.")
             }
             createMemoToSend().length > ZcashSdk.MAX_MEMO_SIZE -> {
-                emit( "Memo must be less than ${ZcashSdk.MAX_MEMO_SIZE} in length.")
+                emit(context.getString(R.string.send_validation_error_memo_length, ZcashSdk.MAX_MEMO_SIZE))
             }
             else -> emit(null)
         }

@@ -126,7 +126,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
+            android:layout_marginEnd="8dp"
             tools:text="fitness"
             app:layout_constraintBottom_toTopOf="@+id/text_address_part_5"
             app:layout_constraintStart_toEndOf="@id/barrier_left_address_column_1"
@@ -218,7 +218,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
+            android:layout_marginEnd="8dp"
             tools:text="goals"
             app:layout_constraintBottom_toTopOf="@+id/text_address_part_6"
             app:layout_constraintStart_toEndOf="@id/barrier_left_address_column_2"
@@ -322,7 +322,7 @@ text_address_part_3, text_address_part_6, text_address_part_9, text_address_part
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         tools:text="Birthday Height: 510,123"
-        android:textSize="20dp"
+        android:textSize="20sp"
         android:fontFamily="@font/inconsolata"
         app:layout_constraintTop_toBottomOf="@id/receive_address_parts"
         app:layout_constraintBottom_toTopOf="@id/text_message"
@@ -335,14 +335,15 @@ text_address_part_3, text_address_part_6, text_address_part_9, text_address_part
         android:layout_height="wrap_content"
         style="@style/TextAppearance.MaterialComponents.Body1"
         android:gravity="center"
-        android:text="empowering\neveryone\nwith\neconomic\nfreedom"
+        android:text="@string/backup_slogan"
         android:textColor="@color/zcashWhite_50"
         android:textSize="56dp"
         android:alpha="0.03"
         app:layout_constraintBottom_toBottomOf="@id/icon_logo"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/icon_logo" />
+        app:layout_constraintTop_toTopOf="@id/icon_logo"
+        tools:ignore="SpUsage" />
 
     <ImageView
         android:id="@+id/icon_logo"
@@ -356,7 +357,8 @@ text_address_part_3, text_address_part_6, text_address_part_9, text_address_part
         app:layout_constraintVertical_bias="0.33333"
         app:layout_constraintWidth_percent="0.4053398058"
         android:visibility="invisible"
-        app:srcCompat="@drawable/ic_logo_landing" />
+        app:srcCompat="@drawable/ic_logo_landing"
+        android:contentDescription="@string/content_description_backup_zcash_logo" />
 
     <!-- Choose release names from here https://en.wikipedia.org/wiki/List_of_woods -->
     <TextView
@@ -367,7 +369,7 @@ text_address_part_3, text_address_part_6, text_address_part_9, text_address_part
         android:gravity="center"
         android:paddingStart="32dp"
         android:paddingEnd="32dp"
-        android:text="Store these backup words securely."
+        android:text="@string/backup_instruction_store_words"
         android:textColor="@color/zcashWhite"
         app:layout_constraintBottom_toTopOf="@id/guideline_buttons"
         app:layout_constraintEnd_toEndOf="parent"
@@ -378,7 +380,7 @@ text_address_part_3, text_address_part_6, text_address_part_9, text_address_part
         android:id="@+id/button_positive"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Verify"
+        android:text="@string/backup_button_primary"
         android:textColor="@color/text_dark"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

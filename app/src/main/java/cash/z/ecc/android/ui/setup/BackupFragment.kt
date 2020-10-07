@@ -10,6 +10,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.lifecycle.lifecycleScope
+import cash.z.ecc.android.R
 import cash.z.ecc.android.ZcashWalletApp
 import cash.z.ecc.android.databinding.FragmentBackupBinding
 import cash.z.ecc.android.di.viewmodel.activityViewModel
@@ -36,7 +37,7 @@ import kotlinx.coroutines.withContext
 class BackupFragment : BaseFragment<FragmentBackupBinding>() {
     override val screen = Report.Screen.BACKUP
 
-    val walletSetup: WalletSetupViewModel by activityViewModel(false)
+    private val walletSetup: WalletSetupViewModel by activityViewModel(false)
 
     private var hasBackUp: Boolean = true //TODO: implement backup and then check for it here-ish
 
@@ -61,7 +62,7 @@ class BackupFragment : BaseFragment<FragmentBackupBinding>() {
             onEnterWallet().also { if (hasBackUp) tapped(BACKUP_DONE) else tapped(BACKUP_VERIFY) }
         }
         if (hasBackUp) {
-            binding.buttonPositive.text = "Done"
+            binding.buttonPositive.text = getString(R.string.backup_button_done)
         }
     }
 
@@ -74,10 +75,9 @@ class BackupFragment : BaseFragment<FragmentBackupBinding>() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         walletSetup.checkSeed().onEach {
-            when(it) {
-                SEED_WITH_BACKUP -> {
-                    hasBackUp = true
-                }
+            hasBackUp = when(it) {
+                SEED_WITH_BACKUP -> true
+                else -> false
             }
         }.launchIn(lifecycleScope)
     }
@@ -85,14 +85,14 @@ class BackupFragment : BaseFragment<FragmentBackupBinding>() {
     override fun onResume() {
         super.onResume()
         resumedScope.launch {
-            binding.textBirtdate.text = "Birthday Height: %,d".format(calculateBirthday())
+            binding.textBirtdate.text = getString(R.string.backup_format_birthday_height, calculateBirthday())
         }
     }
 
     // TODO: move this into the SDK
     private suspend fun calculateBirthday(): Int {
-        var storedBirthday: Int = 0
-        var oldestTransactionHeight:Int = 0
+        var storedBirthday = 0
+        var oldestTransactionHeight = 0
         try {
             storedBirthday = walletSetup.loadBirthdayHeight() ?: 0
             oldestTransactionHeight = mainActivity?.synchronizerComponent?.synchronizer()?.receivedTransactions?.first()?.last()?.minedHeight ?: 0
@@ -109,7 +109,7 @@ class BackupFragment : BaseFragment<FragmentBackupBinding>() {
 
     private fun onEnterWallet(showMessage: Boolean = !this.hasBackUp) {
         if (showMessage) {
-            Toast.makeText(activity, "Backup verification coming soon!", Toast.LENGTH_LONG).show()
+            Toast.makeText(activity, R.string.backup_verification_not_implemented, Toast.LENGTH_LONG).show()
         }
         mainActivity?.navController?.popBackStack()
     }

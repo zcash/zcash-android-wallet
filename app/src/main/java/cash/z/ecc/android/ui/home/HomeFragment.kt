@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.TextView
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.lifecycle.lifecycleScope
 import cash.z.ecc.android.R
 import cash.z.ecc.android.databinding.FragmentHomeBinding
@@ -21,11 +22,9 @@ import cash.z.ecc.android.ui.send.SendViewModel
 import cash.z.ecc.android.ui.setup.WalletSetupViewModel
 import cash.z.ecc.android.ui.setup.WalletSetupViewModel.WalletSetupState.NO_SEED
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onCompletion
-import kotlinx.coroutines.flow.scanReduce
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
@@ -135,7 +134,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
         val existingAmount = sendViewModel.zatoshiAmount.coerceAtLeast(0)
         viewModel.initializeMaybe(existingAmount.convertZatoshiToZecStringUniform(8))
         if (existingAmount == 0L) onClearAmount()
-        viewModel.uiModels.scanReduce { old, new ->
+        viewModel.uiModels.runningReduce { old, new ->
             onModelUpdated(old, new)
             new
         }.onCompletion {
@@ -157,9 +156,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         twig("HomeFragment.onSaveInstanceState")
-        if (::uiModel.isInitialized) {
+//        if (::uiModel.isInitialized) {
 //            outState.putParcelable("uiModel", uiModel)
-        }
+//        }
     }
 
     override fun onViewStateRestored(savedInstanceState: Bundle?) {
@@ -204,20 +203,20 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
         }
 
         val sendText = when {
-            uiModel.status == DISCONNECTED -> "Reconnecting . . ."
-            uiModel.isSynced -> if (uiModel.hasFunds) "SEND AMOUNT" else "NO FUNDS AVAILABLE"
-            uiModel.status == STOPPED -> "IDLE"
-            uiModel.isDownloading -> "Downloading . . . ${snake.downloadProgress}%"
-            uiModel.isValidating -> "Validating . . ."
-            uiModel.isScanning -> "Scanning . . . ${snake.scanProgress}%"
-            else -> "Updating"
+            uiModel.status == DISCONNECTED -> getString(R.string.home_button_send_disconnected)
+            uiModel.isSynced -> if (uiModel.hasFunds) getString(R.string.home_button_send_has_funds) else getString(R.string.home_button_send_no_funds)
+            uiModel.status == STOPPED -> getString(R.string.home_button_send_idle)
+            uiModel.isDownloading -> getString(R.string.home_button_send_downloading, snake.downloadProgress)
+            uiModel.isValidating -> getString(R.string.home_button_send_validating)
+            uiModel.isScanning -> getString(R.string.home_button_send_scanning, snake.scanProgress)
+            else -> getString(R.string.home_button_send_updating)
         }
 
         binding.buttonSendAmount.text = sendText
         twig("Send button set to: $sendText")
 
         val resId = if (uiModel.isSynced) R.color.selector_button_text_dark else R.color.selector_button_text_light
-        binding.buttonSendAmount.setTextColor(resources.getColorStateList(resId))
+        context?.let { binding.buttonSendAmount.setTextColor(AppCompatResources.getColorStateList(it, resId)) }
         binding.lottieButtonLoading.invisibleIf(uiModel.isDisconnected)
     }
 
@@ -245,7 +244,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
                 val change = (totalBalance - availableBalance).convertZatoshiToZecString()
                 "(expecting +$change ZEC)".toColoredSpan(R.color.text_light, "+$change")
             } else {
-                "(enter an amount to send)"
+               getString(R.string.home_instruction_enter_amount)
             }
         }
     }
@@ -332,10 +331,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
         when (action) {
             FUND_NOW -> {
                 MaterialAlertDialogBuilder(activity)
-                    .setMessage("To make full use of this wallet, deposit funds to your address.")
-                    .setTitle("No Balance")
+                    .setMessage(R.string.home_dialog_no_balance_message)
+                    .setTitle(R.string.home_dialog_no_balance_title)
                     .setCancelable(true)
-                    .setPositiveButton("View Address") { dialog, _ ->
+                    .setPositiveButton(R.string.home_dialog_no_balance_button_positive) { dialog, _ ->
                         tapped(HOME_FUND_NOW)
                         dialog.dismiss()
                         mainActivity?.safeNavigate(R.id.action_nav_home_to_nav_receive)
@@ -363,7 +362,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
     }
 
     private fun onNoFunds() {
-        setBanner("No Balance", FUND_NOW)
+        setBanner(getString(R.string.home_no_balance), FUND_NOW)
     }
 
 

@@ -62,7 +62,8 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.065"
         app:layout_constraintWidth_percent="0.08"
-        app:srcCompat="@drawable/ic_cancel" />
+        app:srcCompat="@drawable/ic_cancel"
+        android:contentDescription="@string/content_description_profile_back" />
 
     <ImageView
         android:id="@+id/icon_settings"
@@ -78,7 +79,8 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.065"
         app:layout_constraintWidth_percent="0.08"
-        app:srcCompat="@drawable/ic_settings" />
+        app:srcCompat="@drawable/ic_settings"
+        android:contentDescription="@string/content_description_profile_settings" />
 
     <ImageView
         android:id="@+id/icon_profile"
@@ -92,7 +94,8 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.212"
         app:layout_constraintWidth_percent="0.4"
-        app:srcCompat="@drawable/ic_profile_zebra_01" />
+        app:srcCompat="@drawable/ic_profile_zebra_01"
+        android:contentDescription="@string/content_description_profile_zebra" />
 
     <View
         android:id="@+id/hit_area_settings"
@@ -138,7 +141,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.15"
         app:layout_constraintStart_toEndOf="@id/text_address"
-        app:layout_constraintTop_toTopOf="@id/text_address" />
+        app:layout_constraintTop_toTopOf="@id/text_address"
+        android:contentDescription="@string/content_description_profile_copy" />
 
     <View
         android:id="@+id/hit_area_address"
@@ -214,7 +218,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@id/guideline_content_end"
         app:layout_constraintStart_toStartOf="@id/guideline_content_start"
-        app:layout_constraintTop_toBottomOf="@id/button_logs" />
+        app:layout_constraintTop_toBottomOf="@id/button_logs"
+        tools:ignore="RtlSymmetry" />
 
     <TextView
         android:id="@+id/text_version"
@@ -222,7 +227,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:elevation="6dp"
-        android:text="@string/profile_app_version"
+        tools:text="@string/profile_app_version"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
         android:textColor="@color/text_light_dimmed"
         app:layout_constraintBaseline_toBaselineOf="@id/text_banner_message"

@@ -38,7 +38,9 @@ import cash.z.ecc.android.databinding.DialogFirstUseMessageBinding
 import cash.z.ecc.android.di.component.MainActivitySubcomponent
 import cash.z.ecc.android.di.component.SynchronizerSubcomponent
 import cash.z.ecc.android.di.viewmodel.activityViewModel
-import cash.z.ecc.android.ext.Const
+import cash.z.ecc.android.ext.showCriticalProcessorError
+import cash.z.ecc.android.ext.showScanFailure
+import cash.z.ecc.android.ext.showUninitializedError
 import cash.z.ecc.android.feedback.Feedback
 import cash.z.ecc.android.feedback.FeedbackCoordinator
 import cash.z.ecc.android.feedback.LaunchMetric
@@ -255,7 +257,7 @@ class MainActivity : AppCompatActivity() {
         BiometricPrompt(this, ContextCompat.getMainExecutor(this), callback).apply {
             authenticate(
                 BiometricPrompt.PromptInfo.Builder()
-                    .setTitle("Authenticate to Proceed")
+                    .setTitle(getString(R.string.biometric_prompt_title))
                     .setConfirmationRequired(false)
                     .setDescription(description)
                     .setDeviceCredentialAllowed(true)
@@ -331,7 +333,7 @@ class MainActivity : AppCompatActivity() {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
-    fun showSnackbar(message: String, action: String = "OK"): Snackbar {
+    fun showSnackbar(message: String, action: String = getString(android.R.string.ok)): Snackbar {
         return if (snackbar == null) {
             val view = findViewById<View>(R.id.main_activity_container)
             val snacks = Snackbar
@@ -410,7 +412,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun onNoCamera() {
-        showSnackbar("Well, this is awkward. You denied permission for the camera.")
+        showSnackbar(getString(R.string.camera_permission_denied))
     }
 
     // TODO: clean up this error handling
@@ -422,15 +424,9 @@ class MainActivity : AppCompatActivity() {
                 if (dialog == null) {
                     notified = true
                     runOnUiThread {
-                        dialog = MaterialAlertDialogBuilder(this)
-                            .setTitle("Wallet Improperly Initialized")
-                            .setMessage("This wallet has not been initialized correctly! Perhaps an error occurred during install.\n\nThis can be fixed with a reset. Please reimport using your backup seed phrase.")
-                            .setCancelable(false)
-                            .setPositiveButton("Exit") { dialog, _ ->
-                                dialog.dismiss()
-                                throw error
-                            }
-                            .show()
+                        dialog = showUninitializedError(error) {
+                            dialog = null
+                        }
                     }
                 }
             }
@@ -438,20 +434,10 @@ class MainActivity : AppCompatActivity() {
                 if (dialog == null && !ignoreScanFailure) throttle("scanFailure", 20_000L) {
                     notified = true
                     runOnUiThread {
-                        dialog = MaterialAlertDialogBuilder(this)
-                            .setTitle("Scan Failure")
-                            .setMessage("${error.message}${if (error.cause != null) "\n\nCaused by: ${error.cause}" else ""}")
-                            .setCancelable(true)
-                            .setPositiveButton("Retry") { d, _ ->
-                                d.dismiss()
-                                dialog = null
-                            }
-                            .setNegativeButton("Ignore") { d, _ ->
-                                d.dismiss()
-                                ignoreScanFailure = true
-                                dialog = null
-                            }
-                            .show()
+                        dialog = showScanFailure(error,
+                            onCancel = { dialog = null },
+                            onDismiss = { dialog = null }
+                        )
                     }
                 }
             }
@@ -462,20 +448,9 @@ class MainActivity : AppCompatActivity() {
                 if (dialog == null) {
                     notified = true
                     runOnUiThread {
-                        dialog = MaterialAlertDialogBuilder(this)
-                            .setTitle("Processor Error")
-                            .setMessage(error?.message ?: "Critical error while processing blocks!")
-                            .setCancelable(false)
-                            .setPositiveButton("Retry") { d, _ ->
-                                d.dismiss()
-                                dialog = null
-                            }
-                            .setNegativeButton("Exit") { dialog, _ ->
-                                dialog.dismiss()
-                                throw error
-                                    ?: RuntimeException("Critical error while processing blocks and the user chose to exit.")
-                            }
-                            .show()
+                        dialog = showCriticalProcessorError(error) {
+                            dialog = null
+                        }
                     }
                 }
             }
@@ -604,7 +579,7 @@ class MainActivity : AppCompatActivity() {
         try {
             startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
         } catch (t: Throwable) {
-            Toast.makeText(this, "Failed to open browser.", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, R.string.error_launch_url, Toast.LENGTH_LONG).show()
             twig("Warning: failed to open browser due to $t")
         }
     }

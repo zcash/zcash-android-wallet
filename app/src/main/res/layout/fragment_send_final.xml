@@ -25,36 +25,40 @@
     <!-- Back Button -->
     <ImageView
         android:id="@+id/back_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:contentDescription="@string/content_description_send_final_back"
+        android:tint="@color/zcashBlack_87"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintDimensionRatio="H,1:1"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.05"
+        app:layout_constraintHorizontal_bias="0.088"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.065"
-        app:srcCompat="@drawable/ic_close_black_24dp"
+        app:layout_constraintWidth_percent="0.08"
+        app:srcCompat="@drawable/ic_cancel"
         tools:visibility="visible" />
 
     <View
         android:id="@+id/back_button_hit_area"
-        android:layout_width="56dp"
-        android:layout_height="56dp"
+        android:layout_width="68dp"
+        android:layout_height="68dp"
+        android:layout_marginStart="24dp"
         android:clickable="true"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.01"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.045" />
+        app:layout_constraintVertical_bias="0.045"
+        android:focusable="true" />
 
     <TextView
         android:id="@+id/text_confirmation"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         style="@style/TextAppearance.MaterialComponents.Headline5"
-        android:autoSizeTextType="uniform"
+        app:autoSizeTextType="uniform"
         android:gravity="center"
         android:maxLines="3"
         android:paddingEnd="16dp"
@@ -87,15 +91,14 @@
         android:id="@+id/error_message"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Oops! Failed to send due to insufficient funds!"
-        android:textColor="@color/text_dark"
         android:gravity="center"
+        tools:text="Oops! Failed to send due to insufficient funds!"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
-        app:layout_constraintTop_toBottomOf="@id/lottie_sending"
+        android:textColor="@color/text_dark"
         app:layout_constraintBottom_toTopOf="@id/button_primary"
-        app:layout_constraintStart_toStartOf="@id/button_primary"
         app:layout_constraintEnd_toEndOf="@id/button_primary"
-        />
+        app:layout_constraintStart_toStartOf="@id/button_primary"
+        app:layout_constraintTop_toBottomOf="@id/lottie_sending" />
     <!--    <TextView-->
     <!--        android:id="@+id/text_status"-->
     <!--        android:layout_width="wrap_content"-->
@@ -141,9 +144,9 @@
         android:layout_height="wrap_content"
         style="@style/Zcash.Button.OutlinedButton"
         android:padding="20dp"
-        android:translationY="-6dp"
         android:text="@string/cancel"
         android:textColor="@color/text_dark"
+        android:translationY="-6dp"
         app:layout_constraintBottom_toTopOf="@id/button_secondary"
         app:layout_constraintEnd_toEndOf="@id/guide_keys"
         app:layout_constraintStart_toStartOf="@id/guide_keys"

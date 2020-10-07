@@ -1,5 +1,6 @@
 package cash.z.ecc.android.ui.send
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -23,11 +24,12 @@ import kotlinx.coroutines.flow.onEach
 class SendFinalFragment : BaseFragment<FragmentSendFinalBinding>() {
     override val screen = Report.Screen.SEND_FINAL
 
-    val sendViewModel: SendViewModel by activityViewModel()
+    private val sendViewModel: SendViewModel by activityViewModel()
 
     override fun inflate(inflater: LayoutInflater): FragmentSendFinalBinding =
         FragmentSendFinalBinding.inflate(inflater)
 
+    @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.buttonPrimary.setOnClickListener {
@@ -107,19 +109,20 @@ class SendFinalFragment : BaseFragment<FragmentSendFinalBinding>() {
     private fun PendingTransaction.toUiModel() = UiModel().also { model ->
         when {
            isCancelled() -> {
-                model.title = "Cancelled."
-                model.primaryButtonText = "Go Back"
+                model.title = getString(R.string.send_final_result_cancelled)
+                model.primaryButtonText = getString(R.string.send_final_button_primary_back)
                 model.primaryAction = { onReturnToSend() }
             }
             isSubmitSuccess() -> {
-                model.title = "SENT!"
-                model.primaryButtonText = "See Details"
+                model.title = getString(R.string.send_final_button_primary_sent)
+                model.primaryButtonText = getString(R.string.send_final_button_primary_details)
                 model.primaryAction = { onSeeDetails() }
             }
             isFailure() -> {
-                model.title = "Failed."
-                model.errorMessage = if (isFailedEncoding()) "The transaction could not be encoded." else "Unable to submit transaction to the network."
-                model.primaryButtonText = "Retry"
+                model.title = getString(R.string.send_final_button_primary_failed)
+                model.errorMessage = if (isFailedEncoding()) getString(R.string.send_final_error_encoding) else getString(
+                                    R.string.send_final_error_submitting)
+                model.primaryButtonText = getString(R.string.send_final_button_primary_retry)
                 model.primaryAction = { onReturnToSend() }
             }
             else -> {
@@ -127,10 +130,10 @@ class SendFinalFragment : BaseFragment<FragmentSendFinalBinding>() {
                 model.showProgress = true
                 if (isCreating()) {
                     model.showCloseIcon = false
-                    model.primaryButtonText = "Cancel"
+                    model.primaryButtonText = getString(R.string.send_final_button_primary_cancel)
                     model.primaryAction = { onCancel(this) }
                 } else {
-                    model.primaryButtonText = "See Details"
+                    model.primaryButtonText = getString(R.string.send_final_button_primary_details)
                     model.primaryAction = { onSeeDetails() }
                 }
             }

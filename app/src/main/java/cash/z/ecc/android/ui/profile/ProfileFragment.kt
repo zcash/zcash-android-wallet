@@ -85,7 +85,7 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>() {
             putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris)
             type = "text/*"
         }
-        startActivity(Intent.createChooser(intent, "Share Log Files"))
+        startActivity(Intent.createChooser(intent, getString(R.string.profile_share_log_title)))
     }
 
     fun shareFile(file: File?) {
@@ -95,7 +95,7 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>() {
             putExtra(Intent.EXTRA_STREAM, uri)
             type = "text/plain"
         }
-        startActivity(Intent.createChooser(intent, "Share Log File"))
+        startActivity(Intent.createChooser(intent, getString(R.string.profile_share_log_title)))
     }
 
     private fun userLogFile(): File? {
