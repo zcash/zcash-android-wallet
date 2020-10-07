@@ -17,5 +17,18 @@ object Const {
     object Pref {
         const val FIRST_USE_VIEW_TX = "const.pref.first_use_view_tx"
         const val FEEDBACK_ENABLED = "const.pref.feedback_enabled"
+        const val SERVER_HOST = "const.pref.server_host"
+        const val SERVER_PORT = "const.pref.server_port"
+    }
+
+    /**
+     * Default values to use application-wide. Ideally, this set of values should remain very short.
+     */
+    object Default {
+        object Server {
+            // If you've forked the ECC repo, change this to your hosted lightwalletd instance
+            const val HOST = "lightwalletd.electriccoin.co"//"your.hosted.lightwalletd.org"
+            const val PORT = 9067
+        }
     }
 }

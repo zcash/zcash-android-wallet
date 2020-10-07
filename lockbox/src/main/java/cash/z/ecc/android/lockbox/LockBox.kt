@@ -11,6 +11,8 @@ import javax.inject.Inject
 
 class LockBox @Inject constructor(private val appContext: Context) : LockBoxPlugin {
 
+    private val maxLength: Int = 200
+
     override fun setBoolean(key: String, value: Boolean) {
         SecurePreferences.setValue(appContext, key, value)
     }
@@ -22,21 +24,64 @@ class LockBox @Inject constructor(private val appContext: Context) : LockBoxPlug
     override fun setBytes(key: String, value: ByteArray) {
         // using hex here because this library doesn't really work well for byte arrays
         // but hopefully we can code to arrays and then change the underlying library, later
-        SecurePreferences.setValue(appContext, key, value.toHex())
+        setValue(key, value.toHex())
     }
 
     override fun getBytes(key: String): ByteArray? {
-        return SecurePreferences.getStringValue(appContext, key, null)?.fromHex()
+        return getValue(key)?.fromHex()
     }
 
     override fun setCharsUtf8(key: String, value: CharArray) {
         // Using string here because this library doesn't work well for char arrays
         // but hopefully we can code to arrays and then change the underlying library, later
-        SecurePreferences.setValue(appContext, key, String(value))
+       setValue(key, String(value))
     }
 
     override fun getCharsUtf8(key: String): CharArray? {
-        return SecurePreferences.getStringValue(appContext, key, null)?.toCharArray()
+        return getValue(key)?.toCharArray()
+    }
+
+    inline operator fun <reified T> set(key: String, value: T) {
+        when (T::class.java) {
+            Boolean::class.java, Double::class.java, Float::class.java, Integer::class.java, Long::class.java, String::class.java -> setValue(key, value.toString())
+            else -> throw UnsupportedOperationException("Lockbox does not yet support ${T::class.java.simpleName} objects but it can be added")
+        }
+    }
+
+    inline operator fun <reified T> get(key: String): T? = when (T::class.java) {
+        Boolean::class.java -> (getCharsUtf8(key)?.let { String(it).toIntOrNull() }) as T
+        Double::class.java -> (getCharsUtf8(key)?.let { String(it).toDoubleOrNull() }) as T
+        Float::class.java -> (getCharsUtf8(key)?.let { String(it).toFloatOrNull() }) as T
+        Integer::class.java -> (getCharsUtf8(key)?.let { String(it).toIntOrNull() }) as T
+        Long::class.java -> (getCharsUtf8(key)?.let { String(it).toLongOrNull() }) as T
+        String::class.java -> (getCharsUtf8(key)?.let { String(it) }) as T
+        else -> throw UnsupportedOperationException("Lockbox does not yet support  ${T::class.java.simpleName} objects but it can be added")
+    }
+
+    /**
+     * Splits a string value into smaller pieces so as not to exceed the limit on the length of
+     * String that can be stored.
+     */
+    fun setValue(key: String, value: String) {
+        if (value.length > maxLength) {
+            SecurePreferences.setValue(appContext, key, value.chunked(maxLength).toSet())
+        } else {
+            SecurePreferences.setValue(appContext, key, value)
+        }
+    }
+
+    /**
+     * Returns a string value from storage by first fetching the key, directly. If that is missing,
+     * it checks for a chunked version of the key. If that exists, it will be merged and returned.
+     * If not, then null will be returned.
+     *
+     * @return the key if found and null otherwise.
+     */
+    private fun getValue(key: String): String? {
+        return SecurePreferences.getStringValue(appContext, key, null)
+            ?: SecurePreferences.getStringSetValue(appContext, key, setOf()).let { result ->
+                if (result.size == 0) null else result.joinToString("")
+            }
     }
 
 

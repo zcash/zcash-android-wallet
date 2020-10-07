@@ -12,18 +12,17 @@ import cash.z.ecc.android.feedback.Report.Issue
 import cash.z.ecc.android.feedback.Report.MetricType
 import cash.z.ecc.android.feedback.Report.MetricType.*
 import cash.z.ecc.android.lockbox.LockBox
-import cash.z.ecc.android.ui.setup.WalletSetupViewModel
-import cash.z.ecc.android.ui.util.INCLUDE_MEMO_PREFIX_STANDARD
-import cash.z.ecc.android.sdk.Initializer
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.db.entity.*
 import cash.z.ecc.android.sdk.ext.ZcashSdk
 import cash.z.ecc.android.sdk.ext.convertZatoshiToZecString
 import cash.z.ecc.android.sdk.ext.twig
+import cash.z.ecc.android.sdk.tool.DerivationTool
 import cash.z.ecc.android.sdk.validate.AddressType
+import cash.z.ecc.android.ui.setup.WalletSetupViewModel
+import cash.z.ecc.android.ui.util.INCLUDE_MEMO_PREFIX_STANDARD
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -39,9 +38,6 @@ class SendViewModel @Inject constructor() : ViewModel() {
 
     @Inject
     lateinit var synchronizer: Synchronizer
-
-    @Inject
-    lateinit var initializer: Initializer
 
     @Inject
     lateinit var feedback: Feedback
@@ -63,7 +59,7 @@ class SendViewModel @Inject constructor() : ViewModel() {
     fun send(): Flow<PendingTransaction> {
         funnel(SendSelected)
         val memoToSend = createMemoToSend()
-        val keys = initializer.deriveSpendingKeys(
+        val keys = DerivationTool.deriveSpendingKeys(
             lockBox.getBytes(WalletSetupViewModel.LockBoxKey.SEED)!!
         )
         funnel(SpendingKeyFound)

@@ -3,7 +3,7 @@ package cash.z.ecc.android
 object Deps {
     // For use in the top-level build.gradle which gives an error when provided
     // `Deps.Kotlin.version` directly
-    const val kotlinVersion = "1.3.72"
+    const val kotlinVersion = "1.4.10"
 
     const val compileSdkVersion = 29
     const val buildToolsVersion = "29.0.2"
@@ -30,7 +30,7 @@ object Deps {
                 val VIEW =                  "androidx.camera:camera-view:1.0.0-alpha11"
             }
         }
-        object Lifecycle :       Version("2.2.0-rc02") {
+        object Lifecycle :       Version("2.2.0") {
             val LIFECYCLE_RUNTIME_KTX =     "androidx.lifecycle:lifecycle-runtime-ktx:$version"
             val LIFECYCLE_EXTENSIONS =      "androidx.lifecycle:lifecycle-extensions:$version"
         }
@@ -72,7 +72,7 @@ object Deps {
     }
     object Kotlin :             Version(kotlinVersion) {
         val STDLIB =                         "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$version"
-        object Coroutines :     Version("1.3.2") {
+        object Coroutines :     Version("1.3.9") {
             val ANDROID =                    "org.jetbrains.kotlinx:kotlinx-coroutines-android:$version"
             val CORE =                       "org.jetbrains.kotlinx:kotlinx-coroutines-core:$version"
             val TEST =                       "org.jetbrains.kotlinx:kotlinx-coroutines-test:$version"
@@ -81,8 +81,8 @@ object Deps {
     object Zcash {
         const val ANDROID_WALLET_PLUGINS =   "cash.z.ecc.android:zcash-android-wallet-plugins:1.0.0"
         const val KOTLIN_BIP39 =            "cash.z.ecc.android:kotlin-bip39:1.0.0-beta09"
-        object Sdk :            Version("1.1.0-beta04") {
-            val MAINNET =                    "cash.z.ecc.android:sdk-mainnet:$version"
+        object Sdk :            Version("1.1.0-beta07") {
+            val MAINNET =                    "cash.z.ecc.android:zcash-android-sdk-mainnet:$version"
             val TESTNET =                    "cash.z.ecc.android:sdk-testnet:$version"
         }
     }

@@ -8,10 +8,8 @@ import dagger.Reusable
 
 @Module
 class InitializerModule {
-    private val host = "lightwalletd.electriccoin.co"
-    private val port = 9067
 
     @Provides
     @Reusable
-    fun provideInitializer(appContext: Context) = Initializer(appContext, host, port)
+    fun provideInitializer(appContext: Context, config: Initializer.Builder) = Initializer(appContext, config)
 }
