@@ -52,7 +52,7 @@ class SendAddressFragment : BaseFragment<FragmentSendAddressBinding>(),
 
         // Apply View Model
         if (sendViewModel.zatoshiAmount > 0L) {
-            sendViewModel.zatoshiAmount.convertZatoshiToZecStringUniform(8).let { amount ->
+            WalletZecFormmatter.toZecStringFull(sendViewModel.zatoshiAmount).let { amount ->
                 binding.inputZcashAmount.setText(amount)
             }
         } else {
@@ -123,7 +123,7 @@ class SendAddressFragment : BaseFragment<FragmentSendAddressBinding>(),
     private fun onMax() {
         if (maxZatoshi != null) {
             binding.inputZcashAmount.apply {
-                setText(maxZatoshi.convertZatoshiToZecString(8))
+                setText(WalletZecFormmatter.toZecStringFull(maxZatoshi ?: 0L))
                 postDelayed({
                     requestFocus()
                     setSelection(text?.length ?: 0)
@@ -156,7 +156,7 @@ class SendAddressFragment : BaseFragment<FragmentSendAddressBinding>(),
 
     private fun onBalanceUpdated(balance: WalletBalance) {
         binding.textLayoutAmount.helperText =
-            "You have ${balance.availableZatoshi.coerceAtLeast(0L).convertZatoshiToZecString(8)} available"
+            "You have ${WalletZecFormmatter.toZecStringFull(balance.availableZatoshi.coerceAtLeast(0L))} available"
         maxZatoshi = (balance.availableZatoshi - ZcashSdk.MINERS_FEE_ZATOSHI).coerceAtLeast(0L)
     }
 

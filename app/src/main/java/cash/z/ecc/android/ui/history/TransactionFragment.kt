@@ -18,7 +18,8 @@ import cash.z.ecc.android.di.viewmodel.activityViewModel
 import cash.z.ecc.android.ext.*
 import cash.z.ecc.android.feedback.Report
 import cash.z.ecc.android.sdk.db.entity.ConfirmedTransaction
-import cash.z.ecc.android.sdk.ext.*
+import cash.z.ecc.android.sdk.ext.ZcashSdk
+import cash.z.ecc.android.sdk.ext.convertZatoshiToZecString
 import cash.z.ecc.android.sdk.ext.toAbbreviatedAddress
 import cash.z.ecc.android.sdk.ext.twig
 import cash.z.ecc.android.ui.MainActivity
@@ -198,10 +199,8 @@ class TransactionFragment : BaseFragment<FragmentTransactionBinding>() {
                 else -> null
             }
             isMined = tx?.minedHeight != null && tx.minedHeight > ZcashSdk.SAPLING_ACTIVATION_HEIGHT
-            topValue = if (tx == null) "" else "\$${tx?.value.convertZatoshiToZecString()}"
-            minedHeight = NumberFormat.getNumberInstance(Locale.getDefault()).format(
-                tx?.minedHeight ?: 0
-            )
+            topValue = if (tx == null) "" else "\$${WalletZecFormmatter.toZecStringFull(tx.value)}"
+            minedHeight = (tx?.minedHeight ?: 0).toString()
             val flags =
                 DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_SHOW_YEAR or DateUtils.FORMAT_ABBREV_MONTH
             timestamp = if (tx == null) getString(R.string.transaction_timestamp_unavailable) else DateUtils.getRelativeDateTimeString(
@@ -246,19 +245,19 @@ class TransactionFragment : BaseFragment<FragmentTransactionBinding>() {
             // inbound v. outbound values
             when (isInbound) {
                 true -> {
-                    bottomValue = "\$${tx?.value.convertZatoshiToZecString()}"
                     topLabel = getString(R.string.transaction_story_inbound)
                     bottomLabel = getString(R.string.transaction_story_inbound_total)
+                    bottomValue = "\$${WalletZecFormmatter.toZecStringFull(tx?.value)}"
                     iconRotation = 315f
                     source = getString(R.string.transaction_story_to_shielded)
                     address = mainActivity.extractValidAddress(tx?.memo.toUtf8Memo())
                 }
                 false -> {
-                    bottomValue = "\$${tx?.value?.plus(ZcashSdk.MINERS_FEE_ZATOSHI).convertZatoshiToZecString()}"
                     topLabel = getString(R.string.transaction_story_outbound)
                     bottomLabel = getString(R.string.transaction_story_outbound_total)
+                    bottomValue = "\$${WalletZecFormmatter.toZecStringFull(tx?.value?.plus(ZcashSdk.MINERS_FEE_ZATOSHI))}"
                     iconRotation = 135f
-                    fee = "+0.0001 network fee"
+                    fee = getString(R.string.transaction_story_network_fee, WalletZecFormmatter.toZecStringFull(ZcashSdk.MINERS_FEE_ZATOSHI))
                     source = getString(R.string.transaction_story_from_shielded)
                     address = tx?.toAddress
                 }

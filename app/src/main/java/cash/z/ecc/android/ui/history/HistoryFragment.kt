@@ -56,11 +56,11 @@ class HistoryFragment : BaseFragment<FragmentHistoryBinding>() {
     }
 
     private fun onBalanceUpdated(balance: WalletBalance) {
-        binding.textBalanceAvailable.text = balance.availableZatoshi.convertZatoshiToZecString()
+        binding.textBalanceAvailable.text = WalletZecFormmatter.toZecStringShort(balance.availableZatoshi)
         val change = (balance.totalZatoshi - balance.availableZatoshi)
         binding.textBalanceDescription.apply {
             goneIf(change <= 0L)
-            val changeString = change.convertZatoshiToZecString()
+            val changeString = WalletZecFormmatter.toZecStringFull(change)
             val expecting = R.string.home_banner_expecting.toAppString(true)
             text = "($expecting +$changeString ZEC)".toColoredSpan(R.color.text_light, "+${changeString}")
         }

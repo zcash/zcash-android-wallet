@@ -7,6 +7,7 @@ import androidx.appcompat.content.res.AppCompatResources
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import cash.z.ecc.android.R
+import cash.z.ecc.android.ext.WalletZecFormmatter
 import cash.z.ecc.android.ext.goneIf
 import cash.z.ecc.android.ext.locale
 import cash.z.ecc.android.ext.toAppColor
@@ -49,7 +50,7 @@ class TransactionViewHolder<T : ConfirmedTransaction>(itemView: View) : Recycler
                     onTransactionLongPressed(this)
                     true
                 }
-                amountZec = value.convertZatoshiToZecString()
+                amountZec = WalletZecFormmatter.toZecStringShort(value)
                 // TODO: these might be good extension functions
                 val timestamp = formatter.format(blockTimeInSeconds * 1000L)
                 val isMined = blockTimeInSeconds != 0L

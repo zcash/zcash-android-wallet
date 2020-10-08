@@ -110,7 +110,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
         if (::uiModel.isInitialized) {
             twig("uiModel exists! it has pendingSend=${uiModel.pendingSend} ZEC while the sendViewModel=${sendViewModel.zatoshiAmount} zats")
             // if the model already existed, cool but let the sendViewModel be the source of truth for the amount
-            onModelUpdated(null, uiModel.copy(pendingSend = sendViewModel.zatoshiAmount.coerceAtLeast(0).convertZatoshiToZecStringUniform(8)))
+            onModelUpdated(null, uiModel.copy(pendingSend = WalletZecFormmatter.toZecStringFull(sendViewModel.zatoshiAmount.coerceAtLeast(0))))
         }
     }
 
@@ -132,7 +132,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
         super.onResume()
         twig("HomeFragment.onResume  resumeScope.isActive: ${resumedScope.isActive}  $resumedScope")
         val existingAmount = sendViewModel.zatoshiAmount.coerceAtLeast(0)
-        viewModel.initializeMaybe(existingAmount.convertZatoshiToZecStringUniform(8))
+        viewModel.initializeMaybe(WalletZecFormmatter.toZecStringFull(existingAmount))
         if (existingAmount == 0L) onClearAmount()
         viewModel.uiModels.runningReduce { old, new ->
             onModelUpdated(old, new)
@@ -228,21 +228,22 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
         binding.textSendAmount.text = "\$$amount".toColoredSpan(R.color.text_light_dimmed, "$")
         if (updateModel) {
             sendViewModel.zatoshiAmount = amount.safelyConvertToBigDecimal().convertZecToZatoshi()
+            twig("dBUG: updating model. converting: $amount\tresult: ${sendViewModel.zatoshiAmount}\tprint: ${WalletZecFormmatter.toZecStringFull(sendViewModel.zatoshiAmount)}")
         }
         binding.buttonSendAmount.disabledIf(amount == "0")
     }
 
     fun setAvailable(availableBalance: Long = -1L, totalBalance: Long = -1L) {
         val missingBalance = availableBalance < 0
-        val availableString = if (missingBalance) "Updating" else availableBalance.convertZatoshiToZecString()
+        val availableString = if (missingBalance) getString(R.string.home_button_send_updating) else WalletZecFormmatter.toZecStringFull(availableBalance)
         binding.textBalanceAvailable.text = availableString
         binding.textBalanceAvailable.transparentIf(missingBalance)
         binding.labelBalance.transparentIf(missingBalance)
         binding.textBalanceDescription.apply {
             goneIf(missingBalance)
             text = if (availableBalance != -1L && (availableBalance < totalBalance)) {
-                val change = (totalBalance - availableBalance).convertZatoshiToZecString()
-                "(expecting +$change ZEC)".toColoredSpan(R.color.text_light, "+$change")
+                val change = WalletZecFormmatter.toZecStringFull(totalBalance - availableBalance)
+                "(${getString(R.string.home_banner_expecting)} +$change ZEC)".toColoredSpan(R.color.text_light, "+$change")
             } else {
                getString(R.string.home_instruction_enter_amount)
             }

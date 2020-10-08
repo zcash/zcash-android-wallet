@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.android.R
+import cash.z.ecc.android.ext.WalletZecFormmatter
 import cash.z.ecc.android.feedback.Feedback
 import cash.z.ecc.android.feedback.Feedback.Keyed
 import cash.z.ecc.android.feedback.Feedback.TimeMetric
@@ -123,7 +124,7 @@ class SendViewModel @Inject constructor() : ViewModel() {
                 emit(context.getString(R.string.send_validation_error_dust))
             }
             maxZatoshi != null && zatoshiAmount > maxZatoshi -> {
-                emit( "Please go back and enter no more than ${maxZatoshi.convertZatoshiToZecString(8)} ZEC.")
+                emit(context.getString(R.string.send_validation_error_too_much, WalletZecFormmatter.toZecStringFull(maxZatoshi)))
             }
             createMemoToSend().length > ZcashSdk.MAX_MEMO_SIZE -> {
                 emit(context.getString(R.string.send_validation_error_memo_length, ZcashSdk.MAX_MEMO_SIZE))
