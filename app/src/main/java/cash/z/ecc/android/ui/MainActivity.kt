@@ -249,6 +249,9 @@ class MainActivity : AppCompatActivity() {
                     }
                     else -> {
                         twig("Warning: failed authentication because $errString [$errorCode]")
+                        // we get here when a device does not have a pin setup, at all
+                        // in the future, notify the user here that they can set a pin on their device for added security
+                        block()
                     }
                 }
             }
