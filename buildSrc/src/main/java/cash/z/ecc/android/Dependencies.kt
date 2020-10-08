@@ -3,12 +3,16 @@ package cash.z.ecc.android
 object Deps {
     // For use in the top-level build.gradle which gives an error when provided
     // `Deps.Kotlin.version` directly
-    const val kotlinVersion = "1.4.10"
+    const val kotlinVersion =       "1.4.10"
 
-    const val compileSdkVersion = 29
-    const val buildToolsVersion = "29.0.2"
-    const val minSdkVersion = 21
-    const val targetSdkVersion = 29
+    const val compileSdkVersion =   29
+    const val buildToolsVersion =   "29.0.2"
+    const val minSdkVersion =       21
+    const val targetSdkVersion =    29
+    const val versionName =         "1.0.0-alpha36"
+    const val versionCode =         1_00_00_036  // last digits are alpha(0XX) beta(2XX) rc(4XX) release(8XX). Ex: 1_08_04_401 is an release candidate build of version 1.8.4 and 1_08_04_800 would be the final release.
+    const val packageName =         "cash.z.ecc.android"
+
 
     object AndroidX {
         const val ANNOTATION =              "androidx.annotation:annotation:1.1.0"
@@ -80,25 +84,26 @@ object Deps {
     }
     object Zcash {
         const val ANDROID_WALLET_PLUGINS =   "cash.z.ecc.android:zcash-android-wallet-plugins:1.0.0"
-        const val KOTLIN_BIP39 =            "cash.z.ecc.android:kotlin-bip39:1.0.0-beta09"
-        object Sdk :            Version("1.1.0-beta07") {
+        const val KOTLIN_BIP39 =            "cash.z.ecc.android:kotlin-bip39:1.0.1"
+        object Sdk :            Version("1.1.0-beta08") {
             val MAINNET =                    "cash.z.ecc.android:zcash-android-sdk-mainnet:$version"
-            val TESTNET =                    "cash.z.ecc.android:sdk-testnet:$version"
+            val TESTNET =                    "cash.z.ecc.android:zcash-android-sdk-testnet:$version"
         }
     }
     object Misc {
         const val LOTTIE =                   "com.airbnb.android:lottie:3.1.0"
         const val CHIPS =                    "com.github.gmale:chips-input-layout:2.3.1"
         object Plugins {
-            const val SECURE_STORAGE =       "de.adorsys.android:securestoragelibrary:1.2.2"
+            const val SECURE_STORAGE =       "com.github.gmale:secure-storage-android:0.0.3"//"de.adorsys.android:securestoragelibrary:1.2.2"
             const val QR_SCANNER =           "com.google.zxing:core:3.2.1"
         }
     }
 
     object Test {
         const val JUNIT =                    "junit:junit:4.12"
-        const val MOKITO =                   "junit:junit:4.12"
-        const val COROUTINES_TEST =          "junit:junit:4.12"
+        const val MOKITO =                   "org.mockito:mockito-android:3.5.10"
+        const val MOKITO_KOTLIN =            "com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0"
+        const val COROUTINES_TEST =          "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.3.9"
         object Android {
             const val JUNIT =                "androidx.test.ext:junit:1.1.1"
             const val ESPRESSO =             "androidx.test.espresso:espresso-core:3.2.0"

@@ -1,11 +1,10 @@
 package cash.z.ecc.android
 
 import cash.z.ecc.android.feedback.Feedback
+import cash.z.ecc.android.sdk.db.entity.PendingTransaction
+import cash.z.ecc.android.sdk.db.entity.*
 import cash.z.ecc.android.ui.send.SendViewModel
-import cash.z.ecc.android.sdk.entity.*
-import com.nhaarman.mockitokotlin2.verify
-import com.nhaarman.mockitokotlin2.verifyZeroInteractions
-import com.nhaarman.mockitokotlin2.whenever
+import com.nhaarman.mockitokotlin2.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.newSingleThreadContext
 import kotlinx.coroutines.test.setMain
@@ -54,7 +53,7 @@ class SendViewModelTest {
 
     @Test
     fun testUpdateMetrics_creating() {
-//        doNothing().whenever(sendViewModel).report(any())
+        doNothing().whenever(sendViewModel).report(any())
 
         assertEquals(true, creatingTx.isCreating())
         sendViewModel.updateMetrics(creatingTx)
