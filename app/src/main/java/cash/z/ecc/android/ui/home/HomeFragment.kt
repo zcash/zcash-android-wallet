@@ -64,7 +64,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
                 mainActivity?.safeNavigate(R.id.action_nav_home_to_create_wallet)
             } else {
                 twig("Previous wallet found. Re-opening it.")
-                mainActivity?.startSync(walletSetup.buildInitializer())
+                mainActivity?.startSync(walletSetup.openStoredWallet())
             }
         }
     }

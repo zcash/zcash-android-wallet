@@ -14,6 +14,7 @@ import cash.z.ecc.android.R
 import cash.z.ecc.android.ZcashWalletApp
 import cash.z.ecc.android.databinding.FragmentBackupBinding
 import cash.z.ecc.android.di.viewmodel.activityViewModel
+import cash.z.ecc.android.ext.Const
 import cash.z.ecc.android.feedback.Report
 import cash.z.ecc.android.feedback.Report.MetricType.SEED_PHRASE_LOADED
 import cash.z.ecc.android.feedback.Report.Tap.BACKUP_DONE
@@ -23,7 +24,6 @@ import cash.z.ecc.android.lockbox.LockBox
 import cash.z.ecc.android.sdk.ext.ZcashSdk
 import cash.z.ecc.android.sdk.ext.twig
 import cash.z.ecc.android.ui.base.BaseFragment
-import cash.z.ecc.android.ui.setup.WalletSetupViewModel.LockBoxKey
 import cash.z.ecc.android.ui.setup.WalletSetupViewModel.WalletSetupState.SEED_WITH_BACKUP
 import cash.z.ecc.android.ui.util.AddressPartNumberSpan
 import cash.z.ecc.kotlin.mnemonic.Mnemonics
@@ -131,7 +131,7 @@ class BackupFragment : BaseFragment<FragmentBackupBinding>() {
         mainActivity!!.feedback.measure(SEED_PHRASE_LOADED) {
             val lockBox = LockBox(ZcashWalletApp.instance)
             val mnemonics = Mnemonics()
-            val seedPhrase =  lockBox.getCharsUtf8(LockBoxKey.SEED_PHRASE)!!
+            val seedPhrase =  lockBox.getCharsUtf8(Const.Backup.SEED_PHRASE)!!
             val result =  mnemonics.toWordList(seedPhrase)
             result
         }

@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.android.R
+import cash.z.ecc.android.ext.Const
 import cash.z.ecc.android.ext.WalletZecFormmatter
 import cash.z.ecc.android.feedback.Feedback
 import cash.z.ecc.android.feedback.Feedback.Keyed
@@ -65,7 +66,7 @@ class SendViewModel @Inject constructor() : ViewModel() {
         funnel(SendSelected)
         val memoToSend = createMemoToSend()
         val keys = DerivationTool.deriveSpendingKeys(
-            lockBox.getBytes(WalletSetupViewModel.LockBoxKey.SEED)!!
+            lockBox.getBytes(Const.Backup.SEED)!!
         )
         funnel(SpendingKeyFound)
         reportIssues(memoToSend)
