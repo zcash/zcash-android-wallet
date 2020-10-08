@@ -9,7 +9,7 @@ apply plugin: 'com.google.gms.google-services'
 
 archivesBaseName = 'zcash-android-wallet'
 group = 'cash.z.ecc.android'
-version = '1.0.0-alpha34'
+version = Deps.versionName
 
 android {
     ndkVersion "21.1.6352462"
@@ -17,16 +17,16 @@ android {
     buildToolsVersion Deps.buildToolsVersion
     viewBinding.enabled = true
     defaultConfig {
-        applicationId 'cash.z.ecc.android'
+        applicationId Deps.packageName
         minSdkVersion Deps.minSdkVersion
         targetSdkVersion Deps.targetSdkVersion
-        versionCode = 1_00_00_034
-        // last digits are alpha(0XX) beta(2XX) rc(4XX) release(8XX) dev(9XX). Ex: 1_08_04_401 is an release candidate build of version 1.8.4 and 1_08_04_800 would be the final release.
-        versionName = "$version"
+        versionCode = Deps.versionCode
+        versionName = Deps.versionName
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
         testInstrumentationRunnerArguments clearPackageData: 'true'
         multiDexEnabled true
         resValue 'string', 'bugsnag_api_key', "${(project.findProperty('BUGSNAG_API_KEY') ?: System.getenv('BUGSNAG_API_KEY')) ?: ''}"
+        resValue 'string', 'file_authority', "${Deps.packageName}.fileprovider"
 
         // this setting allows using color resources in vector drawables, rather than hardcoded values (note: only works when minApi is 21)
         // per https://google.github.io/android-gradle-dsl/current/com.android.build.gradle.internal.dsl.VectorDrawablesOptions.html: If set to an empty collection, all special handling of vector drawables will be disabled.
@@ -68,10 +68,15 @@ android {
             useProguard false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
-//        mock {
-//            initWith debug
-//            matchingFallbacks = ['debug', 'release', 'zcashtestnet']
-//        }
+        // builds for testing only in the wallet team, typically unfinished features
+        // this flavor can be installed alongside the others
+        qa {
+            initWith debug
+            debuggable false
+            applicationIdSuffix ".internal"
+            resValue 'string', 'file_authority', "${Deps.packageName}.internal.fileprovider"
+            matchingFallbacks = ['debug']
+        }
     }
 
     compileOptions {
@@ -80,6 +85,9 @@ android {
     }
     kotlinOptions {
         jvmTarget = "1.8"
+        freeCompilerArgs += "-Xopt-in=kotlinx.coroutines.ExperimentalCoroutinesApi"
+//        freeCompilerArgs += "-Xopt-in=kotlinx.coroutines.ObsoleteCoroutinesApi"
+//        freeCompilerArgs += "-Xopt-in=kotlinx.coroutines.FlowPreview"
     }
     kapt {
         arguments {
@@ -94,7 +102,10 @@ android {
     }
     applicationVariants.all { variant ->
         variant.outputs.all {
-            outputFileName = "$archivesBaseName-v${defaultConfig.versionName}-${variant.buildType.name}.apk"
+            if (variant.buildType.name == "qa") {
+                it.versionNameOverride = "${Deps.versionName}-QA"
+            }
+            outputFileName = "$archivesBaseName-v${Deps.versionName}-${variant.buildType.name}.apk"
         }
     }
 }
@@ -165,8 +176,12 @@ dependencies {
     testImplementation Deps.Test.COROUTINES_TEST
     testImplementation Deps.Test.JUNIT
     testImplementation Deps.Test.MOKITO
+    testImplementation Deps.Test.MOKITO_KOTLIN
+    testImplementation Deps.Test.COROUTINES_TEST
+    testImplementation Deps.Zcash.Sdk.TESTNET
+
     androidTestImplementation Deps.Test.Android.JUNIT
     androidTestImplementation Deps.Test.Android.ESPRESSO
 }
 
-defaultTasks 'clean', 'installZcashmainnetRelease'
+defaultTasks 'clean', 'assembleZcashmainnetRelease'

@@ -57,6 +57,9 @@
     <!-- every color here should be a reference to a palette color
     but have a more useful name for use in code -->
 
+    <color name="app_icon_background_0">#FF3F3F4F</color>
+    <color name="app_icon_background_1">#FF000000</color>
+    <color name="app_icon_foreground">#FFB900</color>
     <color name="background_banner">@color/zcashBlack_dark</color>
     <color name="background_banner_stroke">#282828</color>
     <color name="scan_overlay_background">@color/zcashBlack_87</color>
