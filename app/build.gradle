@@ -72,7 +72,7 @@ android {
         // this flavor can be installed alongside the others
         qa {
             initWith debug
-            debuggable false
+            debuggable true
             applicationIdSuffix ".internal"
             resValue 'string', 'file_authority', "${Deps.packageName}.internal.fileprovider"
             matchingFallbacks = ['debug']
