@@ -11,6 +11,7 @@ import cash.z.ecc.android.R
 import cash.z.ecc.android.ZcashWalletApp
 import cash.z.ecc.android.databinding.FragmentProfileBinding
 import cash.z.ecc.android.di.viewmodel.viewModel
+import cash.z.ecc.android.ext.find
 import cash.z.ecc.android.ext.onClick
 import cash.z.ecc.android.ext.onClickNavBack
 import cash.z.ecc.android.ext.onClickNavTo
@@ -18,14 +19,12 @@ import cash.z.ecc.android.feedback.FeedbackFile
 import cash.z.ecc.android.feedback.Report
 import cash.z.ecc.android.feedback.Report.Funnel.UserFeedback
 import cash.z.ecc.android.feedback.Report.Tap.*
-import cash.z.ecc.android.ui.base.BaseFragment
+import cash.z.ecc.android.sdk.ext.Bush
 import cash.z.ecc.android.sdk.ext.toAbbreviatedAddress
-import cash.z.ecc.android.sdk.ext.twig
+import cash.z.ecc.android.ui.base.BaseFragment
+import cash.z.ecc.android.ui.util.DebugFileTwig
 import kotlinx.coroutines.launch
-import okio.Okio
 import java.io.File
-import java.io.IOException
-import java.lang.IllegalArgumentException
 
 
 class ProfileFragment : BaseFragment<FragmentProfileBinding>() {
@@ -70,7 +69,13 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>() {
     }
 
     private fun onViewDevLogs() {
-        shareFile(writeLogcat())
+        developerLogFile().let {
+            if (it == null) {
+                mainActivity?.showSnackbar("Error: No developer log found!")
+            } else {
+                shareFile(it)
+            }
+        }
     }
 
     private fun shareFiles(vararg files: File?) {
@@ -102,29 +107,7 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>() {
         return mainActivity?.feedbackCoordinator?.findObserver<FeedbackFile>()?.file
     }
 
-    private fun loadLogFileAsText(): String? {
-        val feedbackFile: File = userLogFile() ?: return null
-        Okio.buffer(Okio.source(feedbackFile)).use {
-            return it.readUtf8()
-        }
-    }
-
-    private fun writeLogcat(): File? {
-        try {
-            // Note: the /logs directory has been configured as a file provider under @xml/file_paths which allows the temporary sharing of this file
-            val outputFile = File("${ZcashWalletApp.instance.filesDir}/logs", "developer_log.txt").also { it.parentFile.mkdirs() }
-            if (!outputFile.parentFile.isDirectory) {
-                // addresses security finding in issue #121
-                throw IllegalArgumentException("Invalid path: ${outputFile.parentFile}. Verify" +
-                        " that the default files directory is not being manipulated.")
-            }
-            val cmd = arrayOf("/bin/sh", "-c", "logcat -v time -d | grep '@TWIG' > '${outputFile.absolutePath}'")
-            Runtime.getRuntime().exec(cmd)
-            return outputFile
-        } catch (e: IOException) {
-            e.printStackTrace()
-            twig("Failed to create log")
-        }
-        return null
+    private fun developerLogFile(): File? {
+        return Bush.trunk.find<DebugFileTwig>()?.file
     }
 }

@@ -3,6 +3,9 @@ package cash.z.ecc.android.ext
 import android.content.Context
 import android.os.Build
 import androidx.fragment.app.Fragment
+import cash.z.ecc.android.sdk.ext.Bush
+import cash.z.ecc.android.sdk.ext.CompositeTwig
+import cash.z.ecc.android.sdk.ext.Twig
 import cash.z.ecc.android.sdk.ext.twig
 import java.util.*
 
@@ -26,4 +29,10 @@ inline fun Context.locale(): Locale {
         //noinspection deprecation
         resources.configuration.locale
     }
+}
+
+// TODO: add this to the SDK and if the trunk is a CompositeTwig, search through there before returning null
+inline fun <reified T> Twig.find(): T? {
+    return if (Bush.trunk::class.java.isAssignableFrom(T::class.java)) Bush.trunk as T
+    else null
 }
