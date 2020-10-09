@@ -1,6 +1,8 @@
 package cash.z.ecc.android.ui.home
 
 import androidx.lifecycle.ViewModel
+import cash.z.ecc.android.R
+import cash.z.ecc.android.ext.toAppString
 import cash.z.ecc.android.sdk.SdkSynchronizer
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.Synchronizer.Status.*
@@ -37,25 +39,26 @@ class HomeViewModel @Inject constructor() : ViewModel() {
         }
         _typedChars = ConflatedBroadcastChannel()
         val typedChars = _typedChars.asFlow()
-
+        val decimal = '.'// R.string.key_decimal.toAppString()[0]
+        val backspace = R.string.key_backspace.toAppString()[0]
         val zec = typedChars.scan(preTypedChars) { acc, c ->
             when {
                 // no-op cases
                 acc == "0" && c == '0'
-                        || (c == '<' && acc == "0")
-                        || (c == '.' && acc.contains('.')) -> {twig("triggered: 1  acc: $acc  c: $c")
+                        || (c == backspace && acc == "0")
+                        || (c == decimal && acc.contains(decimal)) -> {twig("triggered: 1  acc: $acc  c: $c")
                     acc
                 }
-                c == '<' && acc.length <= 1 -> {twig("triggered: 2 $typedChars")
+                c == backspace && acc.length <= 1 -> {twig("triggered: 2 $typedChars")
                     "0"
                 }
-                c == '<' -> {twig("triggered: 3")
+                c == backspace -> {twig("triggered: 3")
                     acc.substring(0, acc.length - 1)
                 }
-                acc == "0" && c != '.' -> {twig("triggered: 4 $typedChars")
+                acc == "0" && c != decimal -> {twig("triggered: 4 $typedChars")
                     c.toString()
                 }
-                acc.contains('.') && acc.length - acc.indexOf('.') > 8 -> {
+                acc.contains(decimal) && acc.length - acc.indexOf(decimal) > 8 -> {
                     twig("triggered: 5 $typedChars")
                     acc
                 }

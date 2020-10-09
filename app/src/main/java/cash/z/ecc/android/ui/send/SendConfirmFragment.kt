@@ -7,6 +7,7 @@ import androidx.lifecycle.lifecycleScope
 import cash.z.ecc.android.R
 import cash.z.ecc.android.databinding.FragmentSendConfirmBinding
 import cash.z.ecc.android.di.viewmodel.activityViewModel
+import cash.z.ecc.android.ext.WalletZecFormmatter
 import cash.z.ecc.android.ext.goneIf
 import cash.z.ecc.android.ext.onClickNavTo
 import cash.z.ecc.android.feedback.Report
@@ -36,7 +37,7 @@ class SendConfirmFragment : BaseFragment<FragmentSendConfirmBinding>() {
 //        }
         mainActivity?.lifecycleScope?.launch {
             binding.textConfirmation.text =
-                "Send ${sendViewModel.zatoshiAmount.convertZatoshiToZecString(8)} ZEC to ${sendViewModel?.toAddress.toAbbreviatedAddress()}?"
+                "Send ${WalletZecFormmatter.toZecStringFull(sendViewModel.zatoshiAmount)} ZEC to ${sendViewModel?.toAddress.toAbbreviatedAddress()}?"
         }
         sendViewModel.memo.trim().isNotEmpty().let { hasMemo ->
             binding.radioIncludeAddress.isChecked = hasMemo || sendViewModel.includeFromAddress

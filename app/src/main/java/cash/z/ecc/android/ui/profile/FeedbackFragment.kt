@@ -7,6 +7,7 @@ import android.view.ViewTreeObserver
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.core.view.doOnLayout
+import cash.z.ecc.android.R
 import cash.z.ecc.android.databinding.FragmentFeedbackBinding
 import cash.z.ecc.android.di.viewmodel.viewModel
 import cash.z.ecc.android.feedback.Report
@@ -67,7 +68,7 @@ class FeedbackFragment :  BaseFragment<FragmentFeedbackBinding>() {
     //
 
     private fun onFeedbackSubmit(view: View) {
-        Toast.makeText(mainActivity, "Thanks for the feedback!", Toast.LENGTH_LONG).show()
+        Toast.makeText(mainActivity, R.string.feedback_thanks, Toast.LENGTH_LONG).show()
         tapped(FEEDBACK_SUBMIT)
 
         val q1 = binding.inputQuestion1.editText?.text.toString()

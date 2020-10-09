@@ -19,6 +19,7 @@
         android:id="@+id/back_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:contentDescription="@string/content_description_send_back"
         android:tint="@color/text_light"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -33,6 +34,7 @@
         android:layout_width="56dp"
         android:layout_height="56dp"
         android:clickable="true"
+        android:focusable="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.01"
@@ -52,7 +54,6 @@
         android:paddingEnd="16dp"
         android:paddingStart="16dp"
         android:paddingTop="0dp"
-        android:text="$20.1"
         android:textAppearance="@style/Zcash.TextAppearance.Zec"
         android:textSize="200sp"
         app:autoSizeMaxTextSize="40sp"
@@ -62,14 +63,15 @@
         app:layout_constraintEnd_toStartOf="@id/button_send"
         app:layout_constraintStart_toEndOf="@id/spacer_title"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="packed" />
+        app:layout_constraintVertical_chainStyle="packed"
+        tools:text="$20.1" />
 
     <TextView
         android:id="@+id/text_banner_message_start"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:elevation="6dp"
-        android:text="from your "
+        android:text="@string/send_fund_source_prefix"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
         android:textColor="@color/text_light"
         app:layout_constraintBottom_toTopOf="@id/guideline_content_top"
@@ -83,7 +85,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:elevation="6dp"
-        android:text="shielded"
+        android:text="@string/send_fund_source_highlight"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
         android:textColor="@color/colorPrimary"
         app:layout_constraintBaseline_toBaselineOf="@id/text_banner_message_start"
@@ -95,7 +97,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:elevation="6dp"
-        android:text=" wallet"
+        android:text="@string/send_fund_source_suffix"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
         android:textColor="@color/text_light"
         app:layout_constraintBaseline_toBaselineOf="@id/text_banner_message_start"
@@ -107,6 +109,7 @@
         android:id="@+id/image_down_arrow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:contentDescription="@string/content_description_send_arrow"
         android:tint="@color/colorPrimary"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@id/text_banner_message_end"
@@ -127,11 +130,16 @@
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/button_send"
-        android:layout_width="74dp"
+        android:layout_width="wrap_content"
         android:layout_height="38dp"
-        android:text="Send"
-        android:textColor="@color/text_dark"
         android:backgroundTint="@color/selector_primary_button_activatable"
+        android:maxLines="1"
+        android:paddingEnd="2dp"
+        android:paddingStart="2dp"
+        android:text="@string/send_button_primary"
+        android:textColor="@color/text_dark"
+        app:autoSizeMinTextSize="6sp"
+        app:autoSizeTextType="uniform"
         app:layout_constraintBottom_toBottomOf="@id/back_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.95"
@@ -143,16 +151,16 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        app:autoSizeMaxTextSize="12sp"
-        app:autoSizeMinTextSize="6sp"
-        app:autoSizeTextType="uniform"
         android:fontFamily="@font/inconsolata"
+        android:gravity="center"
+        android:maxLines="1"
         android:paddingEnd="8dp"
         android:paddingStart="8dp"
         android:textColor="@color/zcashRed"
-        android:maxLines="1"
         android:textSize="14sp"
-        android:gravity="center"
+        app:autoSizeMaxTextSize="12sp"
+        app:autoSizeMinTextSize="6sp"
+        app:autoSizeTextType="uniform"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/text_banner_message_start"
@@ -176,9 +184,9 @@
                 android:id="@+id/spacer_lower_content"
                 android:layout_width="1dp"
                 android:layout_height="0dp"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHeight_percent="0.04"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/check_include_address" />
 
             <!-- Input: Address -->
@@ -186,7 +194,7 @@
                 android:id="@+id/text_layout_address"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:hint="To"
+                android:hint="@string/send_address_hint"
                 android:theme="@style/Zcash.Overlay.TextInputLayout"
                 app:endIconDrawable="@drawable/ic_qr_scan"
                 app:endIconMode="custom"
@@ -215,7 +223,7 @@
                 android:id="@+id/text_layout_memo"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:hint="Memo"
+                android:hint="@string/send_memo_hint"
                 android:theme="@style/Zcash.Overlay.TextInputLayout"
                 app:endIconMode="clear_text"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -239,17 +247,17 @@
                     tools:text="WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW" />
             </com.google.android.material.textfield.TextInputLayout>
 
-<!--            <ImageView-->
-<!--                android:id="@+id/clear_memo"-->
-<!--                android:layout_width="24dp"-->
-<!--                android:layout_height="24dp"-->
-<!--                android:layout_marginEnd="10dp"-->
-<!--                android:layout_marginTop="6dp"-->
-<!--                android:elevation="6dp"-->
-<!--                android:src="@drawable/ic_close_black_24dp"-->
-<!--                android:tint="@color/text_light"-->
-<!--                app:layout_constraintEnd_toEndOf="@id/text_layout_memo"-->
-<!--                app:layout_constraintTop_toTopOf="@id/text_layout_memo" />-->
+            <!--            <ImageView-->
+            <!--                android:id="@+id/clear_memo"-->
+            <!--                android:layout_width="24dp"-->
+            <!--                android:layout_height="24dp"-->
+            <!--                android:layout_marginEnd="10dp"-->
+            <!--                android:layout_marginTop="6dp"-->
+            <!--                android:elevation="6dp"-->
+            <!--                android:src="@drawable/ic_close_black_24dp"-->
+            <!--                android:tint="@color/text_light"-->
+            <!--                app:layout_constraintEnd_toEndOf="@id/text_layout_memo"-->
+            <!--                app:layout_constraintTop_toTopOf="@id/text_layout_memo" />-->
 
             <!-- Spacer to help position checkbox under the memo line -->
             <Space
@@ -270,7 +278,7 @@
                 android:padding="0dp"
                 android:scaleX="0.84"
                 android:scaleY="0.84"
-                android:text="include reply-to"
+                android:text="@string/send_checkbox_include_address"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
                 android:textColor="@color/text_light_dimmed"
                 android:textSize="14sp"
@@ -298,7 +306,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="1dp"
-                android:text="On clipboard"
+                android:text="@string/send_history_clipboard"
                 android:textAllCaps="true"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -320,6 +328,7 @@
                     android:id="@+id/image_shield"
                     android:layout_width="16dp"
                     android:layout_height="16dp"
+                    android:contentDescription="@string/content_description_send_shield"
                     android:src="@drawable/ic_shielded"
                     android:tint="@color/colorPrimary"
                     app:layout_constraintBottom_toBottomOf="@id/clipboard_address_label"
@@ -333,7 +342,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="4dp"
-                    android:text="Unknown"
+                    android:text="@string/unknown"
                     android:textColor="@color/colorPrimary"
                     app:layout_constraintBottom_toTopOf="@id/clipboard_address"
                     app:layout_constraintStart_toEndOf="@id/image_shield"
@@ -344,16 +353,17 @@
                     android:id="@+id/clipboard_address"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="zasdfaksfjaslfjaslfkjaslk;kfjaslkfjasld;kfjaslfjdasflja"
                     android:textColor="@color/text_light"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="@id/image_shield"
-                    app:layout_constraintTop_toBottomOf="@id/clipboard_address_label" />
+                    app:layout_constraintTop_toBottomOf="@id/clipboard_address_label"
+                    tools:text="zasdfaksfjaslfjaslfkjaslk;kfjaslkfjasld;kfjaslfjdasflja" />
 
                 <ImageView
                     android:id="@+id/image_clipboard_address_selected"
                     android:layout_width="22dp"
                     android:layout_height="22dp"
+                    android:contentDescription="@string/content_description_send_selected"
                     android:src="@drawable/ic_check_shielded"
                     android:tint="@color/colorPrimary"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -383,7 +393,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="1dp"
-                android:text="last used"
+                android:text="@string/send_history_last"
                 android:textAllCaps="true"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -403,6 +413,7 @@
                     android:id="@+id/image_last_used_shield"
                     android:layout_width="16dp"
                     android:layout_height="16dp"
+                    android:contentDescription="@string/content_description_send_shield"
                     android:src="@drawable/ic_shielded"
                     android:tint="@color/colorPrimary"
                     app:layout_constraintBottom_toBottomOf="@id/last_used_address_label"
@@ -417,7 +428,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="4dp"
                     android:layout_marginTop="16dp"
-                    android:text="Unknown"
+                    android:text="@string/unknown"
                     android:textColor="@color/colorPrimary"
                     app:layout_constraintBottom_toTopOf="@id/last_used_address"
                     app:layout_constraintStart_toEndOf="@id/image_last_used_shield"
@@ -428,16 +439,17 @@
                     android:id="@+id/last_used_address"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="zasdfaksfjaslfjaslfkjaslk;kfjaslkfjasld;kfjaslfjdasflja"
                     android:textColor="@color/text_light"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="@id/image_last_used_shield"
-                    app:layout_constraintTop_toBottomOf="@id/last_used_address_label" />
+                    app:layout_constraintTop_toBottomOf="@id/last_used_address_label"
+                    tools:text="zasdfaksfjaslfjaslfkjaslk;kfjaslkfjasld;kfjaslfjdasflja" />
 
                 <ImageView
                     android:id="@+id/image_last_used_address_selected"
                     android:layout_width="22dp"
                     android:layout_height="22dp"
+                    android:contentDescription="@string/content_description_send_selected"
                     android:src="@drawable/ic_check_shielded"
                     android:tint="@color/colorPrimary"
                     android:visibility="gone"
@@ -467,6 +479,7 @@
                 android:id="@+id/image_scan_qr"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:contentDescription="@string/content_description_send_scan_qr"
                 android:paddingBottom="24dp"
                 android:paddingEnd="1dp"
                 android:paddingStart="6dp"

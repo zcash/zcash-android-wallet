@@ -39,30 +39,29 @@
         tools:background="@color/zcashRed" />
 
 
-<!--    <ImageView-->
-<!--        android:id="@+id/scan_frame"-->
-<!--        android:layout_width="0dp"-->
-<!--        android:layout_height="0dp"-->
-<!--        android:scaleType="centerCrop"-->
-<!--        android:src="@drawable/ic_scan_frame"-->
-<!--        app:layout_constraintDimensionRatio="H,1:1"-->
-<!--        app:layout_constraintBottom_toBottomOf="parent"-->
-<!--        app:layout_constraintEnd_toStartOf="@id/spacer_bottom_right"-->
-<!--        app:layout_constraintStart_toEndOf="@id/spacer_bottom_left"-->
-<!--        app:layout_constraintTop_toTopOf="parent"-->
-<!--        app:layout_constraintVertical_bias="0.3" />-->
-
-
+    <!--    <ImageView-->
+    <!--        android:id="@+id/scan_frame"-->
+    <!--        android:layout_width="0dp"-->
+    <!--        android:layout_height="0dp"-->
+    <!--        android:scaleType="centerCrop"-->
+    <!--        android:src="@drawable/ic_scan_frame"-->
+    <!--        app:layout_constraintDimensionRatio="H,1:1"-->
+    <!--        app:layout_constraintBottom_toBottomOf="parent"-->
+    <!--        app:layout_constraintEnd_toStartOf="@id/spacer_bottom_right"-->
+    <!--        app:layout_constraintStart_toEndOf="@id/spacer_bottom_left"-->
+    <!--        app:layout_constraintTop_toTopOf="parent"-->
+    <!--        app:layout_constraintVertical_bias="0.3" />-->
 
 
     <ImageView
         android:id="@+id/background_qr"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:contentDescription="@string/content_description_receive_qr_background"
         android:scaleType="fitXY"
         android:src="@drawable/ic_background_qr"
-        app:layout_constraintDimensionRatio="H,1:1"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintDimensionRatio="H,1:1"
         app:layout_constraintEnd_toStartOf="@id/spacer_bottom_right"
         app:layout_constraintStart_toEndOf="@id/spacer_bottom_left"
         app:layout_constraintTop_toTopOf="parent"
@@ -73,21 +72,23 @@
         android:id="@+id/receive_qr_code"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:contentDescription="@string/content_description_receive_qr_code"
         android:onClick="copyAddress"
         android:scaleType="fitCenter"
-        tools:visibility="visible"
-        app:layout_constraintDimensionRatio="H,1:1"
-        app:layout_constraintWidth_percent="0.625"
-        app:layout_constraintStart_toStartOf="@id/background_qr"
-        app:layout_constraintEnd_toEndOf="@id/background_qr"
-        app:layout_constraintTop_toTopOf="@id/background_qr"
         app:layout_constraintBottom_toBottomOf="@id/background_qr"
-        tools:background="@color/zcashWhite" />
+        app:layout_constraintDimensionRatio="H,1:1"
+        app:layout_constraintEnd_toEndOf="@id/background_qr"
+        app:layout_constraintStart_toStartOf="@id/background_qr"
+        app:layout_constraintTop_toTopOf="@id/background_qr"
+        app:layout_constraintWidth_percent="0.625"
+        tools:background="@color/zcashWhite"
+        tools:visibility="visible" />
 
     <ImageView
         android:id="@+id/icon_qr_logo"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:contentDescription="@string/content_description_receive_qr_logo"
         android:onClick="copyAddress"
         android:scaleType="fitCenter"
         android:src="@drawable/ic_shield_address"
@@ -102,12 +103,12 @@
         android:id="@+id/receive_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/address_label_shielded"
         android:drawableEnd="@drawable/ic_content_copy"
         android:drawablePadding="16dp"
+        android:text="@string/receive_address_label_shielded"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
         android:textColor="@color/text_light"
-        android:textSize="20dp"
+        android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/spacer_title" />
@@ -119,10 +120,10 @@
         android:layout_height="0dp"
         android:layout_marginTop="24dp"
         android:onClick="copyAddress"
-        app:layout_constraintStart_toStartOf="@id/background_qr"
-        app:layout_constraintEnd_toEndOf="@id/background_qr"
-        app:layout_constraintTop_toBottomOf="@id/background_qr"
         app:layout_constraintBottom_toBottomOf="@id/receive_address_parts"
+        app:layout_constraintEnd_toEndOf="@id/background_qr"
+        app:layout_constraintStart_toStartOf="@id/background_qr"
+        app:layout_constraintTop_toBottomOf="@id/background_qr"
         tools:background="@color/spacer" />
 
     <!-- Back Button -->
@@ -132,14 +133,15 @@
         android:layout_height="0dp"
         android:tint="@color/text_light_dimmed"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintDimensionRatio="H,1:1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.088"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintDimensionRatio="H,1:1"
-        app:layout_constraintWidth_percent="0.08"
         app:layout_constraintVertical_bias="0.065"
-        app:srcCompat="@drawable/ic_cancel" />
+        app:layout_constraintWidth_percent="0.08"
+        app:srcCompat="@drawable/ic_cancel"
+        android:contentDescription="@string/content_description_receive_back" />
 
     <View
         android:id="@+id/back_button_hit_area"
@@ -147,6 +149,7 @@
         android:layout_height="68dp"
         android:layout_marginStart="24dp"
         android:clickable="true"
+        android:focusable="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -157,15 +160,14 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         style="@style/TextAppearance.MaterialComponents.Headline6"
-        android:autoSizeTextType="uniform"
         android:maxLines="1"
         android:text="@string/receive_address_title"
         android:textColor="@color/text_light"
+        app:autoSizeTextType="uniform"
         app:layout_constraintBottom_toBottomOf="@id/back_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/back_button_hit_area"
         app:layout_constraintTop_toTopOf="@id/back_button" />
-
 
 
     <!-- Address parts -->
@@ -180,95 +182,95 @@
         app:layout_constraintEnd_toEndOf="@id/receive_title"
         app:layout_constraintStart_toStartOf="@id/receive_title"
         app:layout_constraintTop_toBottomOf="@id/receive_title">
+
         <TextView
             android:id="@+id/text_address_part_1"
-            style="@style/Zcash.TextAppearance.AddressPart"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text=" ztestsaplin"
+            style="@style/Zcash.TextAppearance.AddressPart"
             app:layout_constraintBottom_toTopOf="@+id/text_address_part_3"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.0"
-            app:layout_constraintVertical_chainStyle="packed" />
+            app:layout_constraintVertical_chainStyle="packed"
+            tools:text=" ztestsaplin" />
 
         <TextView
             android:id="@+id/text_address_part_3"
-            style="@style/Zcash.TextAppearance.AddressPart"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:text=" jceuu9s2p6t"
+            style="@style/Zcash.TextAppearance.AddressPart"
             app:layout_constraintBottom_toTopOf="@+id/text_address_part_5"
             app:layout_constraintStart_toStartOf="@id/text_address_part_1"
-            app:layout_constraintTop_toBottomOf="@id/text_address_part_1" />
+            app:layout_constraintTop_toBottomOf="@id/text_address_part_1"
+            tools:text=" jceuu9s2p6t" />
 
         <TextView
             android:id="@+id/text_address_part_5"
-            style="@style/Zcash.TextAppearance.AddressPart"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:text=" 7u7uarqls7d"
+            style="@style/Zcash.TextAppearance.AddressPart"
             app:layout_constraintBottom_toTopOf="@+id/text_address_part_7"
             app:layout_constraintStart_toStartOf="@id/text_address_part_1"
-            app:layout_constraintTop_toBottomOf="@id/text_address_part_3" />
+            app:layout_constraintTop_toBottomOf="@id/text_address_part_3"
+            tools:text=" 7u7uarqls7d" />
 
         <TextView
             android:id="@+id/text_address_part_7"
-            style="@style/Zcash.TextAppearance.AddressPart"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:text=" rzq85xggu56"
+            style="@style/Zcash.TextAppearance.AddressPart"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="@id/text_address_part_1"
-            app:layout_constraintTop_toBottomOf="@id/text_address_part_5" />
+            app:layout_constraintTop_toBottomOf="@id/text_address_part_5"
+            tools:text=" rzq85xggu56" />
 
         <TextView
             android:id="@+id/text_address_part_2"
-            style="@style/Zcash.TextAppearance.AddressPart"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
-            android:text=" g1mwjzlg62j"
+            style="@style/Zcash.TextAppearance.AddressPart"
             app:layout_constraintBottom_toTopOf="@+id/text_address_part_4"
             app:layout_constraintStart_toEndOf="@id/barrier_left_address_column"
-            app:layout_constraintTop_toTopOf="@id/text_address_part_1" />
+            app:layout_constraintTop_toTopOf="@id/text_address_part_1"
+            tools:text=" g1mwjzlg62j" />
 
         <TextView
             android:id="@+id/text_address_part_4"
-            style="@style/Zcash.TextAppearance.AddressPart"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:text=" wns6qxwec6v"
+            style="@style/Zcash.TextAppearance.AddressPart"
             app:layout_constraintBottom_toTopOf="@+id/text_address_part_6"
             app:layout_constraintStart_toStartOf="@id/text_address_part_2"
-            app:layout_constraintTop_toBottomOf="@id/text_address_part_2" />
+            app:layout_constraintTop_toBottomOf="@id/text_address_part_2"
+            tools:text=" wns6qxwec6v" />
 
         <TextView
             android:id="@+id/text_address_part_6"
-            style="@style/Zcash.TextAppearance.AddressPart"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:text=" gtg3tpgqxjd"
+            style="@style/Zcash.TextAppearance.AddressPart"
             app:layout_constraintBottom_toTopOf="@+id/text_address_part_8"
             app:layout_constraintStart_toStartOf="@id/text_address_part_2"
-            app:layout_constraintTop_toBottomOf="@id/text_address_part_4" />
+            app:layout_constraintTop_toBottomOf="@id/text_address_part_4"
+            tools:text=" gtg3tpgqxjd" />
 
         <TextView
             android:id="@+id/text_address_part_8"
-            style="@style/Zcash.TextAppearance.AddressPart"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:text=" k904xderng6"
+            style="@style/Zcash.TextAppearance.AddressPart"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="@id/text_address_part_2"
-            app:layout_constraintTop_toBottomOf="@id/text_address_part_6" />
+            app:layout_constraintTop_toBottomOf="@id/text_address_part_6"
+            tools:text=" k904xderng6" />
 
         <androidx.constraintlayout.widget.Barrier
             android:id="@+id/barrier_left_address_column"

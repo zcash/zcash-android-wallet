@@ -14,7 +14,6 @@ import cash.z.ecc.android.databinding.FragmentScanBinding
 import cash.z.ecc.android.di.viewmodel.activityViewModel
 import cash.z.ecc.android.di.viewmodel.viewModel
 import cash.z.ecc.android.ext.onClickNavBack
-import cash.z.ecc.android.ext.onClickNavTo
 import cash.z.ecc.android.feedback.Report
 import cash.z.ecc.android.feedback.Report.Tap.SCAN_BACK
 import cash.z.ecc.android.sdk.ext.ZcashSdk
@@ -47,8 +46,8 @@ class ScanFragment : BaseFragment<FragmentScanBinding>() {
         binding.backButtonHitArea.onClickNavBack() { tapped(SCAN_BACK) }
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
         if (!allPermissionsGranted()) getRuntimePermissions()
     }
 
@@ -125,7 +124,7 @@ class ScanFragment : BaseFragment<FragmentScanBinding>() {
         resumedScope.launch {
             if (viewModel.isNotValid(qrContent)) {
                 val network = ZcashSdk.NETWORK
-                binding.textScanError.text = "Invalid Zcash $network address:\n$qrContent"
+                binding.textScanError.text = getString(R.string.scan_invalid_address, network, qrContent)
                 image.close()
             } else {  /* continue scanning*/
                 binding.textScanError.text = ""

@@ -1,6 +1,16 @@
 Change Log
 ==========
 
+Version 1.0.0-alpha37 *(2020-10-07)*
+------------------------------------
+- New: Localization in 5 languages Russian, Italian, Spanish, Chinese and Korean.
+- New: Store and sync using just the ViewingKey.
+- New: Added QA build flavor for better testing.
+- New: Ability to change servers (thanks @Nighthawk!)
+- Fix: Critical bug in 3rd-party secure storage library impacting large strings.
+- Fix: Devices without PIN can use the wallet again.
+- Fix: Developer logs now work on all devices.
+
 Version 1.0.0-alpha34 *(2020-08-28)*
 ------------------------------------
 - New: Implemented transaction detail view.

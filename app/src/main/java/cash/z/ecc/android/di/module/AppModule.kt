@@ -10,6 +10,7 @@ import cash.z.ecc.android.lockbox.LockBox
 import cash.z.ecc.android.sdk.ext.SilentTwig
 import cash.z.ecc.android.sdk.ext.TroubleshootingTwig
 import cash.z.ecc.android.sdk.ext.Twig
+import cash.z.ecc.android.ui.util.DebugFileTwig
 import dagger.Module
 import dagger.Provides
 import dagger.multibindings.IntoSet
@@ -53,7 +54,7 @@ class AppModule {
     ): FeedbackCoordinator {
         return prefs.getBoolean(Const.Pref.FEEDBACK_ENABLED).let { isEnabled ->
             // observe nothing unless feedback is enabled
-            Twig.plant(if (isEnabled) TroubleshootingTwig() else SilentTwig())
+            Twig.plant(if (isEnabled) DebugFileTwig() else SilentTwig())
             FeedbackCoordinator(feedback, if (isEnabled) defaultObservers else setOf())
         }
     }

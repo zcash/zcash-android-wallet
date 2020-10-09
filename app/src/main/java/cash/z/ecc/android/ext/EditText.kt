@@ -42,7 +42,7 @@ inline fun EditText.limitDecimalPlaces(max: Int) {
                     if (editText.selectionStart == editText.selectionEnd && editText.selectionStart != textStr.length) {
                         textStr = previousValue
                     } else {
-                        textStr = number.toZecStringUniform(8)
+                        textStr = WalletZecFormmatter.formatFull(number)
                     }
                 }
 

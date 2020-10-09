@@ -22,7 +22,7 @@
 
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="cash.z.ecc.android.fileprovider"
+            android:authorities="@string/file_authority"
             android:exported="false"
             android:grantUriPermissions="true"
             android:writePermission="true">

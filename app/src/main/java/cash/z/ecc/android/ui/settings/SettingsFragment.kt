@@ -60,7 +60,7 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>() {
 
     private fun onResetClicked(unused: View?) {
         mainActivity?.hideKeyboard()
-        context?.showUpdateServerDialog("Restore Defaults") {
+        context?.showUpdateServerDialog(R.string.settings_buttons_restore) {
             resumedScope.launch {
                 binding.groupLoading.visible()
                 binding.loadingView.requestFocus()
@@ -117,7 +117,7 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>() {
             if (uiModel.complete) {
                 binding.groupLoading.gone()
                 mainActivity?.safeNavigate(R.id.nav_home)
-                Toast.makeText(ZcashWalletApp.instance, "Successfully changed server!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(ZcashWalletApp.instance, getString(R.string.settings_toast_change_server_success), Toast.LENGTH_SHORT).show()
                 true
             }
             false
@@ -133,7 +133,7 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>() {
         val message = "An error occured while changing servers. Please verify the info" +
                 " and try again.\n\nError: $details"
         twig(message)
-        Toast.makeText(ZcashWalletApp.instance, "Failed to change server!", Toast.LENGTH_SHORT).show()
+        Toast.makeText(ZcashWalletApp.instance, getString(R.string.settings_toast_change_server_failure), Toast.LENGTH_SHORT).show()
         context?.showUpdateServerCriticalError(message)
     }
 

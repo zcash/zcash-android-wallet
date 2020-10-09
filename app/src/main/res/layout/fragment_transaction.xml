@@ -71,6 +71,7 @@
         android:id="@+id/close_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:contentDescription="@string/content_description_transaction_details_back"
         android:tint="@color/zcashWhite_40"
         app:layout_constraintBottom_toTopOf="@id/text_timestamp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -84,6 +85,7 @@
         android:layout_width="56dp"
         android:layout_height="56dp"
         android:clickable="true"
+        android:focusable="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.01"
@@ -108,13 +110,13 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="12dp"
-        android:autoSizeMaxTextSize="18sp"
-        android:autoSizeMinTextSize="6dp"
-        android:autoSizeTextType="uniform"
         android:gravity="bottom"
         android:maxLines="1"
         android:textColor="@color/tx_text_light_dimmed"
         android:textSize="18sp"
+        app:autoSizeMaxTextSize="18sp"
+        app:autoSizeMinTextSize="6dp"
+        app:autoSizeTextType="uniform"
         app:layout_constraintBaseline_toBaselineOf="@id/text_block_height"
         app:layout_constraintEnd_toStartOf="@id/text_block_height_prefix"
         app:layout_constraintHorizontal_bias="0"
@@ -204,7 +206,8 @@
         app:layout_constraintEnd_toEndOf="@id/top_box_icon_background"
         app:layout_constraintHeight_percent="0.0408"
         app:layout_constraintStart_toStartOf="@id/top_box_icon_background"
-        app:layout_constraintTop_toTopOf="@id/top_box_icon_background" />
+        app:layout_constraintTop_toTopOf="@id/top_box_icon_background"
+        android:contentDescription="@string/content_description_transaction_details_direction" />
 
     <TextView
         android:id="@+id/top_box_label"
@@ -294,7 +297,8 @@
         app:layout_constraintEnd_toEndOf="@id/space_spots_memo"
         app:layout_constraintStart_toStartOf="@id/space_spots_memo"
         app:layout_constraintTop_toTopOf="@id/subway_label_memo"
-        tools:visibility="visible" />
+        tools:visibility="visible"
+        android:contentDescription="@string/content_description_transaction_details_memo" />
 
     <View
         android:id="@+id/subway_spot_address"
@@ -332,8 +336,9 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="24dp"
         android:textColor="@color/tx_text_light_dimmed"
-        android:textSize="18dp"
+        android:textSize="18sp"
         android:visibility="gone"
+        tools:visibility="visible"
         app:layout_constraintStart_toStartOf="@id/subway_line"
         app:layout_constraintTop_toTopOf="@id/subway_line"
         tools:text="+0.0001 network fee" />
@@ -346,7 +351,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="24dp"
         android:textColor="@color/tx_text_light_dimmed"
-        android:textSize="18dp"
+        android:textSize="18sp"
         android:visibility="gone"
         app:layout_constraintStart_toStartOf="@id/subway_line"
         app:layout_constraintTop_toBottomOf="@id/subway_label_fee"
@@ -359,8 +364,9 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="24dp"
         android:paddingEnd="8dp"
+        android:paddingStart="8dp"
         android:text="@string/transaction_with_memo"
-        android:textSize="18dp"
+        android:textSize="18sp"
         android:visibility="invisible"
         app:layout_constraintStart_toStartOf="@id/subway_line"
         app:layout_constraintTop_toBottomOf="@id/subway_label_source"
@@ -378,7 +384,7 @@
         android:maxLines="3"
         android:scrollbars="vertical"
         android:textColor="@color/tx_text_light_dimmed"
-        android:textSize="18dp"
+        android:textSize="18sp"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="@id/guideline_keyline_end"
         app:layout_constraintStart_toStartOf="@id/subway_line"
@@ -394,7 +400,8 @@
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@id/spacer_memo_icon"
         app:layout_constraintStart_toEndOf="@id/spacer_memo_icon"
-        app:layout_constraintTop_toTopOf="@id/spacer_memo_icon" />
+        app:layout_constraintTop_toTopOf="@id/spacer_memo_icon"
+        android:contentDescription="@string/content_description_transaction_details_memo_icon" />
 
     <View
         android:id="@+id/hit_area_memo_subway"
@@ -429,7 +436,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="24dp"
         android:textColor="@color/text_light"
-        android:textSize="18dp"
+        android:textSize="18sp"
         android:visibility="gone"
         app:layout_constraintStart_toStartOf="@id/subway_line"
         app:layout_constraintTop_toBottomOf="@id/subway_label_memo"
@@ -442,7 +449,7 @@
         android:layout_marginBottom="24dp"
         android:layout_marginStart="16dp"
         android:textColor="@color/tx_text_light_dimmed"
-        android:textSize="18dp"
+        android:textSize="18sp"
         app:layout_constraintBottom_toTopOf="@id/bottom_box_background"
         app:layout_constraintStart_toStartOf="@id/subway_line"
         tools:text="confirmed" />
@@ -477,7 +484,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="2dp"
-        android:text="Total Spent"
+        android:text="@string/transaction_details_total"
         android:textColor="@color/tx_primary"
         android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@id/bottom_box_value"
@@ -495,7 +502,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginTop="4dp"
         android:maxLines="1"
-        android:text="$4.32"
+        tools:text="$4.32"
         android:textAppearance="@style/Zcash.TextAppearance.Zec"
         android:textColor="@color/text_light"
         android:textSize="36sp"
@@ -519,7 +526,7 @@
         style="@style/Zcash.Button.OutlinedButton"
         android:gravity="center"
         android:padding="12dp"
-        android:text="Explore"
+        android:text="@string/transaction_details_button_explore"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
         android:textColor="@color/tx_text_light_dimmed_less"
         app:icon="@drawable/ic_baseline_launch_24"
@@ -542,6 +549,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
-        app:constraint_referenced_ids="icon_memo, hit_area_memo_icon, spacer_memo_icon" />
+        app:constraint_referenced_ids="icon_memo, hit_area_memo_icon" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

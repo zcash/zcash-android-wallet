@@ -54,7 +54,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.065"
-        app:srcCompat="@drawable/ic_arrow_back_black_24dp" />
+        app:srcCompat="@drawable/ic_arrow_back_black_24dp"
+        android:contentDescription="@string/content_description_history_back" />
 
     <View
         android:id="@+id/back_button_hit_area"
@@ -66,14 +67,15 @@
         app:layout_constraintHorizontal_bias="0.01"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.045" />
+        app:layout_constraintVertical_bias="0.045"
+        android:focusable="true" />
 
 
     <TextView
         android:id="@+id/text_balance_available"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Updating"
+        android:text="@string/history_balance_updating"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
         android:textColor="@color/text_light"
         android:visibility="visible"
@@ -87,8 +89,8 @@
         android:id="@+id/label_balance"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="4dp"
-        android:text="Available"
+        android:layout_marginStart="4dp"
+        android:text="@string/history_balance_available"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
         android:textColor="@color/colorPrimary"
         app:layout_constraintBaseline_toBaselineOf="@id/text_balance_available"
@@ -99,7 +101,7 @@
         android:id="@+id/text_balance_description"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="(enter an amount to send)"
+        android:text="@string/history_instruction_enter_amount"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
         android:textColor="@color/text_light_dimmed"
         app:layout_constraintBottom_toBottomOf="@id/back_button"
@@ -124,9 +126,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:text="Your Wallet History"
+            android:text="@string/history_header_transactions"
             android:textColor="@color/text_light"
-            android:textSize="22dp"
+            android:textSize="22sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -135,7 +137,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:text="Shielded address: "
+            android:paddingEnd="8dp"
+            android:text="@string/history_address_label"
             android:textColor="@color/text_light_dimmed"
             app:layout_constraintStart_toStartOf="@id/text_header_title"
             app:layout_constraintTop_toBottomOf="@+id/text_header_title" />
@@ -160,7 +163,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.15"
             app:layout_constraintStart_toEndOf="@id/text_address"
-            app:layout_constraintTop_toTopOf="@id/label_address" />
+            app:layout_constraintTop_toTopOf="@id/label_address"
+            android:contentDescription="@string/content_description_history_copy" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <View
@@ -176,9 +180,9 @@
         android:id="@+id/empty_message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="No history yet."
+        android:text="@string/history_empty_text"
         android:textColor="@color/text_light"
-        android:textSize="18dp"
+        android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

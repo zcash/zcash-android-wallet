@@ -14,6 +14,7 @@ import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.core.widget.ImageViewCompat
 import androidx.core.widget.doAfterTextChanged
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.android.R
 import cash.z.ecc.android.databinding.FragmentSendBinding
@@ -105,7 +106,7 @@ class SendFragment : BaseFragment<FragmentSendBinding>(),
     private fun applyViewModel(model: SendViewModel) {
         // apply amount
         val roundedAmount =
-            model.zatoshiAmount.coerceAtLeast(0L).convertZatoshiToZecStringUniform(8)
+            WalletZecFormmatter.toZecStringFull(model.zatoshiAmount.coerceAtLeast(0L))
         binding.textSendAmount.text = "\$$roundedAmount"
         // apply address
         binding.inputZcashAddress.setText(model.toAddress)
@@ -117,7 +118,7 @@ class SendFragment : BaseFragment<FragmentSendBinding>(),
 
     private fun onMemoUpdated() {
         val totalLength = sendViewModel.createMemoToSend().length
-        binding.textLayoutMemo.helperText = "$totalLength/${ZcashSdk.MAX_MEMO_SIZE} chars"
+        binding.textLayoutMemo.helperText = "$totalLength/${ZcashSdk.MAX_MEMO_SIZE} ${getString(R.string.send_memo_chars_abbreviation)}"
         val color = if (totalLength > ZcashSdk.MAX_MEMO_SIZE) R.color.zcashRed else R.color.text_light_dimmed
         binding.textLayoutMemo.setHelperTextColor(ColorStateList.valueOf(color.toAppColor()))
     }
@@ -135,17 +136,17 @@ class SendFragment : BaseFragment<FragmentSendBinding>(),
     }
 
     private fun onAddressChanged(address: String) {
-        resumedScope.launch {
+        lifecycleScope.launchWhenResumed {
             val validation = sendViewModel.validateAddress(address)
             binding.buttonSend.isActivated = !validation.isNotValid
             var type = when (validation) {
-                is AddressType.Transparent -> "This is a valid transparent address" to R.color.zcashGreen
-                is AddressType.Shielded -> "This is a valid shielded address" to R.color.zcashGreen
-                is AddressType.Invalid -> "This address appears to be invalid" to R.color.zcashRed
+                is AddressType.Transparent -> R.string.send_validation_address_valid_taddr to R.color.zcashGreen
+                is AddressType.Shielded -> R.string.send_validation_address_valid_zaddr to R.color.zcashGreen
+                is AddressType.Invalid -> R.string.send_validation_address_invalid to R.color.zcashRed
             }
             if (address == sendViewModel.synchronizer.getAddress()) type =
-                "Warning, this appears to be your address!" to R.color.zcashRed
-            binding.textLayoutAddress.helperText = type.first
+                R.string.send_validation_address_self to R.color.zcashRed
+            binding.textLayoutAddress.helperText = getString(type.first)
             binding.textLayoutAddress.setHelperTextColor(ColorStateList.valueOf(type.second.toAppColor()))
 
             // if we have the clipboard address but we're changing it, then clear the selection
@@ -170,9 +171,9 @@ class SendFragment : BaseFragment<FragmentSendBinding>(),
 
     private fun onSubmit(unused: EditText? = null) {
         sendViewModel.toAddress = binding.inputZcashAddress.text.toString()
-        sendViewModel.validate(availableZatoshi, maxZatoshi).onFirstWith(resumedScope) { errorMessage ->
+        sendViewModel.validate(requireContext(), availableZatoshi, maxZatoshi).onFirstWith(resumedScope) { errorMessage ->
             if (errorMessage == null) {
-                mainActivity?.authenticate("Please confirm that you want to send\n${sendViewModel.zatoshiAmount.convertZatoshiToZecString(8)} ZEC to\n${sendViewModel.toAddress.toAbbreviatedAddress()}") {
+                mainActivity?.authenticate("${getString(R.string.send_confirmation_prompt)}\n${WalletZecFormmatter.toZecStringFull(sendViewModel.zatoshiAmount)} ZEC ${getString(R.string.send_final_to)}\n${sendViewModel.toAddress.toAbbreviatedAddress()}") {
 //                    sendViewModel.funnel(Send.AddressPageComplete)
                     mainActivity?.safeNavigate(R.id.action_nav_send_to_nav_send_final)
                 }
@@ -189,7 +190,7 @@ class SendFragment : BaseFragment<FragmentSendBinding>(),
     private fun onMax() {
         if (maxZatoshi != null) {
 //            binding.inputZcashAmount.apply {
-//                setText(maxZatoshi.convertZatoshiToZecString(8))
+//                setText(WalletZecFormmatter.toZecStringFull(maxZatoshi))
 //                postDelayed({
 //                    requestFocus()
 //                    setSelection(text?.length ?: 0)
@@ -223,7 +224,7 @@ class SendFragment : BaseFragment<FragmentSendBinding>(),
 
     private fun onBalanceUpdated(balance: WalletBalance) {
 //        binding.textLayoutAmount.helperText =
-//            "You have ${balance.availableZatoshi.coerceAtLeast(0L).convertZatoshiToZecString(8)} available"
+//            "You have ${WalletZecFormmatter.toZecStringFull(balance.availableZatoshi.coerceAtLeast(0L))} available"
         maxZatoshi = (balance.availableZatoshi - ZcashSdk.MINERS_FEE_ZATOSHI).coerceAtLeast(0L)
         availableZatoshi = balance.availableZatoshi
     }
@@ -264,7 +265,7 @@ class SendFragment : BaseFragment<FragmentSendBinding>(),
                 selected,
                 address.takeUnless { isBoth })
         }
-        binding.dividerClipboard.text = if (isBoth) "Last Used and On Clipboard" else "On Clipboard"
+        binding.dividerClipboard.setText(if (isBoth) R.string.send_history_last_and_clipboard else R.string.send_history_clipboard)
     }
 
     private fun updateAddressBanner(
