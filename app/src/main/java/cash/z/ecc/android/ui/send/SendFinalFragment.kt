@@ -91,7 +91,7 @@ class SendFinalFragment : BaseFragment<FragmentSendFinalBinding>() {
 
     private fun onExit() {
         sendViewModel.reset()
-        mainActivity?.navController?.popBackStack(R.id.nav_home, false)
+        mainActivity?.safeNavigate(R.id.action_nav_send_final_to_nav_home)
     }
 
     private fun onCancel(tx: PendingTransaction) {
@@ -99,7 +99,7 @@ class SendFinalFragment : BaseFragment<FragmentSendFinalBinding>() {
     }
 
     private fun onReturnToSend() {
-        mainActivity?.navController?.popBackStack(R.id.nav_send, false)
+        mainActivity?.safeNavigate(R.id.action_nav_send_final_to_nav_send)
     }
 
     private fun onSeeDetails() {

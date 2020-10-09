@@ -38,7 +38,7 @@ object Deps {
             val LIFECYCLE_RUNTIME_KTX =     "androidx.lifecycle:lifecycle-runtime-ktx:$version"
             val LIFECYCLE_EXTENSIONS =      "androidx.lifecycle:lifecycle-extensions:$version"
         }
-        object Navigation :     Version("2.2.0") {
+        object Navigation :     Version("2.3.0") {
             val FRAGMENT_KTX =              "androidx.navigation:navigation-fragment-ktx:$version"
             val UI_KTX =                    "androidx.navigation:navigation-ui-ktx:$version"
         }
