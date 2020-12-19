@@ -40,11 +40,16 @@ class FeedbackBugsnag : FeedbackCoordinator.FeedbackObserver {
                 action.rewindHeight,
                 action.toString()
             )
+            is Report.Funnel.Send.Error -> SendException(
+                action.errorCode,
+                action.errorMessage
+            )
             else -> null
         }?.let { exception ->
-            val details = kotlin.runCatching { action.toMap() }.getOrElse { mapOf() }
+            // fix: always add details so that we can differentiate a lack of details from a change in the way details should be added
+            val details = kotlin.runCatching { action.toMap() }.getOrElse { mapOf("hasDetails" to false) }
             Bugsnag.notify(exception) { event ->
-                if (details.isNotEmpty()) event.addMetadata("errorDetails", details)
+                event.addMetadata("errorDetails", details)
                 true
             }
         }
@@ -53,4 +58,7 @@ class FeedbackBugsnag : FeedbackCoordinator.FeedbackObserver {
     private class ReorgException(errorHeight: Int, rewindHeight: Int, reorgMesssage: String) :
         Throwable(reorgMesssage)
 
+    private class SendException(errorCode: Int?, errorMessage: String?): RuntimeException(
+        "Non-fatal error while sending transaction. code: $errorCode message: $errorMessage"
+    )
 }

@@ -14,18 +14,19 @@ object Report {
             object SendSelected : Send("sendselected", 50)
             object SpendingKeyFound : Send("keyfound", 60)
             object Creating : Send("creating", 70)
+            object Cancelled : Send("cancelled", 72)
             class Created(id: Long) : Send("created", 80, "id" to id)
             object Submitted : Send("submitted", 90)
             class Mined(minedHeight: Int) : Send("mined", 100, "minedHeight" to minedHeight)
 
             // Errors
-            abstract class Error(stepName: String, step: Int, vararg properties: Pair<String, Any>) : Send("error.$stepName", step, "isError" to true, *properties)
-            object ErrorNotFound : Error("notfound", 51)
-            class ErrorEncoding(errorCode: Int? = null, errorMessage: String? = null) : Error("encode", 71,
+            abstract class Error(stepName: String, step: Int, val errorCode: Int?, val errorMessage: String?, vararg properties: Pair<String, Any>) : Send("error.$stepName", step, "isError" to true, *properties)
+            object ErrorNotFound : Error("notfound", 51, null, "Key not found")
+            class ErrorEncoding(errorCode: Int? = null, errorMessage: String? = null) : Error("encode", 71, errorCode, errorMessage,
                 "errorCode" to (errorCode ?: -1),
                 "errorMessage" to (errorMessage ?: "None")
             )
-            class ErrorSubmitting(errorCode: Int? = null, errorMessage: String? = null) : Error("submit", 81,
+            class ErrorSubmitting(errorCode: Int? = null, errorMessage: String? = null) : Error("submit", 81, errorCode, errorMessage,
                 "errorCode" to (errorCode ?: -1),
                 "errorMessage" to (errorMessage ?: "None")
             )
@@ -64,6 +65,14 @@ object Report {
                 val rewindHeight: Int by propertyMap
             }
             class TxUpdateFailed(t: Throwable) : Feedback.AppError("txupdate", t, false)
+            abstract class TxError(action: String, val errorCode: Int?, val errorMessage: String?) : Feedback.AppError(
+                "tx.$action",
+                "Failed to $action transaction due to $errorMessage",
+                false,
+                "errorCode" to (errorCode ?: 1)
+            )
+            class TxEncodeError(errorCode: Int?, errorMessage: String?) : TxError("encode", errorCode, errorMessage)
+            class TxSubmitError(errorCode: Int?, errorMessage: String?) : TxError("submit", errorCode, errorMessage)
         }
     }
 
@@ -74,7 +83,7 @@ object Report {
         *properties
     ) {
         override val key = "issue.$name"
-        override fun toString() = "occurrence of ${key.replace('.', ' ')}"
+        override fun toString() = "occurrence of ${key.replace('.', ' ')}${toMap().let { if(it.size > 1) " with ${it.entries}" else "" }}"
 
         // Issues with sending worth monitoring
         object SelfSend : Issue("self.send")
@@ -83,6 +92,9 @@ object Report {
         object MinimumAmount : Issue("minimum.amount")
         class TruncatedMemo(memoSize: Int) : Issue("truncated.memo", "memoSize" to memoSize)
         class LargeMemo(memoSize: Int) : Issue("large.memo", "memoSize" to memoSize)
+        class MissingViewkey(recovered: Boolean, needle: String, haystack: String, hasKey: Boolean) : Issue(
+            "missing.viewkey", "wasAbleToRecover" to recovered, "needle" to needle, "haystack" to haystack, "hasKey" to hasKey
+        )
     }
 
     enum class Screen(val id: String? = null) : Feedback.Action {

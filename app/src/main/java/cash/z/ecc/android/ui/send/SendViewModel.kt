@@ -10,6 +10,7 @@ import cash.z.ecc.android.feedback.Feedback
 import cash.z.ecc.android.feedback.Feedback.Keyed
 import cash.z.ecc.android.feedback.Feedback.TimeMetric
 import cash.z.ecc.android.feedback.Report
+import cash.z.ecc.android.feedback.Report.Funnel.Send
 import cash.z.ecc.android.feedback.Report.Funnel.Send.SendSelected
 import cash.z.ecc.android.feedback.Report.Funnel.Send.SpendingKeyFound
 import cash.z.ecc.android.feedback.Report.Issue
@@ -17,14 +18,11 @@ import cash.z.ecc.android.feedback.Report.MetricType
 import cash.z.ecc.android.feedback.Report.MetricType.*
 import cash.z.ecc.android.lockbox.LockBox
 import cash.z.ecc.android.sdk.Synchronizer
-import cash.z.ecc.android.sdk.annotation.OpenForTesting
 import cash.z.ecc.android.sdk.db.entity.*
 import cash.z.ecc.android.sdk.ext.ZcashSdk
-import cash.z.ecc.android.sdk.ext.convertZatoshiToZecString
 import cash.z.ecc.android.sdk.ext.twig
 import cash.z.ecc.android.sdk.tool.DerivationTool
 import cash.z.ecc.android.sdk.validate.AddressType
-import cash.z.ecc.android.ui.setup.WalletSetupViewModel
 import cash.z.ecc.android.ui.util.INCLUDE_MEMO_PREFIX_STANDARD
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.Flow
@@ -69,7 +67,7 @@ class SendViewModel @Inject constructor() : ViewModel() {
             lockBox.getBytes(Const.Backup.SEED)!!
         )
         funnel(SpendingKeyFound)
-        reportIssues(memoToSend)
+        reportUserInputIssues(memoToSend)
         return synchronizer.sendToAddress(
             keys[0],
             zatoshiAmount,
@@ -77,6 +75,8 @@ class SendViewModel @Inject constructor() : ViewModel() {
             memoToSend.chunked(ZcashSdk.MAX_MEMO_SIZE).firstOrNull() ?: ""
         ).onEach {
             twig("Received pending txUpdate: ${it?.toString()}")
+            updateMetrics(it)
+            reportFailures(it)
         }
     }
 
@@ -87,21 +87,6 @@ class SendViewModel @Inject constructor() : ViewModel() {
     }
 
     fun createMemoToSend() = if (includeFromAddress) "$memo\n$INCLUDE_MEMO_PREFIX_STANDARD\n$fromAddress" else memo
-
-    private fun reportIssues(memoToSend: String) {
-        if (toAddress == fromAddress) feedback.report(Issue.SelfSend)
-        when {
-            zatoshiAmount < ZcashSdk.MINERS_FEE_ZATOSHI -> feedback.report(Issue.TinyAmount)
-            zatoshiAmount < 100 -> feedback.report(Issue.MicroAmount)
-            zatoshiAmount == 1L -> feedback.report(Issue.MinimumAmount)
-        }
-        memoToSend.length.also {
-            when {
-                it > ZcashSdk.MAX_MEMO_SIZE -> feedback.report(Issue.TruncatedMemo(it))
-                it > (ZcashSdk.MAX_MEMO_SIZE * 0.96) -> feedback.report(Issue.LargeMemo(it))
-            }
-        }
-    }
 
     suspend fun validateAddress(address: String): AddressType =
         synchronizer.validateAddress(address)
@@ -149,7 +134,43 @@ class SendViewModel @Inject constructor() : ViewModel() {
         includeFromAddress = false
     }
 
-    fun updateMetrics(tx: PendingTransaction) {
+
+    //
+    // Analytics
+    //
+
+    private fun reportFailures(tx: PendingTransaction) {
+        when {
+            tx.isCancelled() -> funnel(Send.Cancelled)
+            tx.isFailedEncoding() -> {
+                // report that the funnel leaked and also capture a non-fatal app error
+                funnel(Send.ErrorEncoding(tx.errorCode, tx.errorMessage))
+                feedback.report(Report.Error.NonFatal.TxEncodeError(tx.errorCode, tx.errorMessage))
+            }
+            tx.isFailedSubmit() -> {
+                // report that the funnel leaked and also capture a non-fatal app error
+                funnel(Send.ErrorSubmitting(tx.errorCode, tx.errorMessage))
+                feedback.report(Report.Error.NonFatal.TxSubmitError(tx.errorCode, tx.errorMessage))
+            }
+        }
+    }
+
+    private fun reportUserInputIssues(memoToSend: String) {
+        if (toAddress == fromAddress) feedback.report(Issue.SelfSend)
+        when {
+            zatoshiAmount < ZcashSdk.MINERS_FEE_ZATOSHI -> feedback.report(Issue.TinyAmount)
+            zatoshiAmount < 100 -> feedback.report(Issue.MicroAmount)
+            zatoshiAmount == 1L -> feedback.report(Issue.MinimumAmount)
+        }
+        memoToSend.length.also {
+            when {
+                it > ZcashSdk.MAX_MEMO_SIZE -> feedback.report(Issue.TruncatedMemo(it))
+                it > (ZcashSdk.MAX_MEMO_SIZE * 0.96) -> feedback.report(Issue.LargeMemo(it))
+            }
+        }
+    }
+
+    private fun updateMetrics(tx: PendingTransaction) {
         try {
             when {
                 tx.isMined() -> TRANSACTION_SUBMITTED to TRANSACTION_MINED by tx.id
@@ -165,7 +186,7 @@ class SendViewModel @Inject constructor() : ViewModel() {
         }
     }
 
-    fun report(metricId: String?) {
+    private fun report(metricId: String?) {
         metrics[metricId]?.let { metric ->
             metric.takeUnless { (it.elapsedTime ?: 0) <= 0L }?.let {
                 viewModelScope.launch {
@@ -189,7 +210,7 @@ class SendViewModel @Inject constructor() : ViewModel() {
         }
     }
 
-    fun funnel(step: Report.Funnel.Send?) {
+    fun funnel(step: Send?) {
         step ?: return
         feedback.report(step)
     }
