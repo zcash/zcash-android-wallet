@@ -1,6 +1,16 @@
 Change Log
 ==========
 
+Version 1.0.0-alpha41 *(2020-12-19)*
+------------------------------------
+- New: Upgrade to the latest SDK.
+- New: Implements ZIP-313, reducing the default fee from 10,000 to 1,000 zats.
+- New: Adds authentication prior to viewing backup seed words.
+- New: Adds blockchair as the transaction explorer.
+- Fix: Authentication bugs on older devices that were preventing sends and mishandling cancels.
+- Fix: Users can now upgrade from seed-only prior versions without crashing or needing to restore.
+- Fix: Improved internal metrics for troubleshooting issues.
+
 Version 1.0.0-alpha37 *(2020-10-07)*
 ------------------------------------
 - New: Localization in 5 languages Russian, Italian, Spanish, Chinese and Korean.
