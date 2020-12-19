@@ -18,6 +18,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.IdRes
@@ -38,6 +39,7 @@ import cash.z.ecc.android.databinding.DialogFirstUseMessageBinding
 import cash.z.ecc.android.di.component.MainActivitySubcomponent
 import cash.z.ecc.android.di.component.SynchronizerSubcomponent
 import cash.z.ecc.android.di.viewmodel.activityViewModel
+import cash.z.ecc.android.ext.goneIf
 import cash.z.ecc.android.ext.showCriticalProcessorError
 import cash.z.ecc.android.ext.showScanFailure
 import cash.z.ecc.android.ext.showUninitializedError
@@ -60,11 +62,17 @@ import cash.z.ecc.android.ui.util.INCLUDE_MEMO_PREFIXES_RECOGNIZED
 import cash.z.ecc.android.ui.util.toUtf8Memo
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
 class MainActivity : AppCompatActivity() {
+
+    @Inject
+    lateinit var mainViewModel: MainViewModel
 
     @Inject
     lateinit var feedback: Feedback
@@ -113,6 +121,7 @@ class MainActivity : AppCompatActivity() {
 
         setContentView(R.layout.main_activity)
         initNavigation()
+        initLoadScreen()
 
         window.statusBarColor = Color.TRANSPARENT
         window.navigationBarColor = Color.TRANSPARENT
@@ -122,8 +131,6 @@ class MainActivity : AppCompatActivity() {
         )
         setWindowFlag(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, false)
         setWindowFlag(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION, false)
-
-
     }
 
     override fun onResume() {
@@ -173,6 +180,21 @@ class MainActivity : AppCompatActivity() {
         navInitListeners.clear()
     }
 
+    private fun initLoadScreen() {
+        lifecycleScope.launchWhenResumed {
+            mainViewModel.loadingMessage.collect { message ->
+                onLoadingMessage(message)
+            }
+        }
+    }
+
+    private fun onLoadingMessage(message: String?) {
+        twig("Applying loading message: $message")
+        // TODO: replace with view binding
+        findViewById<View>(R.id.container_loading).goneIf(message == null)
+        findViewById<TextView>(R.id.text_message).text = message
+    }
+
     fun safeNavigate(@IdRes destination: Int, extras: Navigator.Extras? = null) {
         if (navController == null) {
             navInitListeners.add {
@@ -205,6 +227,7 @@ class MainActivity : AppCompatActivity() {
 
     fun startSync(initializer: Initializer) {
         if (!isInitialized) {
+            mainViewModel.setLoading(true)
             synchronizerComponent = ZcashWalletApp.component.synchronizerSubcomponent().create(
                 initializer
             )
@@ -217,6 +240,7 @@ class MainActivity : AppCompatActivity() {
         } else {
             twig("Ignoring request to start sync because sync has already been started!")
         }
+        mainViewModel.setLoading(false)
     }
 
     fun reportScreen(screen: Report.Screen?) = reportAction(screen)
@@ -227,6 +251,10 @@ class MainActivity : AppCompatActivity() {
 
     private fun reportAction(action: Feedback.Action?) {
         action?.let { feedback.report(it) }
+    }
+
+    fun setLoading(isLoading: Boolean, message: String? = null) {
+        mainViewModel.setLoading(isLoading, message)
     }
 
     fun authenticate(description: String, title: String = getString(R.string.biometric_prompt_title), block: () -> Unit) {
@@ -597,4 +625,5 @@ class MainActivity : AppCompatActivity() {
             twig("Warning: failed to open browser due to $t")
         }
     }
+
 }
