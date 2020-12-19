@@ -66,7 +66,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="+.0001 Network Fee"
+        android:text="+.00001 Network Fee"
         style="@style/TextAppearance.MaterialComponents.Body2"
         android:textColor="@color/colorAccent"
         app:layout_constraintTop_toTopOf="parent"
