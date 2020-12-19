@@ -1,9 +1,12 @@
 package cash.z.ecc.android.ui.setup
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import cash.z.ecc.android.ZcashWalletApp
 import cash.z.ecc.android.ext.Const
+import cash.z.ecc.android.ext.failWith
 import cash.z.ecc.android.feedback.Feedback
+import cash.z.ecc.android.feedback.Report
 import cash.z.ecc.android.lockbox.LockBox
 import cash.z.ecc.android.sdk.Initializer
 import cash.z.ecc.android.sdk.exception.InitializerException
@@ -12,6 +15,7 @@ import cash.z.ecc.android.sdk.tool.DerivationTool
 import cash.z.ecc.android.sdk.tool.WalletBirthdayTool
 import cash.z.ecc.android.ui.setup.WalletSetupViewModel.WalletSetupState.*
 import cash.z.ecc.kotlin.mnemonic.Mnemonics
+import com.bugsnag.android.Bugsnag
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -78,16 +82,60 @@ class WalletSetupViewModel @Inject constructor() : ViewModel() {
         return ZcashWalletApp.component.initializerSubcomponent().create(config).initializer()
     }
 
-
-    private fun loadConfig() = Initializer.Builder { builder ->
+    /**
+     * Build a config object by loading in the viewingKey, birthday and server info which is already
+     * known by this point.
+     */
+    private suspend fun loadConfig(): Initializer.Config {
         val vk = lockBox.getCharsUtf8(Const.Backup.VIEWING_KEY)?.let { String(it) }
-            ?: throw InitializerException.MissingViewingKeyException
-        val birthdayHeight = loadBirthdayHeight()
-            ?: throw InitializerException.MissingBirthdayException
+            ?: onMissingViewingKey()
+        val birthdayHeight = loadBirthdayHeight() ?: onMissingBirthday()
         val host = prefs[Const.Pref.SERVER_HOST] ?: Const.Default.Server.HOST
         val port = prefs[Const.Pref.SERVER_PORT] ?: Const.Default.Server.PORT
 
-        builder.import(vk, birthdayHeight, host, port)
+        return Initializer.Config { it.importWallet(vk, birthdayHeight, host, port) }
+    }
+
+    // TODO: delete this function in the next release
+    private suspend fun onMissingViewingKey(): String {
+        // add some temporary logic to help us troubleshoot this problem.
+        ZcashWalletApp.instance.getSharedPreferences("SecurePreferences", Context.MODE_PRIVATE)
+            .all.map { it.key }.joinToString().let { keyNames ->
+                Const.Backup.VIEWING_KEY.let { missingKey ->
+                    // is there a typo or change in how the value is labelled?
+                    Bugsnag.leaveBreadcrumb("$missingKey not found in keySet: $keyNames")
+                    // for troubleshooting purposes, let's see if we CAN derive the vk from the seed in these situations
+                    var recoveryViewingKey: String? = null
+                    var ableToLoadSeed = false
+                    try {
+                        val seed = lockBox.getBytes(Const.Backup.SEED)!!
+                        ableToLoadSeed = true
+                        recoveryViewingKey = DerivationTool.deriveViewingKeys(seed)[0]
+                    } catch (t: Throwable) {
+                        Bugsnag.leaveBreadcrumb("Failed while trying to recover VK due to: $t")
+                    }
+
+                    // this will happen during rare upgrade scenarios when the user migrates from a seed-only wallet to this vk-based version
+                    if (recoveryViewingKey != null) {
+                        storeViewingKey(recoveryViewingKey)
+                        return recoveryViewingKey
+                    } else {
+                        feedback.report(
+                            Report.Issue.MissingViewkey(
+                                ableToLoadSeed,
+                                missingKey,
+                                keyNames,
+                                lockBox.getCharsUtf8(Const.Backup.VIEWING_KEY) != null
+                            )
+                        )
+                    }
+                    throw InitializerException.MissingViewingKeyException
+                }
+            }
+    }
+
+    private fun onMissingBirthday(): Int = failWith(InitializerException.MissingBirthdayException) {
+        loadNearestBirthday().height
     }
 
     private fun loadNearestBirthday(birthdayHeight: Int? = null) =
@@ -104,7 +152,10 @@ class WalletSetupViewModel @Inject constructor() : ViewModel() {
      * primarily only work with the viewing key and spending key. The seed is only accessed when
      * presenting backup information to the user.
      */
-    private suspend fun storeWallet(seedPhraseChars: CharArray, birthday: WalletBirthdayTool.WalletBirthday) {
+    private suspend fun storeWallet(
+        seedPhraseChars: CharArray,
+        birthday: WalletBirthdayTool.WalletBirthday
+    ) {
         check(!lockBox.getBoolean(Const.Backup.HAS_SEED)) {
             "Error! Cannot store a seed when one already exists! This would overwrite the" +
                     " existing seed and could lead to a loss of funds if the user has no backup!"

@@ -20,6 +20,14 @@ inline fun <R> tryWithWarning(message: String = "", block: () -> R): R? {
     }
 }
 
+inline fun <E : Throwable, R> failWith(specificErrorType: E, block: () -> R): R {
+    return try {
+        block()
+    } catch (error: Throwable) {
+        throw specificErrorType
+    }
+}
+
 inline fun Fragment.locale(): Locale = context?.locale() ?: Locale.getDefault()
 
 inline fun Context.locale(): Locale {
