@@ -167,7 +167,7 @@ class TransactionFragment : BaseFragment<FragmentTransactionBinding>() {
     }
 
     private fun String.toTransactionUrl(): String {
-        return "https://explorer.z.cash/tx/$this"
+        return getString(R.string.api_block_explorer, this)
     }
 
     private fun UiModel?.toAddressClickListener(): View.OnClickListener? {
