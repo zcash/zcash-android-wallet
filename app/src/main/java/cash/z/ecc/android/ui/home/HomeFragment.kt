@@ -65,8 +65,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
             } else {
                 twig("Previous wallet found. Re-opening it.")
                 mainActivity?.startSync(walletSetup.openStoredWallet())
+                twig("Done reopening wallet.")
             }
         }
+        twig("HomeFragment.onAttach COMPLETE")
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -112,6 +114,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
             // if the model already existed, cool but let the sendViewModel be the source of truth for the amount
             onModelUpdated(null, uiModel.copy(pendingSend = WalletZecFormmatter.toZecStringFull(sendViewModel.zatoshiAmount.coerceAtLeast(0))))
         }
+
+        twig("HomeFragment.onViewCreated COMPLETE")
     }
 
     private fun onClearAmount() {
@@ -130,26 +134,29 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
 
     override fun onResume() {
         super.onResume()
-        twig("HomeFragment.onResume  resumeScope.isActive: ${resumedScope.isActive}  $resumedScope")
-        val existingAmount = sendViewModel.zatoshiAmount.coerceAtLeast(0)
-        viewModel.initializeMaybe(WalletZecFormmatter.toZecStringFull(existingAmount))
-        if (existingAmount == 0L) onClearAmount()
-        viewModel.uiModels.runningReduce { old, new ->
-            onModelUpdated(old, new)
-            new
-        }.onCompletion {
-            twig("uiModel.scanReduce completed.")
-        }.catch { e ->
-            twig("exception while processing uiModels $e")
-            throw e
-        }.launchIn(resumedScope)
+        mainActivity?.launchWhenSyncing {
+            twig("HomeFragment.onResume  resumeScope.isActive: ${resumedScope.isActive}  $resumedScope")
+            val existingAmount = sendViewModel.zatoshiAmount.coerceAtLeast(0)
+            viewModel.initializeMaybe(WalletZecFormmatter.toZecStringFull(existingAmount))
+            if (existingAmount == 0L) onClearAmount()
+            viewModel.uiModels.runningReduce { old, new ->
+                onModelUpdated(old, new)
+                new
+            }.onCompletion {
+                twig("uiModel.scanReduce completed.")
+            }.catch { e ->
+                twig("exception while processing uiModels $e")
+                throw e
+            }.launchIn(resumedScope)
 
-        // TODO: see if there is a better way to trigger a refresh of the uiModel on resume
-        //       the latest one should just be in the viewmodel and we should just "resubscribe"
-        //       but for some reason, this doesn't always happen, which kind of defeats the purpose
-        //       of having a cold stream in the view model
-        resumedScope.launch {
-            viewModel.refreshBalance()
+            // TODO: see if there is a better way to trigger a refresh of the uiModel on resume
+            //       the latest one should just be in the viewmodel and we should just "resubscribe"
+            //       but for some reason, this doesn't always happen, which kind of defeats the purpose
+            //       of having a cold stream in the view model
+            resumedScope.launch {
+                viewModel.refreshBalance()
+            }
+            twig("HomeFragment.onResume COMPLETE")
         }
     }
 

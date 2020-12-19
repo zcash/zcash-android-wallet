@@ -1,6 +1,11 @@
 Change Log
 ==========
 
+Version 1.0.0-alpha42 *(2020-12-19)*
+------------------------------------
+- Fix: Correct race condition when launching the app
+- Fix: Display loading screen while waiting for app to initialize
+
 Version 1.0.0-alpha41 *(2020-12-19)*
 ------------------------------------
 - New: Upgrade to the latest SDK.

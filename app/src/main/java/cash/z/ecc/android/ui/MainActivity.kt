@@ -18,13 +18,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.annotation.IdRes
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
-import androidx.biometric.BiometricPrompt.*
 import androidx.biometric.BiometricPrompt
+import androidx.biometric.BiometricPrompt.*
 import androidx.core.content.ContextCompat
 import androidx.core.content.getSystemService
 import androidx.fragment.app.Fragment
@@ -38,6 +39,7 @@ import cash.z.ecc.android.databinding.DialogFirstUseMessageBinding
 import cash.z.ecc.android.di.component.MainActivitySubcomponent
 import cash.z.ecc.android.di.component.SynchronizerSubcomponent
 import cash.z.ecc.android.di.viewmodel.activityViewModel
+import cash.z.ecc.android.ext.goneIf
 import cash.z.ecc.android.ext.showCriticalProcessorError
 import cash.z.ecc.android.ext.showScanFailure
 import cash.z.ecc.android.ext.showUninitializedError
@@ -50,6 +52,7 @@ import cash.z.ecc.android.feedback.Report.NonUserAction.FEEDBACK_STOPPED
 import cash.z.ecc.android.feedback.Report.NonUserAction.SYNC_START
 import cash.z.ecc.android.feedback.Report.Tap.COPY_ADDRESS
 import cash.z.ecc.android.sdk.Initializer
+import cash.z.ecc.android.sdk.SdkSynchronizer
 import cash.z.ecc.android.sdk.db.entity.ConfirmedTransaction
 import cash.z.ecc.android.sdk.exception.CompactBlockProcessorException
 import cash.z.ecc.android.sdk.ext.ZcashSdk
@@ -60,11 +63,17 @@ import cash.z.ecc.android.ui.util.INCLUDE_MEMO_PREFIXES_RECOGNIZED
 import cash.z.ecc.android.ui.util.toUtf8Memo
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
 class MainActivity : AppCompatActivity() {
+
+    @Inject
+    lateinit var mainViewModel: MainViewModel
 
     @Inject
     lateinit var feedback: Feedback
@@ -113,6 +122,7 @@ class MainActivity : AppCompatActivity() {
 
         setContentView(R.layout.main_activity)
         initNavigation()
+        initLoadScreen()
 
         window.statusBarColor = Color.TRANSPARENT
         window.navigationBarColor = Color.TRANSPARENT
@@ -122,8 +132,6 @@ class MainActivity : AppCompatActivity() {
         )
         setWindowFlag(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, false)
         setWindowFlag(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION, false)
-
-
     }
 
     override fun onResume() {
@@ -173,6 +181,21 @@ class MainActivity : AppCompatActivity() {
         navInitListeners.clear()
     }
 
+    private fun initLoadScreen() {
+        lifecycleScope.launchWhenResumed {
+            mainViewModel.loadingMessage.collect { message ->
+                onLoadingMessage(message)
+            }
+        }
+    }
+
+    private fun onLoadingMessage(message: String?) {
+        twig("Applying loading message: $message")
+        // TODO: replace with view binding
+        findViewById<View>(R.id.container_loading).goneIf(message == null)
+        findViewById<TextView>(R.id.text_message).text = message
+    }
+
     fun safeNavigate(@IdRes destination: Int, extras: Navigator.Extras? = null) {
         if (navController == null) {
             navInitListeners.add {
@@ -204,10 +227,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun startSync(initializer: Initializer) {
+        twig("MainActivity.startSync")
         if (!isInitialized) {
+            mainViewModel.setLoading(true)
             synchronizerComponent = ZcashWalletApp.component.synchronizerSubcomponent().create(
                 initializer
             )
+            twig("Synchronizer component created")
             feedback.report(SYNC_START)
             synchronizerComponent.synchronizer().let { synchronizer ->
                 synchronizer.onProcessorErrorHandler = ::onProcessorError
@@ -217,6 +243,8 @@ class MainActivity : AppCompatActivity() {
         } else {
             twig("Ignoring request to start sync because sync has already been started!")
         }
+        mainViewModel.setLoading(false)
+        twig("MainActivity.startSync COMPLETE")
     }
 
     fun reportScreen(screen: Report.Screen?) = reportAction(screen)
@@ -227,6 +255,28 @@ class MainActivity : AppCompatActivity() {
 
     private fun reportAction(action: Feedback.Action?) {
         action?.let { feedback.report(it) }
+    }
+
+    fun setLoading(isLoading: Boolean, message: String? = null) {
+        mainViewModel.setLoading(isLoading, message)
+    }
+
+    /**
+     * Launch the given block if the synchronizer is ready and syncing. Otherwise, wait until it is.
+     * The block will be scoped to the synchronizer when it runs.
+     */
+    fun launchWhenSyncing(block: suspend CoroutineScope.() -> Unit) {
+        // TODO: update this quick and dirty implementation, after the holidays. For now, this gets
+        //  the job done but the synchronizer should expose a method that helps with this so that
+        //  any complexity is taken care of at the library level.
+        lifecycleScope.launch {
+            while (mainViewModel.isLoading) {
+                delay(25L)
+            }
+            (synchronizerComponent.synchronizer() as SdkSynchronizer).coroutineScope.launch {
+                block()
+            }
+        }
     }
 
     fun authenticate(description: String, title: String = getString(R.string.biometric_prompt_title), block: () -> Unit) {
@@ -597,4 +647,5 @@ class MainActivity : AppCompatActivity() {
             twig("Warning: failed to open browser due to $t")
         }
     }
+
 }
