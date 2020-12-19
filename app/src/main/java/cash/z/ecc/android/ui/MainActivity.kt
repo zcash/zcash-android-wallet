@@ -23,7 +23,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.annotation.IdRes
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
-import androidx.biometric.BiometricConstants
+import androidx.biometric.BiometricPrompt.*
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
 import androidx.core.content.getSystemService
@@ -229,30 +229,41 @@ class MainActivity : AppCompatActivity() {
         action?.let { feedback.report(it) }
     }
 
-    fun authenticate(description: String, block: () -> Unit) {
+    fun authenticate(description: String, title: String = getString(R.string.biometric_prompt_title), block: () -> Unit) {
         val callback =  object : BiometricPrompt.AuthenticationCallback() {
             override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
                 twig("Authentication success")
                 block()
             }
-
             override fun onAuthenticationFailed() {
                 twig("Authentication failed!!!!")
+                showMessage("Authentication failed :(")
             }
             override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
-                twig("Authenticatiion Error")
+                twig("Authentication Error")
+                fun doNothing(message: String, interruptUser: Boolean = true) {
+                    if (interruptUser) {
+                        showSnackbar(message)
+                    } else {
+                        showMessage(message, true)
+                    }
+                }
                 when (errorCode) {
-                    BiometricConstants.ERROR_HW_NOT_PRESENT, BiometricConstants.ERROR_HW_UNAVAILABLE,
-                    BiometricConstants.ERROR_NO_BIOMETRICS, BiometricConstants.ERROR_NO_DEVICE_CREDENTIAL -> {
+                    ERROR_HW_NOT_PRESENT, ERROR_HW_UNAVAILABLE,
+                    ERROR_NO_BIOMETRICS, ERROR_NO_DEVICE_CREDENTIAL -> {
                         twig("Warning: bypassing authentication because $errString [$errorCode]")
+                        showMessage("Please enable screen lock on this device to add security here!", true)
                         block()
                     }
-                    else -> {
-                        twig("Warning: failed authentication because $errString [$errorCode]")
-                        // we get here when a device does not have a pin setup, at all
-                        // in the future, notify the user here that they can set a pin on their device for added security
-                        block()
-                    }
+                    ERROR_LOCKOUT -> doNothing("Too many attempts. Try again in 30s.")
+                    ERROR_LOCKOUT_PERMANENT -> doNothing("Whoa. Waaaay too many attempts!")
+                    ERROR_CANCELED -> doNothing("I just can't right now. Please try again.")
+                    ERROR_NEGATIVE_BUTTON -> doNothing("Authentication cancelled", false)
+                    ERROR_USER_CANCELED -> doNothing("Cancelled", false)
+                    ERROR_NO_SPACE -> doNothing("Not enough storage space!")
+                    ERROR_TIMEOUT -> doNothing("Oops. It timed out.")
+                    ERROR_UNABLE_TO_PROCESS -> doNothing(".")
+                    ERROR_VENDOR -> doNothing("We got some weird error and you should report this.")
                 }
             }
         }
@@ -260,7 +271,7 @@ class MainActivity : AppCompatActivity() {
         BiometricPrompt(this, ContextCompat.getMainExecutor(this), callback).apply {
             authenticate(
                 BiometricPrompt.PromptInfo.Builder()
-                    .setTitle(getString(R.string.biometric_prompt_title))
+                    .setTitle(title)
                     .setConfirmationRequired(false)
                     .setDescription(description)
                     .setDeviceCredentialAllowed(true)
@@ -302,7 +313,7 @@ class MainActivity : AppCompatActivity() {
                     synchronizerComponent.synchronizer().getAddress()
                 )
             )
-            showMessage("Address copied!", "Sweet")
+            showMessage("Address copied!")
         }
     }
 
@@ -317,7 +328,7 @@ class MainActivity : AppCompatActivity() {
         clipboard.setPrimaryClip(
             ClipData.newPlainText(label, textToCopy)
         )
-        showMessage("$label copied!", "Sweet")
+        showMessage("$label copied!")
     }
 
     fun preventBackPress(fragment: Fragment) {
@@ -332,8 +343,8 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    private fun showMessage(message: String, action: String) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    private fun showMessage(message: String, linger: Boolean = false) {
+        Toast.makeText(this, message, if (linger) Toast.LENGTH_LONG else Toast.LENGTH_SHORT).show()
     }
 
     fun showSnackbar(message: String, action: String = getString(android.R.string.ok)): Snackbar {
@@ -582,7 +593,7 @@ class MainActivity : AppCompatActivity() {
         try {
             startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
         } catch (t: Throwable) {
-            Toast.makeText(this, R.string.error_launch_url, Toast.LENGTH_LONG).show()
+            showMessage(getString(R.string.error_launch_url))
             twig("Warning: failed to open browser due to $t")
         }
     }
