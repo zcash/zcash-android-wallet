@@ -39,7 +39,17 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>() {
         super.onViewCreated(view, savedInstanceState)
         binding.hitAreaSettings.onClickNavTo(R.id.action_nav_profile_to_nav_settings)
         binding.hitAreaExit.onClickNavBack() { tapped(PROFILE_CLOSE) }
-        binding.buttonBackup.onClickNavTo(R.id.action_nav_profile_to_nav_backup) { tapped(PROFILE_BACKUP) }
+        binding.buttonBackup.setOnClickListener {
+            tapped(PROFILE_BACKUP)
+            mainActivity?.let { main ->
+                main.authenticate(
+                    getString(R.string.biometric_backup_phrase_description),
+                    getString(R.string.biometric_backup_phrase_title)
+                ) {
+                    main.safeNavigate(R.id.action_nav_profile_to_nav_backup)
+                }
+            }
+        }
         binding.buttonFeedback.onClickNavTo(R.id.action_nav_profile_to_nav_feedback) {
             tapped(PROFILE_SEND_FEEDBACK)
             mainActivity?.reportFunnel(UserFeedback.Started)
