@@ -31,3 +31,4 @@ task clean(type: Delete) {
 }
 
 defaultTasks 'clean', 'installZcashmainnetRelease'
+

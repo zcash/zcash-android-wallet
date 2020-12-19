@@ -20,6 +20,7 @@ val INCLUDE_MEMO_PREFIXES_RECOGNIZED = arrayOf(
     "sent from"                     // previous standard w/o colon
 )
 
+// TODO: move this to the SDK
 inline fun ByteArray?.toUtf8Memo(): String {
 // TODO: make this more official but for now, this will do
     return if (this == null || this[0] >= 0xF5) "" else try {
