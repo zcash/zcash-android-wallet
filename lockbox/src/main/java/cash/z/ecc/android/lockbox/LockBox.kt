@@ -1,7 +1,6 @@
 package cash.z.ecc.android.lockbox
 
 import android.content.Context
-import android.provider.Settings
 import cash.z.android.plugin.LockBoxPlugin
 import de.adorsys.android.securestoragelibrary.SecurePreferences
 import java.nio.ByteBuffer

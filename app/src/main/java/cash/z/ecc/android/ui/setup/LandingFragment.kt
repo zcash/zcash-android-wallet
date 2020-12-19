@@ -14,9 +14,11 @@ import cash.z.ecc.android.ext.toAppString
 import cash.z.ecc.android.feedback.Report
 import cash.z.ecc.android.feedback.Report.Funnel.Restore
 import cash.z.ecc.android.feedback.Report.Tap.*
+import cash.z.ecc.android.sdk.ext.twig
 import cash.z.ecc.android.ui.base.BaseFragment
 import cash.z.ecc.android.ui.setup.WalletSetupViewModel.WalletSetupState.SEED_WITHOUT_BACKUP
 import cash.z.ecc.android.ui.setup.WalletSetupViewModel.WalletSetupState.SEED_WITH_BACKUP
+import com.bugsnag.android.Bugsnag
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -45,7 +47,7 @@ class LandingFragment : BaseFragment<FragmentLandingBinding>() {
             tapped(DEVELOPER_WALLET_PROMPT)
             if (binding.buttonNegative.text.toString().toLowerCase(locale()) == "restore") {
                 MaterialAlertDialogBuilder(activity)
-                    .setMessage("Would you like to import the dev wallet?\n\nIf so, please only send 0.0001 ZEC at a time and return some later so that the account remains funded.")
+                    .setMessage("Would you like to import the dev wallet?\n\nIf so, please only send 0.00001 ZEC at a time and return some later so that the account remains funded.")
                     .setTitle("Import Dev Wallet?")
                     .setCancelable(true)
                     .setPositiveButton("Import") { dialog, _ ->
@@ -117,7 +119,7 @@ class LandingFragment : BaseFragment<FragmentLandingBinding>() {
     // AKA import wallet
     private fun onUseDevWallet() {
         val seedPhrase = "still champion voice habit trend flight survey between bitter process artefact blind carbon truly provide dizzy crush flush breeze blouse charge solid fish spread"
-        val birthday = 663174 //991645
+        val birthday = 991645 //663174
         mainActivity?.apply {
             lifecycleScope.launch {
                 mainActivity?.startSync(walletSetup.importWallet(seedPhrase, birthday))
@@ -152,7 +154,11 @@ class LandingFragment : BaseFragment<FragmentLandingBinding>() {
                 mainActivity?.playSound("sound_receive_small.mp3")
                 mainActivity?.vibrateSuccess()
             } catch (t: Throwable) {
-                Toast.makeText(context, "Failed to create wallet", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Failed to create wallet. See logs for details. Try restarting the app.", Toast.LENGTH_SHORT).show()
+                twig("Failed to create wallet due to: $t")
+                mainActivity?.feedback?.report(t)
+                binding.buttonPositive.isEnabled = true
+                binding.buttonPositive.setText(R.string.landing_button_primary)
             }
         }
     }

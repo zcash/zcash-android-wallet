@@ -255,6 +255,8 @@
 
     <string name="app_name" tools:ignore="MissingTranslation">@string/translated_app_name</string>
     <string name="biometric_prompt_title" tools:ignore="MissingTranslation">@string/translated_send_securityauth</string>
+    <string name="biometric_backup_phrase_title">Authenticate to proceed</string>
+    <string name="biometric_backup_phrase_description">Load backup phrase</string>
     <string name="camera_permission_denied">Well, this is awkward. You denied permission for the camera.</string>
     <string name="error_launch_url">Failed to open browser.</string>
     <string name="key_backspace"><![CDATA[<]]></string>

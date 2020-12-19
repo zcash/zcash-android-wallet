@@ -11,10 +11,10 @@ import dagger.Subcomponent
 interface InitializerSubcomponent {
 
     fun initializer(): Initializer
-    fun config(): Initializer.Builder
+    fun config(): Initializer.Config
 
     @Subcomponent.Factory
     interface Factory {
-        fun create(@BindsInstance config: Initializer.Builder): InitializerSubcomponent
+        fun create(@BindsInstance config: Initializer.Config): InitializerSubcomponent
     }
 }
