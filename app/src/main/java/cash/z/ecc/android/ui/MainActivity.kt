@@ -24,8 +24,8 @@ import androidx.activity.OnBackPressedCallback
 import androidx.annotation.IdRes
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
-import androidx.biometric.BiometricPrompt.*
 import androidx.biometric.BiometricPrompt
+import androidx.biometric.BiometricPrompt.*
 import androidx.core.content.ContextCompat
 import androidx.core.content.getSystemService
 import androidx.fragment.app.Fragment
@@ -52,6 +52,7 @@ import cash.z.ecc.android.feedback.Report.NonUserAction.FEEDBACK_STOPPED
 import cash.z.ecc.android.feedback.Report.NonUserAction.SYNC_START
 import cash.z.ecc.android.feedback.Report.Tap.COPY_ADDRESS
 import cash.z.ecc.android.sdk.Initializer
+import cash.z.ecc.android.sdk.SdkSynchronizer
 import cash.z.ecc.android.sdk.db.entity.ConfirmedTransaction
 import cash.z.ecc.android.sdk.exception.CompactBlockProcessorException
 import cash.z.ecc.android.sdk.ext.ZcashSdk
@@ -226,11 +227,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun startSync(initializer: Initializer) {
+        twig("MainActivity.startSync")
         if (!isInitialized) {
             mainViewModel.setLoading(true)
             synchronizerComponent = ZcashWalletApp.component.synchronizerSubcomponent().create(
                 initializer
             )
+            twig("Synchronizer component created")
             feedback.report(SYNC_START)
             synchronizerComponent.synchronizer().let { synchronizer ->
                 synchronizer.onProcessorErrorHandler = ::onProcessorError
@@ -241,6 +244,7 @@ class MainActivity : AppCompatActivity() {
             twig("Ignoring request to start sync because sync has already been started!")
         }
         mainViewModel.setLoading(false)
+        twig("MainActivity.startSync COMPLETE")
     }
 
     fun reportScreen(screen: Report.Screen?) = reportAction(screen)
@@ -255,6 +259,24 @@ class MainActivity : AppCompatActivity() {
 
     fun setLoading(isLoading: Boolean, message: String? = null) {
         mainViewModel.setLoading(isLoading, message)
+    }
+
+    /**
+     * Launch the given block if the synchronizer is ready and syncing. Otherwise, wait until it is.
+     * The block will be scoped to the synchronizer when it runs.
+     */
+    fun launchWhenSyncing(block: suspend CoroutineScope.() -> Unit) {
+        // TODO: update this quick and dirty implementation, after the holidays. For now, this gets
+        //  the job done but the synchronizer should expose a method that helps with this so that
+        //  any complexity is taken care of at the library level.
+        lifecycleScope.launch {
+            while (mainViewModel.isLoading) {
+                delay(25L)
+            }
+            (synchronizerComponent.synchronizer() as SdkSynchronizer).coroutineScope.launch {
+                block()
+            }
+        }
     }
 
     fun authenticate(description: String, title: String = getString(R.string.biometric_prompt_title), block: () -> Unit) {

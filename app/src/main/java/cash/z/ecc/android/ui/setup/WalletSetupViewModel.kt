@@ -87,17 +87,20 @@ class WalletSetupViewModel @Inject constructor() : ViewModel() {
      * known by this point.
      */
     private suspend fun loadConfig(): Initializer.Config {
+        twig("Loading config variables")
         val vk = lockBox.getCharsUtf8(Const.Backup.VIEWING_KEY)?.let { String(it) }
             ?: onMissingViewingKey()
         val birthdayHeight = loadBirthdayHeight() ?: onMissingBirthday()
         val host = prefs[Const.Pref.SERVER_HOST] ?: Const.Default.Server.HOST
         val port = prefs[Const.Pref.SERVER_PORT] ?: Const.Default.Server.PORT
 
+        twig("Done loading config variables")
         return Initializer.Config { it.importWallet(vk, birthdayHeight, host, port) }
     }
 
     // TODO: delete this function in the next release
     private suspend fun onMissingViewingKey(): String {
+        twig("Recover VK: Viewing key was missing")
         // add some temporary logic to help us troubleshoot this problem.
         ZcashWalletApp.instance.getSharedPreferences("SecurePreferences", Context.MODE_PRIVATE)
             .all.map { it.key }.joinToString().let { keyNames ->
@@ -110,7 +113,9 @@ class WalletSetupViewModel @Inject constructor() : ViewModel() {
                     try {
                         val seed = lockBox.getBytes(Const.Backup.SEED)!!
                         ableToLoadSeed = true
+                        twig("Recover VK: Seed found")
                         recoveryViewingKey = DerivationTool.deriveViewingKeys(seed)[0]
+                        twig("Recover VK: successfully derived VK from seed")
                     } catch (t: Throwable) {
                         Bugsnag.leaveBreadcrumb("Failed while trying to recover VK due to: $t")
                     }
