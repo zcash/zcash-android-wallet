@@ -1,6 +1,11 @@
 Change Log
 ==========
 
+Version 1.0.0-alpha43 *(2020-12-20)*
+------------------------------------
+- Fix: Repaired the upgrade flow, which could not reorg because of missing birthday height
+- Fix: Repaired create wallet flow which was being covered by the loading screen
+
 Version 1.0.0-alpha42 *(2020-12-19)*
 ------------------------------------
 - Fix: Correct race condition when launching the app

@@ -9,8 +9,8 @@ object Deps {
     const val buildToolsVersion =   "29.0.2"
     const val minSdkVersion =       21
     const val targetSdkVersion =    29
-    const val versionName =         "1.0.0-alpha42"
-    const val versionCode =         1_00_00_142  // last digits are alpha(0XX) beta(2XX) rc(4XX) release(8XX). Ex: 1_08_04_401 is an release candidate build of version 1.8.4 and 1_08_04_800 would be the final release.
+    const val versionName =         "1.0.0-alpha43"
+    const val versionCode =         1_00_00_143  // last digits are alpha(0XX) beta(2XX) rc(4XX) release(8XX). Ex: 1_08_04_401 is an release candidate build of version 1.8.4 and 1_08_04_800 would be the final release.
     const val packageName =         "cash.z.ecc.android"
 
 
