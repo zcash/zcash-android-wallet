@@ -33,6 +33,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.lang.RuntimeException
 
 class BackupFragment : BaseFragment<FragmentBackupBinding>() {
     override val screen = Report.Screen.BACKUP
@@ -131,7 +132,7 @@ class BackupFragment : BaseFragment<FragmentBackupBinding>() {
         mainActivity!!.feedback.measure(SEED_PHRASE_LOADED) {
             val lockBox = LockBox(ZcashWalletApp.instance)
             val mnemonics = Mnemonics()
-            val seedPhrase =  lockBox.getCharsUtf8(Const.Backup.SEED_PHRASE)!!
+            val seedPhrase =  lockBox.getCharsUtf8(Const.Backup.SEED_PHRASE) ?: throw RuntimeException("Seed Phrase expected but not found in storage!!")
             val result =  mnemonics.toWordList(seedPhrase)
             result
         }

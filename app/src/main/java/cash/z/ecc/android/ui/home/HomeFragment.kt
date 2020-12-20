@@ -61,9 +61,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
                 // interact with user to create, backup and verify seed
                 // leads to a call to startSync(), later (after accounts are created from seed)
                 twig("Previous wallet not found, therefore, launching seed creation flow")
+                mainActivity?.setLoading(false)
                 mainActivity?.safeNavigate(R.id.action_nav_home_to_create_wallet)
             } else {
                 twig("Previous wallet found. Re-opening it.")
+                mainActivity?.setLoading(true)
                 mainActivity?.startSync(walletSetup.openStoredWallet())
                 twig("Done reopening wallet.")
             }
