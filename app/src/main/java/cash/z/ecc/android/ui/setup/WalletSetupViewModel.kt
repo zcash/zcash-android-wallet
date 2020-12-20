@@ -10,6 +10,7 @@ import cash.z.ecc.android.feedback.Report
 import cash.z.ecc.android.lockbox.LockBox
 import cash.z.ecc.android.sdk.Initializer
 import cash.z.ecc.android.sdk.exception.InitializerException
+import cash.z.ecc.android.sdk.ext.ZcashSdk
 import cash.z.ecc.android.sdk.ext.twig
 import cash.z.ecc.android.sdk.tool.DerivationTool
 import cash.z.ecc.android.sdk.tool.WalletBirthdayTool
@@ -140,7 +141,8 @@ class WalletSetupViewModel @Inject constructor() : ViewModel() {
     }
 
     private fun onMissingBirthday(): Int = failWith(InitializerException.MissingBirthdayException) {
-        loadNearestBirthday().height
+        twig("Recover Birthday: falling back to sapling birthday")
+        loadNearestBirthday(ZcashSdk.SAPLING_ACTIVATION_HEIGHT).height
     }
 
     private fun loadNearestBirthday(birthdayHeight: Int? = null) =
