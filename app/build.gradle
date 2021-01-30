@@ -59,6 +59,7 @@ android {
             minifyEnabled false
             shrinkResources false
             useProguard false
+            buildConfigField "String", "SERVER_URL", '"lightwalletd.electriccoin.co"'
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.placeholder
         }
@@ -66,6 +67,7 @@ android {
             minifyEnabled false
             shrinkResources false
             useProguard false
+            buildConfigField "String", "SERVER_URL", '"lightwalletd.testnet.electriccoin.co"'
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         // builds for testing only in the wallet team, typically unfinished features
@@ -74,6 +76,7 @@ android {
             initWith debug
             debuggable true
             applicationIdSuffix ".internal"
+            buildConfigField "String", "SERVER_URL", '"lightwalletd.electriccoin.co"'
             resValue 'string', 'file_authority', "${Deps.packageName}.internal.fileprovider"
             matchingFallbacks = ['debug']
         }
