@@ -1,5 +1,7 @@
 package cash.z.ecc.android.ext
 
+import cash.z.ecc.android.BuildConfig
+
 object Const {
     /**
      * Named objects for Dependency Injection.
@@ -42,7 +44,7 @@ object Const {
     object Default {
         object Server {
             // If you've forked the ECC repo, change this to your hosted lightwalletd instance
-            const val HOST = "lightwalletd.electriccoin.co"//"your.hosted.lightwalletd.org"
+            const val HOST = BuildConfig.DEFAULT_SERVER_URL
             const val PORT = 9067
         }
     }
