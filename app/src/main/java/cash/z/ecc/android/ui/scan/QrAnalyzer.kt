@@ -1,63 +1,80 @@
 package cash.z.ecc.android.ui.scan
 
+import android.content.ContentValues.TAG
+import android.graphics.ImageFormat
+import android.util.Log
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
 import cash.z.ecc.android.sdk.ext.retrySimple
 import cash.z.ecc.android.sdk.ext.retryUpTo
 import cash.z.ecc.android.sdk.ext.twig
 import com.google.android.gms.tasks.Task
+import com.google.zxing.PlanarYUVLuminanceSource
 import com.google.firebase.ml.vision.FirebaseVision
 import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcode
 import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetector
 import com.google.firebase.ml.vision.barcode.FirebaseVisionBarcodeDetectorOptions
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.google.firebase.ml.vision.common.FirebaseVisionImageMetadata
+import com.google.zxing.BinaryBitmap
+import com.google.zxing.MultiFormatReader
+import com.google.zxing.common.HybridBinarizer
+
+
 
 class QrAnalyzer(val scanCallback: (qrContent: String, image: ImageProxy) -> Unit) :
     ImageAnalysis.Analyzer {
-    private val detector: FirebaseVisionBarcodeDetector by lazy {
-        val options = FirebaseVisionBarcodeDetectorOptions.Builder()
-            .setBarcodeFormats(FirebaseVisionBarcode.FORMAT_QR_CODE)
-            .build()
-        FirebaseVision.getInstance().getVisionBarcodeDetector(options)
-    }
 
     var pendingTask: Task<out Any>? = null
 
+    var enabled = true
+    var inverted = false
+
+    private val reader =  MultiFormatReader()
+
     override fun analyze(image: ImageProxy) {
-        var rotation = image.imageInfo.rotationDegrees % 360
-        if (rotation < 0) {
-            rotation += 360
+        if (!enabled) return
+
+        //YUV_420 is normally the input type here, but other YUV types are also supported in theory
+        if (ImageFormat.YUV_420_888 != image.format && ImageFormat.YUV_422_888 != image.format && ImageFormat.YUV_444_888 != image.format) {
+            Log.e(TAG, "Unexpected format: ${image.format}")
+           // listener.onNoResult()
+            return
+        }
+        val byteBuffer = image?.planes?.firstOrNull()?.buffer
+        if (byteBuffer == null) {
+          //  listener.onNoResult()
+            return
         }
 
-        retrySimple {
-            val mediaImage = FirebaseVisionImage.fromMediaImage(
-                image.image!!, when (rotation) {
-                    0 -> FirebaseVisionImageMetadata.ROTATION_0
-                    90 -> FirebaseVisionImageMetadata.ROTATION_90
-                    180 -> FirebaseVisionImageMetadata.ROTATION_180
-                    270 -> FirebaseVisionImageMetadata.ROTATION_270
-                    else -> {
-                        FirebaseVisionImageMetadata.ROTATION_0
-                    }
-                }
-            )
-            pendingTask = detector.detectInImage(mediaImage).also {
-                it.addOnSuccessListener { result ->
-                    onImageScan(result, image)
-                }
-                it.addOnFailureListener(::onImageScanFailure)
-            }
+        val data = ByteArray(byteBuffer.remaining()).also { byteBuffer.get(it) }
+
+        val width = image.width
+        val height = image.height
+
+        val source = PlanarYUVLuminanceSource(data, width, height, 0, 0, width, height, false).let {
+            if (inverted) it.invert() else it
         }
+        val bitmap = BinaryBitmap(HybridBinarizer(source))
+
+
+            try {
+                val result = reader.decodeWithState(bitmap)
+                onImageScan(result.toString(), image)
+
+            } catch (e: Exception) {
+                image.close()
+                twig("Error Scanning:{${e}}")
+            }
     }
 
-    private fun onImageScan(result: List<FirebaseVisionBarcode>, image: ImageProxy) {
-        result.firstOrNull()?.rawValue?.let {
-            scanCallback(it, image)
-        } ?: runCatching { image.close() }
+    private fun onImageScan(result: String, image: ImageProxy) {
+        scanCallback(result, image) ?: runCatching { image.close() }
     }
 
     private fun onImageScanFailure(e: Exception) {
         twig("Warning: Image scan failed")
     }
+
+
 }

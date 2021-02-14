@@ -184,6 +184,8 @@ dependencies {
 
     androidTestImplementation Deps.Test.Android.JUNIT
     androidTestImplementation Deps.Test.Android.ESPRESSO
+
+    implementation 'com.journeyapps:zxing-android-embedded:3.6.0'
 }
 
 defaultTasks 'clean', 'assembleZcashmainnetRelease'
