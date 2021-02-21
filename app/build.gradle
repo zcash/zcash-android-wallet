@@ -4,7 +4,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
-apply plugin: 'com.google.gms.google-services'
+// apply plugin: 'com.google.gms.google-services'
 //apply plugin: 'com.github.ben-manes.versions'
 
 archivesBaseName = 'zcash-android-wallet'
@@ -152,7 +152,6 @@ dependencies {
     // Google
     implementation Deps.Google.GUAVA
     implementation Deps.Google.MATERIAL
-    implementation Deps.Google.ML_VISION // QR Scanner
 
     // Dagger
     implementation Deps.Dagger.ANDROID_SUPPORT
