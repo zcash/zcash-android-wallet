@@ -1,67 +1,63 @@
 package cash.z.ecc.android.ui.scan
 
-import android.content.ContentValues.TAG
-import android.graphics.ImageFormat
-import android.util.Log
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
 import cash.z.ecc.android.sdk.ext.twig
-import com.google.zxing.PlanarYUVLuminanceSource
-import com.google.zxing.BinaryBitmap
-import com.google.zxing.MultiFormatReader
+import com.google.zxing.*
 import com.google.zxing.common.HybridBinarizer
+
 
 class QrAnalyzer(val scanCallback: (qrContent: String, image: ImageProxy) -> Unit) :
     ImageAnalysis.Analyzer {
-    
-    var enabled = true
-    var inverted = false
 
-    private val reader =  MultiFormatReader()
+    private val reader = MultiFormatReader()
 
     override fun analyze(image: ImageProxy) {
-        if (!enabled) return
-
-        //YUV_420 is normally the input type here, but other YUV types are also supported in theory
-        if (ImageFormat.YUV_420_888 != image.format && ImageFormat.YUV_422_888 != image.format && ImageFormat.YUV_444_888 != image.format) {
-            Log.e(TAG, "Unexpected format: ${image.format}")
-           // listener.onNoResult()
-            return
-        }
-        val byteBuffer = image?.planes?.firstOrNull()?.buffer
-        if (byteBuffer == null) {
-          //  listener.onNoResult()
-            return
-        }
-
-        val data = ByteArray(byteBuffer.remaining()).also { byteBuffer.get(it) }
-
-        val width = image.width
-        val height = image.height
-
-        val source = PlanarYUVLuminanceSource(data, width, height, 0, 0, width, height, false).let {
-            if (inverted) it.invert() else it
-        }
-        val bitmap = BinaryBitmap(HybridBinarizer(source))
-
-
-            try {
-                val result = reader.decodeWithState(bitmap)
-                onImageScan(result.toString(), image)
-
-            } catch (e: Exception) {
+        image.toBinaryBitmap().let { bitmap ->
+            val qrContent = bitmap.decodeWith(reader) ?: bitmap.flip().decodeWith(reader)
+            if (qrContent == null) {
                 image.close()
-                twig("Error Scanning:{${e}}")
+            } else {
+                onImageScan(qrContent, image)
             }
+        }
+    }
+
+    private fun ImageProxy.toBinaryBitmap(): BinaryBitmap {
+        return planes[0].buffer.let { buffer ->
+            ByteArray(buffer.remaining()).also { buffer.get(it) }
+        }.let { bytes ->
+            PlanarYUVLuminanceSource(bytes, width, height, 0, 0, width, height, false)
+        }.let { source ->
+            BinaryBitmap(HybridBinarizer(source))
+        }
+    }
+
+    private fun BinaryBitmap.decodeWith(reader: Reader): String? {
+        return try {
+            reader.decode(this).toString()
+        } catch (e: NotFoundException) {
+            // these happen frequently. Whenever no QR code is found in the frame. No need to log.
+            null
+        } catch (e: Throwable) {
+            twig("Error while scanning QR: $e")
+            null
+        }
+    }
+
+    private fun BinaryBitmap.flip(): BinaryBitmap {
+        blackMatrix.apply {
+            repeat(width) { w ->
+                repeat(height) { h ->
+                    flip(w, h)
+                }
+            }
+        }
+        return this
     }
 
     private fun onImageScan(result: String, image: ImageProxy) {
-        scanCallback(result, image) ?: runCatching { image.close() }
+        scanCallback(result, image)
     }
-
-    private fun onImageScanFailure(e: Exception) {
-        twig("Warning: Image scan failed")
-    }
-
 
 }

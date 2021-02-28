@@ -30,8 +30,8 @@ object Deps {
             val CORE =                      "androidx.camera:camera-core:1.0.0-rc02"
             val LIFECYCLE =                 "androidx.camera:camera-lifecycle:1.0.0-rc02"
             object View :       Version("1.0.0-alpha11") {
-                val EXT =                   "androidx.camera:camera-extensions:1.0.0-alpha11"
-                val VIEW =                  "androidx.camera:camera-view:1.0.0-alpha11"
+                val EXT =                   "androidx.camera:camera-extensions:1.0.0-alpha21"
+                val VIEW =                  "androidx.camera:camera-view:1.0.0-alpha21"
             }
         }
         object Lifecycle :       Version("2.2.0") {
@@ -93,7 +93,7 @@ object Deps {
         const val CHIPS =                    "com.github.gmale:chips-input-layout:2.3.1"
         object Plugins {
             const val SECURE_STORAGE =       "com.github.gmale:secure-storage-android:0.0.3"//"de.adorsys.android:securestoragelibrary:1.2.2"
-            const val QR_SCANNER =           "com.google.zxing:core:3.2.1"
+            const val QR_SCANNER =           "com.google.zxing:core:3.4.1"
         }
     }
 
