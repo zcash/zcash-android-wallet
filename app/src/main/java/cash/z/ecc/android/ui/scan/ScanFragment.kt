@@ -122,13 +122,14 @@ class ScanFragment : BaseFragment<FragmentScanBinding>() {
 
     private fun onQrScanned(qrContent: String, image: ImageProxy) {
         resumedScope.launch {
-            if (viewModel.isNotValid(qrContent)) {
+            val parsed = viewModel.parse(qrContent)
+            if (parsed == null) {
                 val network = ZcashSdk.NETWORK
                 binding.textScanError.text = getString(R.string.scan_invalid_address, network, qrContent)
                 image.close()
             } else {  /* continue scanning*/
                 binding.textScanError.text = ""
-                sendViewModel.toAddress = qrContent
+                sendViewModel.toAddress = parsed
                 mainActivity?.safeNavigate(R.id.action_nav_scan_to_nav_send)
             }
         }
