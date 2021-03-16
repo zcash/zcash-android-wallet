@@ -29,9 +29,9 @@ object Deps {
             val CAMERA2 =                   "androidx.camera:camera-camera2:1.0.0-rc02"
             val CORE =                      "androidx.camera:camera-core:1.0.0-rc02"
             val LIFECYCLE =                 "androidx.camera:camera-lifecycle:1.0.0-rc02"
-            object View :       Version("1.0.0-alpha11") {
-                val EXT =                   "androidx.camera:camera-extensions:1.0.0-alpha21"
-                val VIEW =                  "androidx.camera:camera-view:1.0.0-alpha21"
+            object View :       Version("1.0.0-alpha21") {
+                val EXT =                   "androidx.camera:camera-extensions:$version"
+                val VIEW =                  "androidx.camera:camera-view:$version"
             }
         }
         object Lifecycle :       Version("2.2.0") {
