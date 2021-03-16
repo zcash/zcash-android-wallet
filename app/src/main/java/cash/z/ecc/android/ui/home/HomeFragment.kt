@@ -282,7 +282,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
         if (old?.pendingSend != new.pendingSend) {
             setSendAmount(new.pendingSend)
         }
-        setProgress(uiModel) // TODO: we may not need to separate anymore
+        setProgress(new) // TODO: we may not need to separate anymore
 //        if (new.status = SYNCING) onSyncing(new) else onSynced(new)
         if (new.status == SYNCED) onSynced(new) else onSyncing(new)
         setSendEnabled(new.isSendEnabled, new.status == SYNCED)
