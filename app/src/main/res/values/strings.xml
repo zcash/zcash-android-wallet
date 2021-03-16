@@ -87,7 +87,7 @@
     <string name="scan_address_title" tools:ignore="MissingTranslation">@string/translated_send_scanqr</string>
 
     <!-- Screen: Scan -->
-    <string name="scan_invalid_address">"Invalid Zcash %1$s address:\n%2$s"</string>
+    <string name="scan_invalid_address">"Invalid Zcash %1$s address:\n\n%2$s"</string>
 
     <!-- Screen: Send Flow -->
     <string name="send_address_hint" tools:ignore="MissingTranslation">@string/translated_label_to</string>
