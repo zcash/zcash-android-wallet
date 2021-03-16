@@ -25,13 +25,13 @@ object Deps {
         const val MULTIDEX =                "androidx.multidex:multidex:2.0.1"
         const val PAGING =                  "androidx.paging:paging-runtime-ktx:2.1.2"
         const val RECYCLER =                "androidx.recyclerview:recyclerview:1.2.0-alpha05"
-        object CameraX :         Version("1.0.0-beta04") {
-            val CAMERA2 =                   "androidx.camera:camera-camera2:1.0.0-beta04"
-            val CORE =                      "androidx.camera:camera-core:1.0.0-beta04"
-            val LIFECYCLE =                 "androidx.camera:camera-lifecycle:1.0.0-beta04"
+        object CameraX :         Version("1.0.0-rc02") {
+            val CAMERA2 =                   "androidx.camera:camera-camera2:1.0.0-rc02"
+            val CORE =                      "androidx.camera:camera-core:1.0.0-rc02"
+            val LIFECYCLE =                 "androidx.camera:camera-lifecycle:1.0.0-rc02"
             object View :       Version("1.0.0-alpha11") {
-                val EXT =                   "androidx.camera:camera-extensions:1.0.0-alpha11"
-                val VIEW =                  "androidx.camera:camera-view:1.0.0-alpha11"
+                val EXT =                   "androidx.camera:camera-extensions:1.0.0-alpha21"
+                val VIEW =                  "androidx.camera:camera-view:1.0.0-alpha21"
             }
         }
         object Lifecycle :       Version("2.2.0") {
@@ -57,8 +57,6 @@ object Deps {
         // per this recommendation from Chris Povirk, given guava's decision to split ListenableFuture away from Guava: https://groups.google.com/d/msg/guava-discuss/GghaKwusjcY/bCIAKfzOEwAJ
         const val GUAVA =                   "com.google.guava:guava:27.0.1-android"
         const val MATERIAL =                "com.google.android.material:material:1.1.0-beta01"
-        // QR Scanner
-        const val ML_VISION =               "com.google.firebase:firebase-ml-vision:24.0.3"
     }
     object Grpc :               Version("1.25.0") {
         val ANDROID =                       "io.grpc:grpc-android:$version"
@@ -95,7 +93,7 @@ object Deps {
         const val CHIPS =                    "com.github.gmale:chips-input-layout:2.3.1"
         object Plugins {
             const val SECURE_STORAGE =       "com.github.gmale:secure-storage-android:0.0.3"//"de.adorsys.android:securestoragelibrary:1.2.2"
-            const val QR_SCANNER =           "com.google.zxing:core:3.2.1"
+            const val QR_SCANNER =           "com.google.zxing:core:3.4.1"
         }
     }
 

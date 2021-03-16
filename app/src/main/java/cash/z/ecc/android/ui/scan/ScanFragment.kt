@@ -96,7 +96,7 @@ class ScanFragment : BaseFragment<FragmentScanBinding>() {
 
         try {
             cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageAnalysis)
-            preview.setSurfaceProvider(binding.preview.createSurfaceProvider())
+            preview.setSurfaceProvider(binding.preview.surfaceProvider)
         } catch (t: Throwable) {
             // TODO: consider bubbling this up to the user
             mainActivity?.feedback?.report(t)
