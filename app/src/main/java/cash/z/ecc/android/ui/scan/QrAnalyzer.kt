@@ -3,14 +3,18 @@ package cash.z.ecc.android.ui.scan
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
 import cash.z.ecc.android.sdk.ext.twig
-import com.google.zxing.*
+import com.google.zxing.BinaryBitmap
+import com.google.zxing.NotFoundException
+import com.google.zxing.PlanarYUVLuminanceSource
+import com.google.zxing.Reader
 import com.google.zxing.common.HybridBinarizer
+import com.google.zxing.qrcode.QRCodeReader
 
 
 class QrAnalyzer(val scanCallback: (qrContent: String, image: ImageProxy) -> Unit) :
     ImageAnalysis.Analyzer {
 
-    private val reader = MultiFormatReader()
+    private val reader = QRCodeReader()
 
     override fun analyze(image: ImageProxy) {
         image.toBinaryBitmap().let { bitmap ->
