@@ -10,20 +10,27 @@ import cash.z.ecc.android.R
 import cash.z.ecc.android.databinding.FragmentLandingBinding
 import cash.z.ecc.android.di.viewmodel.activityViewModel
 import cash.z.ecc.android.ext.locale
+import cash.z.ecc.android.ext.showSharedLibraryCriticalError
 import cash.z.ecc.android.ext.toAppString
 import cash.z.ecc.android.feedback.Report
 import cash.z.ecc.android.feedback.Report.Funnel.Restore
-import cash.z.ecc.android.feedback.Report.Tap.*
+import cash.z.ecc.android.feedback.Report.Tap.DEVELOPER_WALLET_CANCEL
+import cash.z.ecc.android.feedback.Report.Tap.DEVELOPER_WALLET_IMPORT
+import cash.z.ecc.android.feedback.Report.Tap.DEVELOPER_WALLET_PROMPT
+import cash.z.ecc.android.feedback.Report.Tap.LANDING_BACKUP
+import cash.z.ecc.android.feedback.Report.Tap.LANDING_BACKUP_SKIPPED_1
+import cash.z.ecc.android.feedback.Report.Tap.LANDING_BACKUP_SKIPPED_2
+import cash.z.ecc.android.feedback.Report.Tap.LANDING_BACKUP_SKIPPED_3
+import cash.z.ecc.android.feedback.Report.Tap.LANDING_NEW
+import cash.z.ecc.android.feedback.Report.Tap.LANDING_RESTORE
 import cash.z.ecc.android.sdk.ext.twig
 import cash.z.ecc.android.ui.base.BaseFragment
 import cash.z.ecc.android.ui.setup.WalletSetupViewModel.WalletSetupState.SEED_WITHOUT_BACKUP
 import cash.z.ecc.android.ui.setup.WalletSetupViewModel.WalletSetupState.SEED_WITH_BACKUP
-import com.bugsnag.android.Bugsnag
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import java.lang.IllegalStateException
 
 class LandingFragment : BaseFragment<FragmentLandingBinding>() {
     override val screen = Report.Screen.LANDING
@@ -122,14 +129,18 @@ class LandingFragment : BaseFragment<FragmentLandingBinding>() {
         val birthday = 991645 //663174
         mainActivity?.apply {
             lifecycleScope.launch {
-                mainActivity?.startSync(walletSetup.importWallet(seedPhrase, birthday))
+                try {
+                    mainActivity?.startSync(walletSetup.importWallet(seedPhrase, birthday))
+                    binding.buttonPositive.isEnabled = true
+                    binding.textMessage.setText(R.string.landing_import_success_message)
+                    binding.buttonNegative.setText(R.string.landing_button_secondary_import_success)
+                    binding.buttonPositive.setText(R.string.landing_import_success_primary_button)
+                    playSound("sound_receive_small.mp3")
+                    vibrateSuccess()
+                } catch (e: UnsatisfiedLinkError) {
+                    mainActivity?.showSharedLibraryCriticalError(e)
+                }
             }
-            binding.buttonPositive.isEnabled = true
-            binding.textMessage.setText(R.string.landing_import_success_message)
-            binding.buttonNegative.setText(R.string.landing_button_secondary_import_success)
-            binding.buttonPositive.setText(R.string.landing_import_success_primary_button)
-            playSound("sound_receive_small.mp3")
-            vibrateSuccess()
         }
     }
 
@@ -153,12 +164,21 @@ class LandingFragment : BaseFragment<FragmentLandingBinding>() {
                 binding.buttonPositive.setText(R.string.landing_button_primary_create_success)
                 mainActivity?.playSound("sound_receive_small.mp3")
                 mainActivity?.vibrateSuccess()
+            } catch (e: UnsatisfiedLinkError) {
+                // For developer sanity:
+                // show a nice dialog, rather than a toast, when the rust didn't get compile
+                // which can happen often when working from a local SDK build
+                mainActivity?.showSharedLibraryCriticalError(e)
             } catch (t: Throwable) {
-                Toast.makeText(context, "Failed to create wallet. See logs for details. Try restarting the app.", Toast.LENGTH_SHORT).show()
                 twig("Failed to create wallet due to: $t")
                 mainActivity?.feedback?.report(t)
                 binding.buttonPositive.isEnabled = true
                 binding.buttonPositive.setText(R.string.landing_button_primary)
+                Toast.makeText(
+                    context,
+                    "Failed to create wallet. See logs for details. Try restarting the app.\n\nMessage: \n${t.message}",
+                    Toast.LENGTH_LONG
+                ).show()
             }
         }
     }

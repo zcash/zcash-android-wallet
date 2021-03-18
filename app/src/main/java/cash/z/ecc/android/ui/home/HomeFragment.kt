@@ -66,7 +66,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
             } else {
                 twig("Previous wallet found. Re-opening it.")
                 mainActivity?.setLoading(true)
-                mainActivity?.startSync(walletSetup.openStoredWallet())
+                try {
+                    mainActivity?.startSync(walletSetup.openStoredWallet())
+                } catch (e: UnsatisfiedLinkError) {
+                    mainActivity?.showSharedLibraryCriticalError(e)
+                }
                 twig("Done reopening wallet.")
             }
         }

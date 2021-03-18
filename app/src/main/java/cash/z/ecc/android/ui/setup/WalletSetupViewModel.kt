@@ -14,7 +14,9 @@ import cash.z.ecc.android.sdk.ext.ZcashSdk
 import cash.z.ecc.android.sdk.ext.twig
 import cash.z.ecc.android.sdk.tool.DerivationTool
 import cash.z.ecc.android.sdk.tool.WalletBirthdayTool
-import cash.z.ecc.android.ui.setup.WalletSetupViewModel.WalletSetupState.*
+import cash.z.ecc.android.ui.setup.WalletSetupViewModel.WalletSetupState.NO_SEED
+import cash.z.ecc.android.ui.setup.WalletSetupViewModel.WalletSetupState.SEED_WITHOUT_BACKUP
+import cash.z.ecc.android.ui.setup.WalletSetupViewModel.WalletSetupState.SEED_WITH_BACKUP
 import cash.z.ecc.kotlin.mnemonic.Mnemonics
 import com.bugsnag.android.Bugsnag
 import kotlinx.coroutines.Dispatchers.IO

@@ -217,6 +217,8 @@
     <string name="dialog_error_critical_processing_button_positive">Retry</string>
     <string name="dialog_error_critical_processing_message">Critical error while processing blocks!</string>
     <string name="dialog_error_critical_processing_title">Processor Error</string>
+    <string name="dialog_error_critical_link_title">Oh no! Invalid Build!</string>
+    <string name="dialog_error_critical_link_message">Unfortunately, the Rust libraries are missing and the only remedy is to update to a new version.\n\n(Note to developers: try commenting out mavenLocal).</string>
     <string name="dialog_error_invalid_seed_phrase_button_positive">Retry</string>
     <string name="dialog_error_invalid_seed_phrase_message">That seed phrase appears to be invalid! Please double-check it and try again.\n\n%1$s</string>
     <string name="dialog_error_invalid_seed_phrase_title">Oops! Invalid Seed Phrase</string>

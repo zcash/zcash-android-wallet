@@ -18,6 +18,7 @@ import cash.z.ecc.android.databinding.FragmentRestoreBinding
 import cash.z.ecc.android.di.viewmodel.activityViewModel
 import cash.z.ecc.android.ext.goneIf
 import cash.z.ecc.android.ext.showInvalidSeedPhraseError
+import cash.z.ecc.android.ext.showSharedLibraryCriticalError
 import cash.z.ecc.android.feedback.Report
 import cash.z.ecc.android.feedback.Report.Funnel.Restore
 import cash.z.ecc.android.feedback.Report.Tap.*
@@ -132,13 +133,17 @@ class RestoreFragment : BaseFragment<FragmentRestoreBinding>(), View.OnKeyListen
         mainActivity?.hideKeyboard()
         mainActivity?.apply {
             lifecycleScope.launch {
-                mainActivity?.startSync(walletSetup.importWallet(seedPhrase, birthday))
-                // bugfix: if the user proceeds before the synchronizer is created the app will crash!
-                binding.buttonSuccess.isEnabled = true
-                mainActivity?.reportFunnel(Restore.ImportCompleted)
+                try {
+                    mainActivity?.startSync(walletSetup.importWallet(seedPhrase, birthday))
+                    // bugfix: if the user proceeds before the synchronizer is created the app will crash!
+                    binding.buttonSuccess.isEnabled = true
+                    mainActivity?.reportFunnel(Restore.ImportCompleted)
+                    playSound("sound_receive_small.mp3")
+                    vibrateSuccess()
+                } catch (e: UnsatisfiedLinkError) {
+                    mainActivity?.showSharedLibraryCriticalError(e)
+                }
             }
-            playSound("sound_receive_small.mp3")
-            vibrateSuccess()
         }
 
         binding.groupDone.visibility = View.GONE
