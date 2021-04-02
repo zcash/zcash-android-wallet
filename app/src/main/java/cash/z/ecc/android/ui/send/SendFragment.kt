@@ -26,6 +26,7 @@ import cash.z.ecc.android.sdk.block.CompactBlockProcessor.WalletBalance
 import cash.z.ecc.android.sdk.ext.*
 import cash.z.ecc.android.sdk.validate.AddressType
 import cash.z.ecc.android.ui.base.BaseFragment
+import kotlinx.android.synthetic.main.fragment_send.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -136,13 +137,23 @@ class SendFragment : BaseFragment<FragmentSendBinding>(),
     }
 
     private fun onAddressChanged(address: String) {
+        var isTaddress = false
         lifecycleScope.launchWhenResumed {
             val validation = sendViewModel.validateAddress(address)
             binding.buttonSend.isActivated = !validation.isNotValid
             var type = when (validation) {
-                is AddressType.Transparent -> R.string.send_validation_address_valid_taddr to R.color.zcashGreen
-                is AddressType.Shielded -> R.string.send_validation_address_valid_zaddr to R.color.zcashGreen
-                is AddressType.Invalid -> R.string.send_validation_address_invalid to R.color.zcashRed
+                is AddressType.Transparent -> {
+                    isTaddress = true
+                    R.string.send_validation_address_valid_taddr to R.color.zcashGreen
+                }
+                is AddressType.Shielded -> {
+                    isTaddress = false
+                    R.string.send_validation_address_valid_zaddr to R.color.zcashGreen
+                }
+                is AddressType.Invalid -> {
+                    isTaddress = false
+                    R.string.send_validation_address_invalid to R.color.zcashRed
+                }
             }
             if (address == sendViewModel.synchronizer.getAddress()) type =
                 R.string.send_validation_address_self to R.color.zcashRed
@@ -157,6 +168,19 @@ class SendFragment : BaseFragment<FragmentSendBinding>(),
                     }
                 }
             }
+
+            // if Taddress, no memo can be included in TX
+            if(isTaddress) {
+                text_layout_memo.visibility = View.INVISIBLE
+                check_include_address.visibility = View.INVISIBLE
+                text_no_memo.visibility = View.VISIBLE
+
+            }else{
+                text_layout_memo.visibility = View.VISIBLE
+                check_include_address.visibility = View.VISIBLE
+                text_no_memo.visibility = View.INVISIBLE
+            }
+
             // if we have the last used address but we're changing it, then clear the selection
             if (binding.imageLastUsedAddressSelected.isVisible) {
                 loadLastUsedAddress().let { lastAddress ->

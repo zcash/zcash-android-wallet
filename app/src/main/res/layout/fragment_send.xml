@@ -196,13 +196,13 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/send_address_hint"
                 android:theme="@style/Zcash.Overlay.TextInputLayout"
+                android:visibility="visible"
                 app:endIconDrawable="@drawable/ic_qr_scan"
                 app:endIconMode="custom"
                 app:helperText="Enter a valid Zcash address"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.08"
                 app:layout_constraintWidth_percent="0.84">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -225,6 +225,7 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/send_memo_hint"
                 android:theme="@style/Zcash.Overlay.TextInputLayout"
+                android:visibility="visible"
                 app:endIconMode="clear_text"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -244,8 +245,22 @@
                     android:maxLines="3"
                     android:textColor="@color/text_light"
                     android:textColorHint="@color/text_light_dimmed"
+                    android:visibility="visible"
                     tools:text="WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW" />
             </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                android:id="@+id/text_no_memo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="To add a memo, enter a shielded address!"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toBottomOf="@+id/space_checkbox"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/text_layout_address"
+                app:layout_constraintVertical_bias="1.0"
+                app:layout_constraintWidth_percent="0.84" />
 
             <!--            <ImageView-->
             <!--                android:id="@+id/clear_memo"-->
