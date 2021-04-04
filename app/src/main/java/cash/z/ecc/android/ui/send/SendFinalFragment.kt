@@ -121,8 +121,7 @@ class SendFinalFragment : BaseFragment<FragmentSendFinalBinding>() {
             }
             isFailure() -> {
                 model.title = getString(R.string.send_final_button_primary_failed)
-                model.errorMessage = if (isFailedEncoding()) getString(R.string.send_final_error_encoding) else getString(
-                                    R.string.send_final_error_submitting)
+                model.errorMessage = errorMessage ?: getString(R.string.send_final_error_submitting)
                 model.primaryButtonText = getString(R.string.send_final_button_primary_retry)
                 model.primaryAction = { onReturnToSend() }
             }
