@@ -140,8 +140,14 @@ class SendFragment : BaseFragment<FragmentSendBinding>(),
             val validation = sendViewModel.validateAddress(address)
             binding.buttonSend.isActivated = !validation.isNotValid
             var type = when (validation) {
-                is AddressType.Transparent -> R.string.send_validation_address_valid_taddr to R.color.zcashGreen
-                is AddressType.Shielded -> R.string.send_validation_address_valid_zaddr to R.color.zcashGreen
+                is AddressType.Transparent -> {
+                    updateAddressUI(isTAddress = true)
+                    R.string.send_validation_address_valid_taddr to R.color.zcashGreen
+                }
+                is AddressType.Shielded -> {
+                    updateAddressUI(isTAddress = false)
+                    R.string.send_validation_address_valid_zaddr to R.color.zcashGreen
+                }
                 is AddressType.Invalid -> R.string.send_validation_address_invalid to R.color.zcashRed
             }
             if (address == sendViewModel.synchronizer.getAddress()) type =
@@ -165,6 +171,21 @@ class SendFragment : BaseFragment<FragmentSendBinding>(),
                     }
                 }
             }
+        }
+    }
+
+    /**
+    * To hide input Memo and reply-to option for T type address and show a info message about memo option availability
+    * */
+    private fun updateAddressUI(isTAddress: Boolean) {
+        if (isTAddress) {
+            binding.textLayoutMemo.gone()
+            binding.checkIncludeAddress.gone()
+            binding.textNoZAddress.visible()
+        } else {
+            binding.textLayoutMemo.visible()
+            binding.checkIncludeAddress.visible()
+            binding.textNoZAddress.gone()
         }
     }
 
