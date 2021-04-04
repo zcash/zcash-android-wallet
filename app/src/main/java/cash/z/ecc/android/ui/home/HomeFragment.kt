@@ -74,7 +74,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
                 twig("Done reopening wallet.")
             }
         }
-        twig("HomeFragment.onAttach COMPLETE")
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -121,7 +120,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
             onModelUpdated(null, uiModel.copy(pendingSend = WalletZecFormmatter.toZecStringFull(sendViewModel.zatoshiAmount.coerceAtLeast(0))))
         }
 
-        twig("HomeFragment.onViewCreated COMPLETE")
     }
 
     private fun onClearAmount() {
@@ -168,7 +166,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        twig("HomeFragment.onSaveInstanceState")
 //        if (::uiModel.isInitialized) {
 //            outState.putParcelable("uiModel", uiModel)
 //        }
@@ -177,7 +174,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
     override fun onViewStateRestored(savedInstanceState: Bundle?) {
         super.onViewStateRestored(savedInstanceState)
         savedInstanceState?.let { inState ->
-            twig("HomeFragment.onViewStateRestored")
 //            onModelUpdated(HomeViewModel.UiModel(), inState.getParcelable("uiModel")!!)
         }
     }
@@ -404,7 +400,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
         val c = text[0]
         setOnClickListener {
             lifecycleScope.launch {
-                twig("CHAR TYPED: $c")
                 viewModel.onChar(c)
             }
         }
@@ -414,14 +409,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
 
 
 
-    // TODO: remove these troubleshooting logs
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        twig("HomeFragment.onCreate")
     }
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        twig("HomeFragment.onActivityCreated")
     }
     override fun onStart() {
         super.onStart()
@@ -429,22 +421,17 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
     }
     override fun onPause() {
         super.onPause()
-        twig("HomeFragment.onPause  resumeScope.isActive: ${resumedScope.isActive}")
     }
     override fun onStop() {
         super.onStop()
-        twig("HomeFragment.onStop")
     }
     override fun onDestroyView() {
         super.onDestroyView()
-        twig("HomeFragment.onDestroyView")
     }
     override fun onDestroy() {
         super.onDestroy()
-        twig("HomeFragment.onDestroy")
     }
     override fun onDetach() {
         super.onDetach()
-        twig("HomeFragment.onDetach")
     }
 }
