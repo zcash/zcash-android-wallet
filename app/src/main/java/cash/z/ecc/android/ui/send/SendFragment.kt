@@ -148,7 +148,10 @@ class SendFragment : BaseFragment<FragmentSendBinding>(),
                     updateAddressUI(isTAddress = false)
                     R.string.send_validation_address_valid_zaddr to R.color.zcashGreen
                 }
-                is AddressType.Invalid -> R.string.send_validation_address_invalid to R.color.zcashRed
+                is AddressType.Invalid -> {
+                    updateAddressUI(isTAddress = false)
+                    R.string.send_validation_address_invalid to R.color.zcashRed
+                }
             }
             if (address == sendViewModel.synchronizer.getAddress()) type =
                 R.string.send_validation_address_self to R.color.zcashRed
