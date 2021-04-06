@@ -26,7 +26,6 @@ import cash.z.ecc.android.sdk.block.CompactBlockProcessor.WalletBalance
 import cash.z.ecc.android.sdk.ext.*
 import cash.z.ecc.android.sdk.validate.AddressType
 import cash.z.ecc.android.ui.base.BaseFragment
-import kotlinx.android.synthetic.main.fragment_send.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -170,15 +169,15 @@ class SendFragment : BaseFragment<FragmentSendBinding>(),
             }
 
             // if Taddress, no memo can be included in TX
-            if(isTaddress) {
-                text_layout_memo.visibility = View.INVISIBLE
-                check_include_address.visibility = View.INVISIBLE
-                text_no_memo.visibility = View.VISIBLE
+            if (isTaddress) {
+                binding.textLayoutMemo.visibility = View.INVISIBLE
+                binding.checkIncludeAddress.visibility = View.INVISIBLE
+                binding.textNoMemo.visibility = View.VISIBLE
 
-            }else{
-                text_layout_memo.visibility = View.VISIBLE
-                check_include_address.visibility = View.VISIBLE
-                text_no_memo.visibility = View.INVISIBLE
+            } else {
+                binding.textLayoutMemo.visibility = View.VISIBLE
+                binding.checkIncludeAddress.visibility = View.VISIBLE
+                binding.textNoMemo.visibility = View.INVISIBLE
             }
 
             // if we have the last used address but we're changing it, then clear the selection
