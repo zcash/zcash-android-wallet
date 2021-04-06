@@ -167,19 +167,6 @@ class SendFragment : BaseFragment<FragmentSendBinding>(),
                     }
                 }
             }
-
-            // if Taddress, no memo can be included in TX
-            if (isTaddress) {
-                binding.textLayoutMemo.visibility = View.INVISIBLE
-                binding.checkIncludeAddress.visibility = View.INVISIBLE
-                binding.textNoMemo.visibility = View.VISIBLE
-
-            } else {
-                binding.textLayoutMemo.visibility = View.VISIBLE
-                binding.checkIncludeAddress.visibility = View.VISIBLE
-                binding.textNoMemo.visibility = View.INVISIBLE
-            }
-
             // if we have the last used address but we're changing it, then clear the selection
             if (binding.imageLastUsedAddressSelected.isVisible) {
                 loadLastUsedAddress().let { lastAddress ->
@@ -188,6 +175,21 @@ class SendFragment : BaseFragment<FragmentSendBinding>(),
                     }
                 }
             }
+        }
+    }
+
+    /**
+    * To hide input Memo and reply-to option for T type address and show a info message about memo option availability
+    * */
+    private fun updateAddressUI(isTAddress: Boolean) {
+        if (isTAddress) {
+            binding.textLayoutMemo.gone()
+            binding.checkIncludeAddress.gone()
+            binding.textNoZAddress.visible()
+        } else {
+            binding.textLayoutMemo.visible()
+            binding.checkIncludeAddress.visible()
+            binding.textNoZAddress.gone()
         }
     }
 
