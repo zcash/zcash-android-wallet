@@ -245,18 +245,6 @@
                     tools:text="WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <TextView
-                android:id="@+id/text_no_memo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="To add a memo, enter a shielded address!"
-                app:layout_constraintBottom_toBottomOf="@+id/space_checkbox"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/text_layout_address"
-                app:layout_constraintVertical_bias="1.0"
-                app:layout_constraintWidth_percent="0.84" />
-
             <!--            <ImageView-->
             <!--                android:id="@+id/clear_memo"-->
             <!--                android:layout_width="24dp"-->
@@ -311,7 +299,6 @@
                 android:text="@string/send_no_z_address_message"
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
                 android:textColor="@color/text_light"
-                android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/barrier_address_layout_check_include"
