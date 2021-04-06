@@ -136,25 +136,21 @@ class SendFragment : BaseFragment<FragmentSendBinding>(),
     }
 
     private fun onAddressChanged(address: String) {
-        var isTAddress = false
         lifecycleScope.launchWhenResumed {
             val validation = sendViewModel.validateAddress(address)
             binding.buttonSend.isActivated = !validation.isNotValid
             var type = when (validation) {
                 is AddressType.Transparent -> {
-                    isTAddress = true
                     R.string.send_validation_address_valid_taddr to R.color.zcashGreen
                 }
                 is AddressType.Shielded -> {
-                    isTAddress = false
                     R.string.send_validation_address_valid_zaddr to R.color.zcashGreen
                 }
                 is AddressType.Invalid -> {
-                    isTAddress = false
                     R.string.send_validation_address_invalid to R.color.zcashRed
                 }
             }
-            updateAddressUi(isTAddress)
+            updateAddressUi(validation is AddressType.Transparent)
             if (address == sendViewModel.synchronizer.getAddress()) type =
                 R.string.send_validation_address_self to R.color.zcashRed
             binding.textLayoutAddress.helperText = getString(type.first)
