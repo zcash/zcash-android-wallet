@@ -46,23 +46,22 @@ class HomeViewModel @Inject constructor() : ViewModel() {
                 // no-op cases
                 acc == "0" && c == '0'
                         || (c == backspace && acc == "0")
-                        || (c == decimal && acc.contains(decimal)) -> {twig("triggered: 1  acc: $acc  c: $c")
+                        || (c == decimal && acc.contains(decimal)) -> {
                     acc
                 }
-                c == backspace && acc.length <= 1 -> {twig("triggered: 2 $typedChars")
+                c == backspace && acc.length <= 1 -> {
                     "0"
                 }
-                c == backspace -> {twig("triggered: 3")
+                c == backspace -> {
                     acc.substring(0, acc.length - 1)
                 }
-                acc == "0" && c != decimal -> {twig("triggered: 4 $typedChars")
+                acc == "0" && c != decimal -> {
                     c.toString()
                 }
                 acc.contains(decimal) && acc.length - acc.indexOf(decimal) > 8 -> {
-                    twig("triggered: 5 $typedChars")
                     acc
                 }
-                else -> {twig("triggered: 6  $typedChars")
+                else -> {
                     "$acc$c"
                 }
             }
