@@ -47,6 +47,7 @@ class SendFragment : BaseFragment<FragmentSendBinding>(),
 
         // Apply View Model
         applyViewModel(sendViewModel)
+        updateAddressUi(false)
 
 
         // Apply behaviors
@@ -178,8 +179,8 @@ class SendFragment : BaseFragment<FragmentSendBinding>(),
     /**
     * To hide input Memo and reply-to option for T type address and show a info message about memo option availability
     * */
-    private fun updateAddressUi(isTAddress: Boolean) {
-        if (isTAddress) {
+    private fun updateAddressUi(isMemoHidden: Boolean) {
+        if (isMemoHidden) {
             binding.textLayoutMemo.gone()
             binding.checkIncludeAddress.gone()
             binding.textNoZAddress.visible()
