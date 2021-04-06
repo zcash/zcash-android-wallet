@@ -196,7 +196,6 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/send_address_hint"
                 android:theme="@style/Zcash.Overlay.TextInputLayout"
-                android:visibility="visible"
                 app:endIconDrawable="@drawable/ic_qr_scan"
                 app:endIconMode="custom"
                 app:helperText="Enter a valid Zcash address"
@@ -225,7 +224,6 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/send_memo_hint"
                 android:theme="@style/Zcash.Overlay.TextInputLayout"
-                android:visibility="visible"
                 app:endIconMode="clear_text"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -245,7 +243,6 @@
                     android:maxLines="3"
                     android:textColor="@color/text_light"
                     android:textColorHint="@color/text_light_dimmed"
-                    android:visibility="visible"
                     tools:text="WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -254,7 +251,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="To add a memo, enter a shielded address!"
-                android:visibility="invisible"
                 app:layout_constraintBottom_toBottomOf="@+id/space_checkbox"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
