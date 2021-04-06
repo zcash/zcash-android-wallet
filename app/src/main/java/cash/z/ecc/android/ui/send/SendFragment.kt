@@ -47,6 +47,7 @@ class SendFragment : BaseFragment<FragmentSendBinding>(),
 
         // Apply View Model
         applyViewModel(sendViewModel)
+        updateAddressUi(false)
 
 
         // Apply behaviors
@@ -140,10 +141,17 @@ class SendFragment : BaseFragment<FragmentSendBinding>(),
             val validation = sendViewModel.validateAddress(address)
             binding.buttonSend.isActivated = !validation.isNotValid
             var type = when (validation) {
-                is AddressType.Transparent -> R.string.send_validation_address_valid_taddr to R.color.zcashGreen
-                is AddressType.Shielded -> R.string.send_validation_address_valid_zaddr to R.color.zcashGreen
-                is AddressType.Invalid -> R.string.send_validation_address_invalid to R.color.zcashRed
+                is AddressType.Transparent -> {
+                    R.string.send_validation_address_valid_taddr to R.color.zcashGreen
+                }
+                is AddressType.Shielded -> {
+                    R.string.send_validation_address_valid_zaddr to R.color.zcashGreen
+                }
+                is AddressType.Invalid -> {
+                    R.string.send_validation_address_invalid to R.color.zcashRed
+                }
             }
+            updateAddressUi(validation is AddressType.Transparent)
             if (address == sendViewModel.synchronizer.getAddress()) type =
                 R.string.send_validation_address_self to R.color.zcashRed
             binding.textLayoutAddress.helperText = getString(type.first)
@@ -165,6 +173,21 @@ class SendFragment : BaseFragment<FragmentSendBinding>(),
                     }
                 }
             }
+        }
+    }
+
+    /**
+    * To hide input Memo and reply-to option for T type address and show a info message about memo option availability
+    * */
+    private fun updateAddressUi(isMemoHidden: Boolean) {
+        if (isMemoHidden) {
+            binding.textLayoutMemo.gone()
+            binding.checkIncludeAddress.gone()
+            binding.textNoZAddress.visible()
+        } else {
+            binding.textLayoutMemo.visible()
+            binding.checkIncludeAddress.visible()
+            binding.textNoZAddress.gone()
         }
     }
 

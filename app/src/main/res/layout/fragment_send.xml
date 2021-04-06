@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -187,7 +186,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHeight_percent="0.04"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/check_include_address" />
+                app:layout_constraintTop_toBottomOf="@+id/text_no_z_address" />
 
             <!-- Input: Address -->
             <com.google.android.material.textfield.TextInputLayout
@@ -202,7 +201,6 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.08"
                 app:layout_constraintWidth_percent="0.84">
 
                 <com.google.android.material.textfield.TextInputEditText
@@ -285,6 +283,26 @@
                 android:translationY="-10dp"
                 app:layout_constraintEnd_toEndOf="@id/text_layout_memo"
                 app:layout_constraintTop_toBottomOf="@id/space_checkbox" />
+
+            <androidx.constraintlayout.widget.Barrier
+                android:id="@+id/barrier_address_layout_check_include"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:barrierDirection="bottom"
+                app:constraint_referenced_ids="text_layout_address, check_include_address" />
+
+            <TextView
+                android:id="@+id/text_no_z_address"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="@string/send_no_z_address_message"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"
+                android:textColor="@color/text_light"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/barrier_address_layout_check_include"
+                app:layout_constraintWidth_percent="0.84" />
 
 
             <!--                 -->
