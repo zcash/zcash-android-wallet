@@ -3,12 +3,12 @@ package cash.z.ecc.android
 object Deps {
     // For use in the top-level build.gradle which gives an error when provided
     // `Deps.Kotlin.version` directly
-    const val kotlinVersion =       "1.4.10"
+    const val kotlinVersion =       "1.4.32"
 
-    const val compileSdkVersion =   29
-    const val buildToolsVersion =   "29.0.2"
+    const val compileSdkVersion =   30
+    const val buildToolsVersion =   "30.0.3"
     const val minSdkVersion =       21
-    const val targetSdkVersion =    29
+    const val targetSdkVersion =    30
     const val versionName =         "1.0.0-alpha43"
     const val versionCode =         1_00_00_143  // last digits are alpha(0XX) beta(2XX) rc(4XX) release(8XX). Ex: 1_08_04_401 is an release candidate build of version 1.8.4 and 1_08_04_800 would be the final release.
     const val packageName =         "cash.z.ecc.android"

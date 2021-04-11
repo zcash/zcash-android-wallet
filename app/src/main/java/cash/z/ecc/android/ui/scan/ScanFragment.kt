@@ -30,7 +30,9 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 class ScanFragment : BaseFragment<FragmentScanBinding>() {
+
     override val screen = Report.Screen.SCAN
+
     private val viewModel: ScanViewModel by viewModel()
 
     private val sendViewModel: SendViewModel by activityViewModel()
@@ -175,7 +177,7 @@ class ScanFragment : BaseFragment<FragmentScanBinding>() {
         get() {
             return try {
                 val info = mainActivity?.packageManager
-                    ?.getPackageInfo(mainActivity?.packageName, PackageManager.GET_PERMISSIONS)
+                    ?.getPackageInfo(mainActivity?.packageName ?: "", PackageManager.GET_PERMISSIONS)
                 val ps = info?.requestedPermissions
                 if (ps != null && ps.isNotEmpty()) {
                     ps
