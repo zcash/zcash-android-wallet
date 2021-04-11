@@ -10,7 +10,6 @@ import com.google.zxing.Reader
 import com.google.zxing.common.HybridBinarizer
 import com.google.zxing.qrcode.QRCodeReader
 
-
 class QrAnalyzer(val scanCallback: (qrContent: String, image: ImageProxy) -> Unit) :
     ImageAnalysis.Analyzer {
 
@@ -63,5 +62,4 @@ class QrAnalyzer(val scanCallback: (qrContent: String, image: ImageProxy) -> Uni
     private fun onImageScan(result: String, image: ImageProxy) {
         scanCallback(result, image)
     }
-
 }

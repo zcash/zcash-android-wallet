@@ -13,7 +13,7 @@ class ViewModelFactory @Inject constructor(
             modelClass.isAssignableFrom(it.key)
         }?.value ?: throw IllegalArgumentException(
             "No map entry found for ${modelClass.canonicalName}. Verify that this ViewModel has" +
-                    " been added to the ViewModelModule. ${creators.keys}"
+                " been added to the ViewModelModule. ${creators.keys}"
         )
         @Suppress("UNCHECKED_CAST")
         return creator.get() as T

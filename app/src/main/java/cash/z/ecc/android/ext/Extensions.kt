@@ -4,10 +4,9 @@ import android.content.Context
 import android.os.Build
 import androidx.fragment.app.Fragment
 import cash.z.ecc.android.sdk.ext.Bush
-import cash.z.ecc.android.sdk.ext.CompositeTwig
 import cash.z.ecc.android.sdk.ext.Twig
 import cash.z.ecc.android.sdk.ext.twig
-import java.util.*
+import java.util.Locale
 
 fun Boolean.asString(ifTrue: String = "", ifFalse: String = "") = if (this) ifTrue else ifFalse
 

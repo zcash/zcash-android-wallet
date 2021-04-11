@@ -4,15 +4,13 @@ buildscript {
     repositories {
         google()
         jcenter()
-        maven {
-            url 'https://maven.fabric.io/public'
-        }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.0.1'
+        classpath 'com.android.tools.build:gradle:4.2.0-rc01'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${Deps.kotlinVersion}"
-        classpath 'io.fabric.tools:gradle:1.31.2'
         classpath 'com.bugsnag:bugsnag-android-gradle-plugin:4.7.5'
+        classpath 'com.google.gms:google-services:4.3.5'
+        classpath 'com.google.firebase:firebase-crashlytics-gradle:2.5.2'
     }
 }
 
@@ -30,4 +28,3 @@ task clean(type: Delete) {
 }
 
 defaultTasks 'clean', 'installZcashmainnetRelease'
-

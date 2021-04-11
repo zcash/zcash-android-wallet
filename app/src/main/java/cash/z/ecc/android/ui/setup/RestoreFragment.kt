@@ -21,16 +21,16 @@ import cash.z.ecc.android.ext.showInvalidSeedPhraseError
 import cash.z.ecc.android.ext.showSharedLibraryCriticalError
 import cash.z.ecc.android.feedback.Report
 import cash.z.ecc.android.feedback.Report.Funnel.Restore
-import cash.z.ecc.android.feedback.Report.Tap.*
-import cash.z.ecc.android.ui.base.BaseFragment
+import cash.z.ecc.android.feedback.Report.Tap.RESTORE_BACK
+import cash.z.ecc.android.feedback.Report.Tap.RESTORE_DONE
+import cash.z.ecc.android.feedback.Report.Tap.RESTORE_SUCCESS
 import cash.z.ecc.android.sdk.ext.ZcashSdk
-import cash.z.ecc.android.sdk.ext.twig
+import cash.z.ecc.android.ui.base.BaseFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.tylersuehr.chips.Chip
 import com.tylersuehr.chips.ChipsAdapter
 import com.tylersuehr.chips.SeedWordAdapter
 import kotlinx.coroutines.launch
-
 
 class RestoreFragment : BaseFragment<FragmentRestoreBinding>(), View.OnKeyListener {
     override val screen = Report.Screen.RESTORE
@@ -51,7 +51,6 @@ class RestoreFragment : BaseFragment<FragmentRestoreBinding>(), View.OnKeyListen
             onChipsModified()
         }.also { onChipsModified() }
         seedWordRecycler.adapter = seedWordAdapter
-
 
         binding.chipsInput.apply {
             setFilterableChipList(getChips())
@@ -95,7 +94,6 @@ class RestoreFragment : BaseFragment<FragmentRestoreBinding>(), View.OnKeyListen
         // Require one less tap to enter the seed words
         touchScreenForUser()
     }
-
 
     private fun onExit() {
         mainActivity?.reportFunnel(Restore.Exit)
@@ -154,16 +152,22 @@ class RestoreFragment : BaseFragment<FragmentRestoreBinding>(), View.OnKeyListen
 
     private fun onChipsModified() {
         seedWordAdapter?.editText?.apply {
-            postDelayed({
-                requestFocus()
-            },40L)
+            postDelayed(
+                {
+                    requestFocus()
+                },
+                40L
+            )
         }
         setDoneEnabled()
 
-        view!!.postDelayed({
-            mainActivity!!.showKeyboard(seedWordAdapter!!.editText)
-            seedWordAdapter?.editText?.requestFocus()
-        }, 500L)
+        view!!.postDelayed(
+            {
+                mainActivity!!.showKeyboard(seedWordAdapter!!.editText)
+                seedWordAdapter?.editText?.requestFocus()
+            },
+            500L
+        )
     }
 
     private fun setDoneEnabled() {
@@ -195,11 +199,14 @@ class RestoreFragment : BaseFragment<FragmentRestoreBinding>(), View.OnKeyListen
 
     private fun touchScreenForUser() {
         seedWordAdapter?.editText?.apply {
-            postDelayed({
-                seedWordAdapter?.editText?.inputType = InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
-                dispatchTouchEvent(motionEvent(ACTION_DOWN))
-                dispatchTouchEvent(motionEvent(ACTION_UP))
-            }, 100L)
+            postDelayed(
+                {
+                    seedWordAdapter?.editText?.inputType = InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+                    dispatchTouchEvent(motionEvent(ACTION_DOWN))
+                    dispatchTouchEvent(motionEvent(ACTION_UP))
+                },
+                100L
+            )
         }
     }
 
@@ -210,11 +217,10 @@ class RestoreFragment : BaseFragment<FragmentRestoreBinding>(), View.OnKeyListen
     override fun onKey(v: View?, keyCode: Int, event: KeyEvent?): Boolean {
         return false
     }
-
 }
 
 class SeedWordChip(val word: String, var index: Int = -1) : Chip() {
-    override fun getSubtitle(): String? = null//"subtitle for $word"
+    override fun getSubtitle(): String? = null // "subtitle for $word"
     override fun getAvatarDrawable(): Drawable? = null
     override fun getId() = index
     override fun getTitle() = word

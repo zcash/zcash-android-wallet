@@ -25,7 +25,19 @@ import androidx.annotation.IdRes
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.biometric.BiometricPrompt
-import androidx.biometric.BiometricPrompt.*
+import androidx.biometric.BiometricPrompt.ERROR_CANCELED
+import androidx.biometric.BiometricPrompt.ERROR_HW_NOT_PRESENT
+import androidx.biometric.BiometricPrompt.ERROR_HW_UNAVAILABLE
+import androidx.biometric.BiometricPrompt.ERROR_LOCKOUT
+import androidx.biometric.BiometricPrompt.ERROR_LOCKOUT_PERMANENT
+import androidx.biometric.BiometricPrompt.ERROR_NEGATIVE_BUTTON
+import androidx.biometric.BiometricPrompt.ERROR_NO_BIOMETRICS
+import androidx.biometric.BiometricPrompt.ERROR_NO_DEVICE_CREDENTIAL
+import androidx.biometric.BiometricPrompt.ERROR_NO_SPACE
+import androidx.biometric.BiometricPrompt.ERROR_TIMEOUT
+import androidx.biometric.BiometricPrompt.ERROR_UNABLE_TO_PROCESS
+import androidx.biometric.BiometricPrompt.ERROR_USER_CANCELED
+import androidx.biometric.BiometricPrompt.ERROR_VENDOR
 import androidx.core.content.ContextCompat
 import androidx.core.content.getSystemService
 import androidx.fragment.app.Fragment
@@ -68,7 +80,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-
 
 class MainActivity : AppCompatActivity() {
 
@@ -204,9 +215,9 @@ class MainActivity : AppCompatActivity() {
                 } catch (t: Throwable) {
                     twig(
                         "WARNING: during callback, did not navigate to destination: R.id.${
-                            resources.getResourceEntryName(
-                                destination
-                            )
+                        resources.getResourceEntryName(
+                            destination
+                        )
                         } due to: $t"
                     )
                 }
@@ -217,9 +228,9 @@ class MainActivity : AppCompatActivity() {
             } catch (t: Throwable) {
                 twig(
                     "WARNING: did not immediately navigate to destination: R.id.${
-                        resources.getResourceEntryName(
-                            destination
-                        )
+                    resources.getResourceEntryName(
+                        destination
+                    )
                     } due to: $t"
                 )
             }
@@ -280,7 +291,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun authenticate(description: String, title: String = getString(R.string.biometric_prompt_title), block: () -> Unit) {
-        val callback =  object : BiometricPrompt.AuthenticationCallback() {
+        val callback = object : BiometricPrompt.AuthenticationCallback() {
             override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
                 twig("Authentication success")
                 block()
@@ -382,15 +393,18 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun preventBackPress(fragment: Fragment) {
-        onFragmentBackPressed(fragment){}
+        onFragmentBackPressed(fragment) {}
     }
 
     fun onFragmentBackPressed(fragment: Fragment, block: () -> Unit) {
-        onBackPressedDispatcher.addCallback(fragment, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                block()
+        onBackPressedDispatcher.addCallback(
+            fragment,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    block()
+                }
             }
-        })
+        )
     }
 
     private fun showMessage(message: String, linger: Boolean = false) {
@@ -404,26 +418,26 @@ class MainActivity : AppCompatActivity() {
                 .make(view, "$message", Snackbar.LENGTH_INDEFINITE)
                 .setAction(action) { /*auto-close*/ }
 
-                val snackBarView = snacks.view as ViewGroup
-                val navigationBarHeight = resources.getDimensionPixelSize(
-                    resources.getIdentifier(
-                        "navigation_bar_height",
-                        "dimen",
-                        "android"
-                    )
+            val snackBarView = snacks.view as ViewGroup
+            val navigationBarHeight = resources.getDimensionPixelSize(
+                resources.getIdentifier(
+                    "navigation_bar_height",
+                    "dimen",
+                    "android"
                 )
-                val params = snackBarView.getChildAt(0).layoutParams as ViewGroup.MarginLayoutParams
-                params.setMargins(
-                    params.leftMargin,
-                    params.topMargin,
-                    params.rightMargin,
-                    navigationBarHeight
-                )
+            )
+            val params = snackBarView.getChildAt(0).layoutParams as ViewGroup.MarginLayoutParams
+            params.setMargins(
+                params.leftMargin,
+                params.topMargin,
+                params.rightMargin,
+                navigationBarHeight
+            )
 
-                snackBarView.getChildAt(0).setLayoutParams(params)
+            snackBarView.getChildAt(0).setLayoutParams(params)
             snacks
         } else {
-            snackbar!!.setText(message).setAction(action) {/*auto-close*/}
+            snackbar!!.setText(message).setAction(action) { /*auto-close*/ }
         }.also {
             if (!it.isShownOrQueued) it.show()
         }
@@ -498,7 +512,8 @@ class MainActivity : AppCompatActivity() {
                 if (dialog == null && !ignoreScanFailure) throttle("scanFailure", 20_000L) {
                     notified = true
                     runOnUiThread {
-                        dialog = showScanFailure(error,
+                        dialog = showScanFailure(
+                            error,
                             onCancel = { dialog = null },
                             onDismiss = { dialog = null }
                         )
@@ -528,7 +543,6 @@ class MainActivity : AppCompatActivity() {
         feedback.report(Reorg(errorHeight, rewindHeight))
     }
 
-
     // TODO: maybe move this quick helper code somewhere general or throttle the dialogs differently (like with a flow and stream operators, instead)
 
     private val throttles = mutableMapOf<String, () -> Any>()
@@ -543,20 +557,21 @@ class MainActivity : AppCompatActivity() {
 
         // after doing the work, check back in later and if another request came in, throttle it, otherwise exit
         throttles[key] = noWork
-        findViewById<View>(android.R.id.content).postDelayed({
-            throttles[key]?.let { pendingWork ->
-                throttles.remove(key)
-                if (pendingWork !== noWork) throttle(key, delay, pendingWork)
-            }
-        }, delay)
+        findViewById<View>(android.R.id.content).postDelayed(
+            {
+                throttles[key]?.let { pendingWork ->
+                    throttles.remove(key)
+                    if (pendingWork !== noWork) throttle(key, delay, pendingWork)
+                }
+            },
+            delay
+        )
     }
-
-
 
     fun toTxId(tx: ByteArray?): String? {
         if (tx == null) return null
         val sb = StringBuilder(tx.size * 2)
-        for(i in (tx.size - 1) downTo 0) {
+        for (i in (tx.size - 1) downTo 0) {
             sb.append(String.format("%02x", tx[i]))
         }
         return sb.toString()
@@ -647,5 +662,4 @@ class MainActivity : AppCompatActivity() {
             twig("Warning: failed to open browser due to $t")
         }
     }
-
 }

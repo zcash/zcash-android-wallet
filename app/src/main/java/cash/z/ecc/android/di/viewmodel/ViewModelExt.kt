@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModelProvider
 import cash.z.ecc.android.ui.MainActivity
 import cash.z.ecc.android.ui.base.BaseFragment
 
-
 inline fun <reified VM : ViewModel> BaseFragment<*>.viewModel() = object : Lazy<VM> {
     val cached: VM? = null
     override fun isInitialized(): Boolean = cached != null

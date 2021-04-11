@@ -150,7 +150,6 @@ class WalletSetupViewModel @Inject constructor() : ViewModel() {
     private fun loadNearestBirthday(birthdayHeight: Int? = null) =
         WalletBirthdayTool.loadNearest(ZcashWalletApp.instance, birthdayHeight)
 
-
     //
     // Storage Helpers
     //
@@ -167,7 +166,7 @@ class WalletSetupViewModel @Inject constructor() : ViewModel() {
     ) {
         check(!lockBox.getBoolean(Const.Backup.HAS_SEED)) {
             "Error! Cannot store a seed when one already exists! This would overwrite the" +
-                    " existing seed and could lead to a loss of funds if the user has no backup!"
+                " existing seed and could lead to a loss of funds if the user has no backup!"
         }
 
         storeBirthday(birthday)
@@ -202,5 +201,4 @@ class WalletSetupViewModel @Inject constructor() : ViewModel() {
         twig("storeViewingKey vk: ${vk.length}")
         lockBox[Const.Backup.VIEWING_KEY] = vk
     }
-
 }

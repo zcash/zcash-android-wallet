@@ -5,15 +5,12 @@ import cash.z.ecc.android.ext.ConversionsUniform.LONG_SCALE
 import cash.z.ecc.android.ext.ConversionsUniform.SHORT_FORMATTER
 import cash.z.ecc.android.sdk.ext.Conversions
 import cash.z.ecc.android.sdk.ext.ZcashSdk
-import cash.z.ecc.android.sdk.ext.convertZatoshiToZec
-import cash.z.ecc.android.sdk.ext.toZec
 import java.math.BigDecimal
 import java.math.MathContext
 import java.math.RoundingMode
 import java.text.DecimalFormat
 import java.text.NumberFormat
-import java.util.*
-
+import java.util.Locale
 
 /**
  * Do the necessary conversions in one place
@@ -75,5 +72,4 @@ object WalletZecFormmatter {
         BigDecimal(this ?: 0L, MathContext.DECIMAL128)
             .divide(ConversionsUniform.ONE_ZEC_IN_ZATOSHI)
             .setScale(LONG_SCALE, ConversionsUniform.roundingMode)
-
 }

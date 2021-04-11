@@ -15,10 +15,20 @@ import cash.z.ecc.android.feedback.Report.Funnel.Send.SendSelected
 import cash.z.ecc.android.feedback.Report.Funnel.Send.SpendingKeyFound
 import cash.z.ecc.android.feedback.Report.Issue
 import cash.z.ecc.android.feedback.Report.MetricType
-import cash.z.ecc.android.feedback.Report.MetricType.*
+import cash.z.ecc.android.feedback.Report.MetricType.TRANSACTION_CREATED
+import cash.z.ecc.android.feedback.Report.MetricType.TRANSACTION_INITIALIZED
+import cash.z.ecc.android.feedback.Report.MetricType.TRANSACTION_MINED
+import cash.z.ecc.android.feedback.Report.MetricType.TRANSACTION_SUBMITTED
 import cash.z.ecc.android.lockbox.LockBox
 import cash.z.ecc.android.sdk.Synchronizer
-import cash.z.ecc.android.sdk.db.entity.*
+import cash.z.ecc.android.sdk.db.entity.PendingTransaction
+import cash.z.ecc.android.sdk.db.entity.isCancelled
+import cash.z.ecc.android.sdk.db.entity.isCreated
+import cash.z.ecc.android.sdk.db.entity.isCreating
+import cash.z.ecc.android.sdk.db.entity.isFailedEncoding
+import cash.z.ecc.android.sdk.db.entity.isFailedSubmit
+import cash.z.ecc.android.sdk.db.entity.isMined
+import cash.z.ecc.android.sdk.db.entity.isSubmitSuccess
 import cash.z.ecc.android.sdk.ext.ZcashSdk
 import cash.z.ecc.android.sdk.ext.twig
 import cash.z.ecc.android.sdk.tool.DerivationTool
@@ -54,12 +64,12 @@ class SendViewModel @Inject constructor() : ViewModel() {
         set(value) {
             require(!value || (value && !fromAddress.isNullOrEmpty())) {
                 "Error: fromAddress was empty while attempting to include it in the memo. Verify" +
-                        " that initFromAddress() has previously been called on this viewmodel."
+                    " that initFromAddress() has previously been called on this viewmodel."
             }
             field = value
         }
     val isShielded get() = toAddress.startsWith("z")
-    
+
     fun send(): Flow<PendingTransaction> {
         funnel(SendSelected)
         val memoToSend = createMemoToSend()
@@ -134,7 +144,6 @@ class SendViewModel @Inject constructor() : ViewModel() {
         includeFromAddress = false
     }
 
-
     //
     // Analytics
     //
@@ -170,7 +179,7 @@ class SendViewModel @Inject constructor() : ViewModel() {
         }
     }
 
-    private fun updateMetrics(tx: PendingTransaction) {
+    fun updateMetrics(tx: PendingTransaction) {
         try {
             when {
                 tx.isMined() -> TRANSACTION_SUBMITTED to TRANSACTION_MINED by tx.id
@@ -186,7 +195,7 @@ class SendViewModel @Inject constructor() : ViewModel() {
         }
     }
 
-    private fun report(metricId: String?) {
+    fun report(metricId: String?) {
         metrics[metricId]?.let { metric ->
             metric.takeUnless { (it.elapsedTime ?: 0) <= 0L }?.let {
                 viewModelScope.launch {
@@ -222,26 +231,17 @@ class SendViewModel @Inject constructor() : ViewModel() {
             metrics[metricId].also { if (it == null) println("Warning no start metric for id: $metricId") }
         }
         return startMetric?.endTime?.let { startMetricEndTime ->
-                TimeMetric(second.key, second.description, mutableListOf(startMetricEndTime))
-                    .markTime().let { endMetric ->
-                        endMetric.toMetricIdFor(txId).also { metricId ->
-                            metrics[metricId] = endMetric
-                            metrics[metricId.toRelatedMetricId()] = startMetric
-                        }
+            TimeMetric(second.key, second.description, mutableListOf(startMetricEndTime))
+                .markTime().let { endMetric ->
+                    endMetric.toMetricIdFor(txId).also { metricId ->
+                        metrics[metricId] = endMetric
+                        metrics[metricId.toRelatedMetricId()] = startMetric
                     }
-            }
-
+                }
+        }
     }
 
     private fun Keyed<String>.toMetricIdFor(id: Long): String = "$id.$key"
     private fun String.toRelatedMetricId(): String = "$this.related"
     private fun String.toTxId(): Long = split('.').first().toLong()
 }
-
-
-
-
-
-
-
-

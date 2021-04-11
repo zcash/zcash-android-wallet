@@ -3,25 +3,20 @@ package cash.z.ecc.android.ui.profile
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewTreeObserver
-import android.view.WindowManager
 import android.widget.Toast
-import androidx.core.view.doOnLayout
 import cash.z.ecc.android.R
 import cash.z.ecc.android.databinding.FragmentFeedbackBinding
-import cash.z.ecc.android.di.viewmodel.viewModel
 import cash.z.ecc.android.feedback.Report
 import cash.z.ecc.android.feedback.Report.Funnel.UserFeedback
 import cash.z.ecc.android.feedback.Report.Tap.FEEDBACK_CANCEL
 import cash.z.ecc.android.feedback.Report.Tap.FEEDBACK_SUBMIT
 import cash.z.ecc.android.ui.base.BaseFragment
 
-
 /**
  * Fragment representing the home screen of the app. This is the screen most often seen by the user when launching the
  * application.
  */
-class FeedbackFragment :  BaseFragment<FragmentFeedbackBinding>() {
+class FeedbackFragment : BaseFragment<FragmentFeedbackBinding>() {
     override val screen = Report.Screen.FEEDBACK
 
     override fun inflate(inflater: LayoutInflater): FragmentFeedbackBinding =
@@ -61,7 +56,6 @@ class FeedbackFragment :  BaseFragment<FragmentFeedbackBinding>() {
             }
         }
     }
-
 
     //
     // Private API

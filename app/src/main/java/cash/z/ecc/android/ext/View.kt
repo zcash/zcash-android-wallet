@@ -1,7 +1,9 @@
 package cash.z.ecc.android.ext
 
 import android.view.View
-import android.view.View.*
+import android.view.View.GONE
+import android.view.View.INVISIBLE
+import android.view.View.VISIBLE
 import cash.z.ecc.android.ui.MainActivity
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.channelFlow
@@ -40,8 +42,10 @@ fun View.onClickNavTo(navResId: Int, block: (() -> Any) = {}) {
     setOnClickListener {
         block()
         (context as? MainActivity)?.safeNavigate(navResId)
-            ?: throw IllegalStateException("Cannot navigate from this activity. " +
-                    "Expected MainActivity but found ${context.javaClass.simpleName}")
+            ?: throw IllegalStateException(
+                "Cannot navigate from this activity. " +
+                    "Expected MainActivity but found ${context.javaClass.simpleName}"
+            )
     }
 }
 
@@ -51,7 +55,7 @@ fun View.onClickNavUp(block: (() -> Any) = {}) {
         (context as? MainActivity)?.navController?.navigateUp()
             ?: throw IllegalStateException(
                 "Cannot navigate from this activity. " +
-                        "Expected MainActivity but found ${context.javaClass.simpleName}"
+                    "Expected MainActivity but found ${context.javaClass.simpleName}"
             )
     }
 }
@@ -62,7 +66,7 @@ fun View.onClickNavBack(block: (() -> Any) = {}) {
         (context as? MainActivity)?.navController?.popBackStack()
             ?: throw IllegalStateException(
                 "Cannot navigate from this activity. " +
-                        "Expected MainActivity but found ${context.javaClass.simpleName}"
+                    "Expected MainActivity but found ${context.javaClass.simpleName}"
             )
     }
 }

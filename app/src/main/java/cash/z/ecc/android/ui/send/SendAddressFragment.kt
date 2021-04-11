@@ -11,19 +11,31 @@ import androidx.core.widget.doAfterTextChanged
 import cash.z.ecc.android.R
 import cash.z.ecc.android.databinding.FragmentSendAddressBinding
 import cash.z.ecc.android.di.viewmodel.activityViewModel
-import cash.z.ecc.android.ext.*
+import cash.z.ecc.android.ext.WalletZecFormmatter
+import cash.z.ecc.android.ext.convertZecToZatoshi
+import cash.z.ecc.android.ext.goneIf
+import cash.z.ecc.android.ext.limitDecimalPlaces
+import cash.z.ecc.android.ext.onClickNavUp
+import cash.z.ecc.android.ext.onEditorActionDone
+import cash.z.ecc.android.ext.toAppColor
 import cash.z.ecc.android.feedback.Report
-import cash.z.ecc.android.feedback.Report.Funnel.Send
-import cash.z.ecc.android.feedback.Report.Tap.*
-import cash.z.ecc.android.ui.base.BaseFragment
-import cash.z.ecc.android.sdk.Synchronizer
+import cash.z.ecc.android.feedback.Report.Tap.SEND_ADDRESS_BACK
+import cash.z.ecc.android.feedback.Report.Tap.SEND_ADDRESS_DONE_ADDRESS
+import cash.z.ecc.android.feedback.Report.Tap.SEND_ADDRESS_DONE_AMOUNT
+import cash.z.ecc.android.feedback.Report.Tap.SEND_ADDRESS_MAX
+import cash.z.ecc.android.feedback.Report.Tap.SEND_ADDRESS_NEXT
+import cash.z.ecc.android.feedback.Report.Tap.SEND_ADDRESS_PASTE
+import cash.z.ecc.android.feedback.Report.Tap.SEND_ADDRESS_SCAN
 import cash.z.ecc.android.sdk.block.CompactBlockProcessor.WalletBalance
-import cash.z.ecc.android.sdk.ext.*
+import cash.z.ecc.android.sdk.ext.ZcashSdk
+import cash.z.ecc.android.sdk.ext.collectWith
+import cash.z.ecc.android.sdk.ext.twig
 import cash.z.ecc.android.sdk.validate.AddressType
-import kotlinx.coroutines.delay
+import cash.z.ecc.android.ui.base.BaseFragment
 import kotlinx.coroutines.launch
 
-class SendAddressFragment : BaseFragment<FragmentSendAddressBinding>(),
+class SendAddressFragment :
+    BaseFragment<FragmentSendAddressBinding>(),
     ClipboardManager.OnPrimaryClipChangedListener {
     override val screen = Report.Screen.SEND_ADDRESS
 
@@ -75,9 +87,9 @@ class SendAddressFragment : BaseFragment<FragmentSendAddressBinding>(),
                 val trim = textStr.trim()
                 if (text.toString() != trim) {
                     val textView = binding.inputZcashAddress.findViewById<EditText>(R.id.input_zcash_address)
-                    val cursorPosition = textView.selectionEnd;
+                    val cursorPosition = textView.selectionEnd
                     textView.setText(trim)
-                    textView.setSelection(cursorPosition-(textStr.length-trim.length))
+                    textView.setSelection(cursorPosition - (textStr.length - trim.length))
                 }
                 onAddressChanged(trim)
             }
@@ -102,14 +114,13 @@ class SendAddressFragment : BaseFragment<FragmentSendAddressBinding>(),
         }
     }
 
-
     private fun onSubmit(unused: EditText? = null) {
         sendViewModel.toAddress = binding.inputZcashAddress.text.toString()
         binding.inputZcashAmount.convertZecToZatoshi()?.let { sendViewModel.zatoshiAmount = it }
 //        sendViewModel.validate(maxZatoshi).onFirstWith(resumedScope) {
 //            if (it == null) {
 //                sendViewModel.funnel(Send.AddressPageComplete)
-////                mainActivity?.safeNavigate(R.id.action_nav_send_address_to_send_memo)
+// //                mainActivity?.safeNavigate(R.id.action_nav_send_address_to_send_memo)
 //            } else {
 //                resumedScope.launch {
 //                    binding.textAddressError.text = it
@@ -124,14 +135,16 @@ class SendAddressFragment : BaseFragment<FragmentSendAddressBinding>(),
         if (maxZatoshi != null) {
             binding.inputZcashAmount.apply {
                 setText(WalletZecFormmatter.toZecStringFull(maxZatoshi ?: 0L))
-                postDelayed({
-                    requestFocus()
-                    setSelection(text?.length ?: 0)
-                }, 10L)
+                postDelayed(
+                    {
+                        requestFocus()
+                        setSelection(text?.length ?: 0)
+                    },
+                    10L
+                )
             }
         }
     }
-
 
     override fun onAttach(context: Context) {
         super.onAttach(context)

@@ -58,7 +58,7 @@ class FeedbackBugsnag : FeedbackCoordinator.FeedbackObserver {
     private class ReorgException(errorHeight: Int, rewindHeight: Int, reorgMesssage: String) :
         Throwable(reorgMesssage)
 
-    private class SendException(errorCode: Int?, errorMessage: String?): RuntimeException(
+    private class SendException(errorCode: Int?, errorMessage: String?) : RuntimeException(
         "Non-fatal error while sending transaction. code: $errorCode message: $errorMessage"
     )
 }

@@ -4,18 +4,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import androidx.lifecycle.lifecycleScope
-import cash.z.ecc.android.R
 import cash.z.ecc.android.databinding.FragmentSendConfirmBinding
 import cash.z.ecc.android.di.viewmodel.activityViewModel
 import cash.z.ecc.android.ext.WalletZecFormmatter
 import cash.z.ecc.android.ext.goneIf
-import cash.z.ecc.android.ext.onClickNavTo
 import cash.z.ecc.android.feedback.Report
 import cash.z.ecc.android.feedback.Report.Funnel.Send
-import cash.z.ecc.android.feedback.Report.Tap.*
-import cash.z.ecc.android.ui.base.BaseFragment
+import cash.z.ecc.android.feedback.Report.Tap.SEND_CONFIRM_NEXT
 import cash.z.ecc.android.sdk.ext.toAbbreviatedAddress
-import cash.z.ecc.android.sdk.ext.convertZatoshiToZecString
+import cash.z.ecc.android.ui.base.BaseFragment
 import kotlinx.coroutines.launch
 
 class SendConfirmFragment : BaseFragment<FragmentSendConfirmBinding>() {

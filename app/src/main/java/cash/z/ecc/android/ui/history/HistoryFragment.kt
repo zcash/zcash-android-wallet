@@ -10,18 +10,20 @@ import androidx.recyclerview.widget.RecyclerView
 import cash.z.ecc.android.R
 import cash.z.ecc.android.databinding.FragmentHistoryBinding
 import cash.z.ecc.android.di.viewmodel.activityViewModel
-import cash.z.ecc.android.ext.*
+import cash.z.ecc.android.ext.WalletZecFormmatter
+import cash.z.ecc.android.ext.goneIf
+import cash.z.ecc.android.ext.onClickNavUp
+import cash.z.ecc.android.ext.toAppString
+import cash.z.ecc.android.ext.toColoredSpan
 import cash.z.ecc.android.feedback.Report
 import cash.z.ecc.android.feedback.Report.Tap.HISTORY_BACK
 import cash.z.ecc.android.sdk.block.CompactBlockProcessor.WalletBalance
 import cash.z.ecc.android.sdk.db.entity.ConfirmedTransaction
 import cash.z.ecc.android.sdk.ext.collectWith
-import cash.z.ecc.android.sdk.ext.convertZatoshiToZecString
 import cash.z.ecc.android.sdk.ext.toAbbreviatedAddress
 import cash.z.ecc.android.sdk.ext.twig
 import cash.z.ecc.android.ui.base.BaseFragment
 import kotlinx.coroutines.launch
-
 
 class HistoryFragment : BaseFragment<FragmentHistoryBinding>() {
     override val screen = Report.Screen.HISTORY
@@ -34,7 +36,6 @@ class HistoryFragment : BaseFragment<FragmentHistoryBinding>() {
 
     override fun inflate(inflater: LayoutInflater): FragmentHistoryBinding =
         FragmentHistoryBinding.inflate(inflater)
-
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         twig("HistoryFragment.onViewCreated")
@@ -62,7 +63,7 @@ class HistoryFragment : BaseFragment<FragmentHistoryBinding>() {
             goneIf(change <= 0L)
             val changeString = WalletZecFormmatter.toZecStringFull(change)
             val expecting = R.string.home_banner_expecting.toAppString(true)
-            text = "($expecting +$changeString ZEC)".toColoredSpan(R.color.text_light, "+${changeString}")
+            text = "($expecting +$changeString ZEC)".toColoredSpan(R.color.text_light, "+$changeString")
         }
     }
 
@@ -92,9 +93,12 @@ class HistoryFragment : BaseFragment<FragmentHistoryBinding>() {
     private fun scrollToTop() {
         twig("scrolling to the top")
         binding.recyclerTransactions.apply {
-            postDelayed({
-                smoothScrollToPosition(0)
-            }, 5L)
+            postDelayed(
+                {
+                    smoothScrollToPosition(0)
+                },
+                5L
+            )
         }
     }
 

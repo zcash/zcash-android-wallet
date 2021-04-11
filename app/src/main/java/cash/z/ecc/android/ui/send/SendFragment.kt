@@ -19,18 +19,34 @@ import androidx.lifecycle.viewModelScope
 import cash.z.ecc.android.R
 import cash.z.ecc.android.databinding.FragmentSendBinding
 import cash.z.ecc.android.di.viewmodel.activityViewModel
-import cash.z.ecc.android.ext.*
+import cash.z.ecc.android.ext.WalletZecFormmatter
+import cash.z.ecc.android.ext.gone
+import cash.z.ecc.android.ext.goneIf
+import cash.z.ecc.android.ext.onClickNavUp
+import cash.z.ecc.android.ext.toAppColor
+import cash.z.ecc.android.ext.visible
 import cash.z.ecc.android.feedback.Report
-import cash.z.ecc.android.feedback.Report.Tap.*
+import cash.z.ecc.android.feedback.Report.Tap.SEND_ADDRESS_BACK
+import cash.z.ecc.android.feedback.Report.Tap.SEND_ADDRESS_PASTE
+import cash.z.ecc.android.feedback.Report.Tap.SEND_ADDRESS_REUSE
+import cash.z.ecc.android.feedback.Report.Tap.SEND_ADDRESS_SCAN
+import cash.z.ecc.android.feedback.Report.Tap.SEND_MEMO_EXCLUDE
+import cash.z.ecc.android.feedback.Report.Tap.SEND_MEMO_INCLUDE
+import cash.z.ecc.android.feedback.Report.Tap.SEND_SUBMIT
 import cash.z.ecc.android.sdk.block.CompactBlockProcessor.WalletBalance
-import cash.z.ecc.android.sdk.ext.*
+import cash.z.ecc.android.sdk.ext.ZcashSdk
+import cash.z.ecc.android.sdk.ext.collectWith
+import cash.z.ecc.android.sdk.ext.onFirstWith
+import cash.z.ecc.android.sdk.ext.toAbbreviatedAddress
+import cash.z.ecc.android.sdk.ext.twig
 import cash.z.ecc.android.sdk.validate.AddressType
 import cash.z.ecc.android.ui.base.BaseFragment
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
-class SendFragment : BaseFragment<FragmentSendBinding>(),
+class SendFragment :
+    BaseFragment<FragmentSendBinding>(),
     ClipboardManager.OnPrimaryClipChangedListener {
     override val screen = Report.Screen.SEND_ADDRESS
 
@@ -49,14 +65,13 @@ class SendFragment : BaseFragment<FragmentSendBinding>(),
         applyViewModel(sendViewModel)
         updateAddressUi(false)
 
-
         // Apply behaviors
 
         binding.buttonSend.setOnClickListener {
             onSubmit().also { tapped(SEND_SUBMIT) }
         }
 
-        binding.checkIncludeAddress.setOnCheckedChangeListener { _, _->
+        binding.checkIncludeAddress.setOnCheckedChangeListener { _, _ ->
             onIncludeMemo(binding.checkIncludeAddress.isChecked)
         }
 
@@ -177,8 +192,8 @@ class SendFragment : BaseFragment<FragmentSendBinding>(),
     }
 
     /**
-    * To hide input Memo and reply-to option for T type address and show a info message about memo option availability
-    * */
+     * To hide input Memo and reply-to option for T type address and show a info message about memo option availability
+     * */
     private fun updateAddressUi(isMemoHidden: Boolean) {
         if (isMemoHidden) {
             binding.textLayoutMemo.gone()
@@ -190,7 +205,6 @@ class SendFragment : BaseFragment<FragmentSendBinding>(),
             binding.textNoZAddress.gone()
         }
     }
-
 
     private fun onSubmit(unused: EditText? = null) {
         sendViewModel.toAddress = binding.inputZcashAddress.text.toString()
@@ -221,7 +235,6 @@ class SendFragment : BaseFragment<FragmentSendBinding>(),
 //            }
         }
     }
-
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -286,7 +299,8 @@ class SendFragment : BaseFragment<FragmentSendBinding>(),
                 imageLastUsedShield,
                 lastUsedAddressLabel,
                 selected,
-                address.takeUnless { isBoth })
+                address.takeUnless { isBoth }
+            )
         }
         binding.dividerClipboard.setText(if (isBoth) R.string.send_history_last_and_clipboard else R.string.send_history_clipboard)
     }
@@ -310,8 +324,8 @@ class SendFragment : BaseFragment<FragmentSendBinding>(),
                 checkIcon.goneIf(!selected)
                 ImageViewCompat.setImageTintList(shieldIcon, ColorStateList.valueOf(if (selected) R.color.colorPrimary.toAppColor() else R.color.zcashWhite_12.toAppColor()))
                 addressLabel.setText(if (address == userAddress) R.string.send_banner_address_user else R.string.send_banner_address_unknown)
-                addressLabel.setTextColor(if(selected) R.color.colorPrimary.toAppColor() else R.color.text_light.toAppColor())
-                addressTextView.setTextColor(if(selected) R.color.text_light.toAppColor() else R.color.text_light_dimmed.toAppColor())
+                addressLabel.setTextColor(if (selected) R.color.colorPrimary.toAppColor() else R.color.text_light.toAppColor())
+                addressTextView.setTextColor(if (selected) R.color.text_light.toAppColor() else R.color.text_light_dimmed.toAppColor())
             }
         }
     }
@@ -359,7 +373,6 @@ class SendFragment : BaseFragment<FragmentSendBinding>(),
         }
         return lastUsedAddress
     }
-
 
     private fun ClipboardManager.text(): CharSequence =
         primaryClip!!.getItemAt(0).coerceToText(mainActivity)

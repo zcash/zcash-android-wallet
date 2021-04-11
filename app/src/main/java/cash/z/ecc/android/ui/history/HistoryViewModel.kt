@@ -24,7 +24,6 @@ class HistoryViewModel @Inject constructor() : ViewModel() {
 
     var selectedTransaction: ConfirmedTransaction? = null
 
-
     suspend fun getAddress() = synchronizer.getAddress()
 
     override fun onCleared() {

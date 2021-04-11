@@ -10,25 +10,32 @@ import android.view.LayoutInflater
 import android.view.View
 import androidx.core.view.ViewCompat
 import androidx.lifecycle.lifecycleScope
-import androidx.transition.*
+import androidx.transition.ChangeBounds
+import androidx.transition.ChangeClipBounds
+import androidx.transition.ChangeTransform
+import androidx.transition.Transition
+import androidx.transition.TransitionSet
 import cash.z.ecc.android.R
 import cash.z.ecc.android.ZcashWalletApp
 import cash.z.ecc.android.databinding.FragmentTransactionBinding
 import cash.z.ecc.android.di.viewmodel.activityViewModel
-import cash.z.ecc.android.ext.*
+import cash.z.ecc.android.ext.Const
+import cash.z.ecc.android.ext.WalletZecFormmatter
+import cash.z.ecc.android.ext.gone
+import cash.z.ecc.android.ext.invisible
+import cash.z.ecc.android.ext.onClickNavBack
+import cash.z.ecc.android.ext.toAppColor
+import cash.z.ecc.android.ext.toColoredSpan
+import cash.z.ecc.android.ext.visible
 import cash.z.ecc.android.feedback.Report
 import cash.z.ecc.android.sdk.db.entity.ConfirmedTransaction
 import cash.z.ecc.android.sdk.ext.ZcashSdk
-import cash.z.ecc.android.sdk.ext.convertZatoshiToZecString
 import cash.z.ecc.android.sdk.ext.toAbbreviatedAddress
 import cash.z.ecc.android.sdk.ext.twig
 import cash.z.ecc.android.ui.MainActivity
 import cash.z.ecc.android.ui.base.BaseFragment
 import cash.z.ecc.android.ui.util.toUtf8Memo
 import kotlinx.coroutines.launch
-import java.text.NumberFormat
-import java.util.*
-
 
 class TransactionFragment : BaseFragment<FragmentTransactionBinding>() {
     override val screen = Report.Screen.TRANSACTION
@@ -52,7 +59,7 @@ class TransactionFragment : BaseFragment<FragmentTransactionBinding>() {
 //        sharedElementReturnTransition = ChangeBounds().apply { duration = 1500 }
 //        enterTransition = Fade().apply {
 //            duration = 1800
-////            slideEdge = Gravity.END
+// //            slideEdge = Gravity.END
 //        }
     }
 
@@ -115,7 +122,6 @@ class TransactionFragment : BaseFragment<FragmentTransactionBinding>() {
                     uiModel.source?.let { subwaySpotSource.visible(); subwayLabelSource.visible(); subwayLabelSource.text = it }
                     uiModel.toAddressLabel()?.let { subwaySpotAddress.visible(); subwayLabelAddress.visible(); subwayLabelAddress.text = it }
                     uiModel.toAddressClickListener()?.let { subwayLabelAddress.setOnClickListener(it) }
-
 
                     // TODO: remove logic from sections below and add more fields or extension functions to UiModel
                     uiModel.confirmation?.let {
@@ -238,7 +244,6 @@ class TransactionFragment : BaseFragment<FragmentTransactionBinding>() {
                 } else {
                     confirmation = getString(R.string.transaction_status_pending)
                 }
-
             }
 
             val mainActivity = (context as MainActivity)
@@ -272,10 +277,10 @@ class TransactionFragment : BaseFragment<FragmentTransactionBinding>() {
     //       the goal is just to improve the edge cases where the latest height isn't known but other
     //       information suggests that the TX is confirmed. We can improve this, later.
     private fun isSufficientlyOld(tx: ConfirmedTransaction): Boolean {
-        val threshold = 75 * 1000 * 25 //approx 25 blocks
+        val threshold = 75 * 1000 * 25 // approx 25 blocks
         val delta = System.currentTimeMillis() / 1000L - tx.blockTimeInSeconds
-        return tx.minedHeight > ZcashSdk.SAPLING_ACTIVATION_HEIGHT
-                && delta < threshold
+        return tx.minedHeight > ZcashSdk.SAPLING_ACTIVATION_HEIGHT &&
+            delta < threshold
     }
 
     data class UiModel(
@@ -297,7 +302,3 @@ class TransactionFragment : BaseFragment<FragmentTransactionBinding>() {
         var txId: String? = null
     )
 }
-
-
-
-

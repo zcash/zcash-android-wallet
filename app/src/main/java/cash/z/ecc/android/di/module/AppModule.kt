@@ -5,10 +5,14 @@ import android.content.Context
 import cash.z.ecc.android.ZcashWalletApp
 import cash.z.ecc.android.di.component.MainActivitySubcomponent
 import cash.z.ecc.android.ext.Const
-import cash.z.ecc.android.feedback.*
+import cash.z.ecc.android.feedback.Feedback
+import cash.z.ecc.android.feedback.FeedbackBugsnag
+import cash.z.ecc.android.feedback.FeedbackConsole
+import cash.z.ecc.android.feedback.FeedbackCoordinator
+import cash.z.ecc.android.feedback.FeedbackFile
+import cash.z.ecc.android.feedback.FeedbackMixpanel
 import cash.z.ecc.android.lockbox.LockBox
 import cash.z.ecc.android.sdk.ext.SilentTwig
-import cash.z.ecc.android.sdk.ext.TroubleshootingTwig
 import cash.z.ecc.android.sdk.ext.Twig
 import cash.z.ecc.android.ui.util.DebugFileTwig
 import dagger.Module
@@ -35,11 +39,9 @@ class AppModule {
         return LockBox(appContext)
     }
 
-
     //
     // Feedback
     //
-
 
     @Provides
     @Singleton
@@ -58,7 +60,6 @@ class AppModule {
             FeedbackCoordinator(feedback, if (isEnabled) defaultObservers else setOf())
         }
     }
-
 
     //
     // Default Feedback Observer Set

@@ -18,14 +18,17 @@ import cash.z.ecc.android.ext.onClickNavTo
 import cash.z.ecc.android.feedback.FeedbackFile
 import cash.z.ecc.android.feedback.Report
 import cash.z.ecc.android.feedback.Report.Funnel.UserFeedback
-import cash.z.ecc.android.feedback.Report.Tap.*
+import cash.z.ecc.android.feedback.Report.Tap.PROFILE_BACKUP
+import cash.z.ecc.android.feedback.Report.Tap.PROFILE_CLOSE
+import cash.z.ecc.android.feedback.Report.Tap.PROFILE_SEND_FEEDBACK
+import cash.z.ecc.android.feedback.Report.Tap.PROFILE_VIEW_DEV_LOGS
+import cash.z.ecc.android.feedback.Report.Tap.PROFILE_VIEW_USER_LOGS
 import cash.z.ecc.android.sdk.ext.Bush
 import cash.z.ecc.android.sdk.ext.toAbbreviatedAddress
 import cash.z.ecc.android.ui.base.BaseFragment
 import cash.z.ecc.android.ui.util.DebugFileTwig
 import kotlinx.coroutines.launch
 import java.io.File
-
 
 class ProfileFragment : BaseFragment<FragmentProfileBinding>() {
     override val screen = Report.Screen.PROFILE

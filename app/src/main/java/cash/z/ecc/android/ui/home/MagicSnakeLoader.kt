@@ -1,7 +1,6 @@
 package cash.z.ecc.android.ui.home
 
 import android.animation.ValueAnimator
-import cash.z.ecc.android.sdk.ext.twig
 import com.airbnb.lottie.LottieAnimationView
 
 class MagicSnakeLoader(
@@ -47,14 +46,17 @@ class MagicSnakeLoader(
 
     private fun startMaybe() {
 
-        if (!isSynced && !isStarted) lottie.postDelayed({
-            // after some delay, if we're still not synced then we better start animating (unless we already are)!
-            if (!isSynced && isPaused) {
-                lottie.resumeAnimation()
-                isPaused = false
-                isStarted = true
-            }
-        }, 200L)
+        if (!isSynced && !isStarted) lottie.postDelayed(
+            {
+                // after some delay, if we're still not synced then we better start animating (unless we already are)!
+                if (!isSynced && isPaused) {
+                    lottie.resumeAnimation()
+                    isPaused = false
+                    isStarted = true
+                }
+            },
+            200L
+        )
     }
 
     private val isDownloading get() = downloadProgress in 1..99
@@ -77,7 +79,7 @@ class MagicSnakeLoader(
         }
     }
 
-    private val acceptablePauseFrames = arrayOf(33,34,67,68,99)
+    private val acceptablePauseFrames = arrayOf(33, 34, 67, 68, 99)
     private fun applyScanProgress(frame: Int) {
         // don't hardcode the progress until the loop animation has completed, cleanly
         if (isPaused) {
@@ -110,7 +112,7 @@ class MagicSnakeLoader(
     }
 
     private fun removeLoops() {
-        lottie.frame.let {frame ->
+        lottie.frame.let { frame ->
             if (frame in 33..67) {
                 lottie.frame = frame + 34
             } else if (frame in 0..33) {
@@ -144,4 +146,3 @@ class MagicSnakeLoader(
         return ((animatedValue as Float) * totalFrames).toInt()
     }
 }
-

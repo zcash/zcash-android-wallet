@@ -13,7 +13,6 @@ import cash.z.ecc.android.ext.locale
 import cash.z.ecc.android.ext.toAppColor
 import cash.z.ecc.android.sdk.db.entity.ConfirmedTransaction
 import cash.z.ecc.android.sdk.ext.ZcashSdk
-import cash.z.ecc.android.sdk.ext.convertZatoshiToZecString
 import cash.z.ecc.android.sdk.ext.isShielded
 import cash.z.ecc.android.sdk.ext.toAbbreviatedAddress
 import cash.z.ecc.android.ui.MainActivity
@@ -59,7 +58,7 @@ class TransactionViewHolder<T : ConfirmedTransaction>(itemView: View) : Recycler
                         lineOne = "${str(R.string.transaction_address_you_paid)} ${toAddress?.toAbbreviatedAddress()}"
                         lineTwo = if (isMined) "${str(R.string.transaction_status_sent)} $timestamp" else str(R.string.transaction_status_pending)
                         // TODO: this logic works but is sloppy. Find a more robust solution to displaying information about expiration (such as expires in 1 block, etc). Then if it is way beyond expired, remove it entirely. Perhaps give the user a button for that (swipe to dismiss?)
-                        if(!isMined && (expiryHeight != null) && (expiryHeight!! < mainActivity.latestHeight ?: -1)) lineTwo = str(R.string.transaction_status_expired)
+                        if (!isMined && (expiryHeight != null) && (expiryHeight!! < mainActivity.latestHeight ?: -1)) lineTwo = str(R.string.transaction_status_expired)
                         amountDisplay = "- $amountZec"
                         if (isMined) {
                             amountColor = R.color.zcashRed
@@ -119,7 +118,4 @@ class TransactionViewHolder<T : ConfirmedTransaction>(itemView: View) : Recycler
     }
 
     private inline fun str(@StringRes resourceId: Int) = itemView.context.getString(resourceId)
-    
 }
-
-

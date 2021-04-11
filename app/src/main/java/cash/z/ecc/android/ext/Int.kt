@@ -25,13 +25,12 @@ internal inline fun @receiver:StringRes Int.toAppString(lowercase: Boolean = fal
     }
 }
 
-
 /**
  * Grab an integer from the application resources
  */
 internal inline fun @receiver:IntegerRes Int.toAppInt(): Int {
-    return ZcashWalletApp.instance.resources.getInteger(this)}
-
+    return ZcashWalletApp.instance.resources.getInteger(this)
+}
 
 fun Float.toPx() = this * Resources.getSystem().displayMetrics.density
 

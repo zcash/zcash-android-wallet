@@ -11,20 +11,41 @@ import cash.z.ecc.android.R
 import cash.z.ecc.android.databinding.FragmentHomeBinding
 import cash.z.ecc.android.di.viewmodel.activityViewModel
 import cash.z.ecc.android.di.viewmodel.viewModel
-import cash.z.ecc.android.ext.*
+import cash.z.ecc.android.ext.WalletZecFormmatter
+import cash.z.ecc.android.ext.disabledIf
+import cash.z.ecc.android.ext.goneIf
+import cash.z.ecc.android.ext.invisibleIf
+import cash.z.ecc.android.ext.onClickNavTo
+import cash.z.ecc.android.ext.showSharedLibraryCriticalError
+import cash.z.ecc.android.ext.toColoredSpan
+import cash.z.ecc.android.ext.transparentIf
 import cash.z.ecc.android.feedback.Report
-import cash.z.ecc.android.feedback.Report.Tap.*
-import cash.z.ecc.android.sdk.Synchronizer.Status.*
-import cash.z.ecc.android.sdk.ext.*
+import cash.z.ecc.android.feedback.Report.Tap.HOME_CLEAR_AMOUNT
+import cash.z.ecc.android.feedback.Report.Tap.HOME_FUND_NOW
+import cash.z.ecc.android.feedback.Report.Tap.HOME_HISTORY
+import cash.z.ecc.android.feedback.Report.Tap.HOME_PROFILE
+import cash.z.ecc.android.feedback.Report.Tap.HOME_RECEIVE
+import cash.z.ecc.android.feedback.Report.Tap.HOME_SEND
+import cash.z.ecc.android.sdk.Synchronizer.Status.DISCONNECTED
+import cash.z.ecc.android.sdk.Synchronizer.Status.STOPPED
+import cash.z.ecc.android.sdk.Synchronizer.Status.SYNCED
+import cash.z.ecc.android.sdk.ext.convertZecToZatoshi
+import cash.z.ecc.android.sdk.ext.onFirstWith
+import cash.z.ecc.android.sdk.ext.safelyConvertToBigDecimal
+import cash.z.ecc.android.sdk.ext.twig
 import cash.z.ecc.android.ui.base.BaseFragment
-import cash.z.ecc.android.ui.home.HomeFragment.BannerAction.*
+import cash.z.ecc.android.ui.home.HomeFragment.BannerAction.CANCEL
+import cash.z.ecc.android.ui.home.HomeFragment.BannerAction.CLEAR
+import cash.z.ecc.android.ui.home.HomeFragment.BannerAction.FUND_NOW
 import cash.z.ecc.android.ui.send.SendViewModel
 import cash.z.ecc.android.ui.setup.WalletSetupViewModel
 import cash.z.ecc.android.ui.setup.WalletSetupViewModel.WalletSetupState.NO_SEED
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.runningReduce
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
@@ -42,7 +63,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
 
     override fun inflate(inflater: LayoutInflater): FragmentHomeBinding =
         FragmentHomeBinding.inflate(inflater)
-
 
     //
     // LifeCycle
@@ -119,7 +139,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
             // if the model already existed, cool but let the sendViewModel be the source of truth for the amount
             onModelUpdated(null, uiModel.copy(pendingSend = WalletZecFormmatter.toZecStringFull(sendViewModel.zatoshiAmount.coerceAtLeast(0))))
         }
-
     }
 
     private fun onClearAmount() {
@@ -177,7 +196,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
 //            onModelUpdated(HomeViewModel.UiModel(), inState.getParcelable("uiModel")!!)
         }
     }
-
 
     //
     // Public UI API
@@ -254,7 +272,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
                 val change = WalletZecFormmatter.toZecStringFull(totalBalance - availableBalance)
                 "(${getString(R.string.home_banner_expecting)} +$change ZEC)".toColoredSpan(R.color.text_light, "+$change")
             } else {
-               getString(R.string.home_instruction_enter_amount)
+                getString(R.string.home_instruction_enter_amount)
             }
         }
     }
@@ -270,7 +288,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
             textBannerAction.text = action.action
         }
     }
-
 
     //
     // Private UI Events
@@ -297,9 +314,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
             else -> {
                 buildString {
                     append("UiModel(")
-                    if (old.status != new.status) append ("status=${new.status}")
+                    if (old.status != new.status) append("status=${new.status}")
                     if (old.processorInfo != new.processorInfo) {
-                        append ("${maybeComma()}processorInfo=ProcessorInfo(")
+                        append("${maybeComma()}processorInfo=ProcessorInfo(")
                         val startLength = length
                         fun innerComma() = if (length > startLength) ", " else ""
                         if (old.processorInfo.networkBlockHeight != new.processorInfo.networkBlockHeight) append("networkBlockHeight=${new.processorInfo.networkBlockHeight}")
@@ -309,9 +326,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
                         if (old.processorInfo.lastScanRange != new.processorInfo.lastScanRange) append("${innerComma()}lastScanRange=${new.processorInfo.lastScanRange}")
                         append(")")
                     }
-                    if (old.availableBalance != new.availableBalance) append ("${maybeComma()}availableBalance=${new.availableBalance}")
-                    if (old.totalBalance != new.totalBalance) append ("${maybeComma()}totalBalance=${new.totalBalance}")
-                    if (old.pendingSend != new.pendingSend) append ("${maybeComma()}pendingSend=${new.pendingSend}")
+                    if (old.availableBalance != new.availableBalance) append("${maybeComma()}availableBalance=${new.availableBalance}")
+                    if (old.totalBalance != new.totalBalance) append("${maybeComma()}totalBalance=${new.totalBalance}")
+                    if (old.pendingSend != new.pendingSend) append("${maybeComma()}pendingSend=${new.pendingSend}")
                     append(")")
                 }
             }
@@ -375,7 +392,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
         setBanner(getString(R.string.home_no_balance), FUND_NOW)
     }
 
-
     //
     // Inner classes and extensions
     //
@@ -405,9 +421,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
         }
         return this
     }
-
-
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

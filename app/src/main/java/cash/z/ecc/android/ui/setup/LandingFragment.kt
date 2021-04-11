@@ -86,7 +86,7 @@ class LandingFragment : BaseFragment<FragmentLandingBinding>() {
         super.onAttach(context)
 
         walletSetup.checkSeed().onEach {
-            when(it) {
+            when (it) {
                 SEED_WITHOUT_BACKUP, SEED_WITH_BACKUP -> {
                     mainActivity?.safeNavigate(R.id.nav_backup)
                 }
@@ -126,7 +126,7 @@ class LandingFragment : BaseFragment<FragmentLandingBinding>() {
     // AKA import wallet
     private fun onUseDevWallet() {
         val seedPhrase = "still champion voice habit trend flight survey between bitter process artefact blind carbon truly provide dizzy crush flush breeze blouse charge solid fish spread"
-        val birthday = 991645 //663174
+        val birthday = 991645 // 663174
         mainActivity?.apply {
             lifecycleScope.launch {
                 try {

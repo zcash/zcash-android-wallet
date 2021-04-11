@@ -1,6 +1,5 @@
 package cash.z.ecc.android.di.module
 
-
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import cash.z.ecc.android.di.annotation.ActivityScope
@@ -26,7 +25,6 @@ abstract class ViewModelsActivityModule {
     @ViewModelKey(WalletSetupViewModel::class)
     abstract fun bindWalletSetupViewModel(implementation: WalletSetupViewModel): ViewModel
 
-
     /**
      * Factory for view models that are created until before the Synchronizer exists. This is a
      * little tricky because we cannot make them all in one place or else they won't be available
@@ -38,5 +36,4 @@ abstract class ViewModelsActivityModule {
     @Named(Const.Name.BEFORE_SYNCHRONIZER)
     @Binds
     abstract fun bindViewModelFactory(viewModelFactory: ViewModelFactory): ViewModelProvider.Factory
-
 }

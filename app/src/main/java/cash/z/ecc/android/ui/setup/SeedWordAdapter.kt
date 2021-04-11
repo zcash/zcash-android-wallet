@@ -7,13 +7,9 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import cash.z.ecc.android.R
 import cash.z.ecc.android.ext.toAppColor
-import cash.z.ecc.android.feedback.Report
-import cash.z.ecc.android.feedback.Report.Funnel.Restore
-import cash.z.ecc.android.ui.MainActivity
 import cash.z.ecc.android.ui.setup.SeedWordChip
-import cash.z.ecc.android.sdk.ext.twig
 
-class SeedWordAdapter :  ChipsAdapter {
+class SeedWordAdapter : ChipsAdapter {
 
     constructor(existingAdapter: ChipsAdapter) : super(existingAdapter.mDataSource, existingAdapter.mEditText, existingAdapter.mOptions)
 
@@ -25,17 +21,17 @@ class SeedWordAdapter :  ChipsAdapter {
         else object : RecyclerView.ViewHolder(mEditText) {}
     }
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-         if (getItemViewType(position) == CHIP) { // Chips
+        if (getItemViewType(position) == CHIP) { // Chips
             // Display the chip information on the chip view
-             (holder as SeedWordHolder).seedChipView.bind(mDataSource.getSelectedChip(position), position);
+            (holder as SeedWordHolder).seedChipView.bind(mDataSource.getSelectedChip(position), position)
         } else {
             val size = mDataSource.selectedChips.size
             mEditText.hint = if (size < 3) {
                 mEditText.isEnabled = true
                 mEditText.setHintTextColor(R.color.text_light_dimmed.toAppColor())
-                val ordinal = when(size) {2 -> "3rd"; 1 -> "2nd"; else -> "1st"}
+                val ordinal = when (size) { 2 -> "3rd"; 1 -> "2nd"; else -> "1st" }
                 "Enter $ordinal seed word"
-            } else if(size >= 24) {
+            } else if (size >= 24) {
                 mEditText.setHintTextColor(R.color.zcashGreen.toAppColor())
                 mEditText.isEnabled = false
                 "done"
@@ -63,10 +59,13 @@ class SeedWordAdapter :  ChipsAdapter {
         if (mDataSource.originalChips.firstOrNull { it.title == text } != null) {
             mDataSource.addSelectedChip(DefaultCustomChip(text))
             mEditText.apply {
-                postDelayed({
-                    setText("")
-                    requestFocus()
-                }, 50L)
+                postDelayed(
+                    {
+                        setText("")
+                        requestFocus()
+                    },
+                    50L
+                )
             }
         }
     }
@@ -90,4 +89,3 @@ class SeedWordAdapter :  ChipsAdapter {
         }
     }
 }
-

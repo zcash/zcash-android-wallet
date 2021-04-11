@@ -8,6 +8,4 @@ import dagger.Module
     includes = [ViewModelsActivityModule::class],
     subcomponents = [SynchronizerSubcomponent::class, InitializerSubcomponent::class]
 )
-class MainActivityModule {
-
-}
+class MainActivityModule

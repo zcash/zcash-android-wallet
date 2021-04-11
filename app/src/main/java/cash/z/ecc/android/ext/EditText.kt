@@ -55,7 +55,7 @@ inline fun EditText.limitDecimalPlaces(max: Int) {
 
                 // Restore the cursor position
                 if (oldText != textStr) {
-                    val cursorPosition = editText.selectionEnd;
+                    val cursorPosition = editText.selectionEnd
                     editText.setText(textStr)
                     editText.setSelection(
                         (cursorPosition - (oldText.length - textStr.length)).coerceIn(
@@ -68,11 +68,9 @@ inline fun EditText.limitDecimalPlaces(max: Int) {
         }
 
         override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-
         }
     })
 }
-
 
 fun TextView.convertZecToZatoshi(): Long? {
     return try {

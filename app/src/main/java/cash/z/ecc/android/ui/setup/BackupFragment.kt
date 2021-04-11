@@ -40,7 +40,7 @@ class BackupFragment : BaseFragment<FragmentBackupBinding>() {
 
     private val walletSetup: WalletSetupViewModel by activityViewModel(false)
 
-    private var hasBackUp: Boolean = true //TODO: implement backup and then check for it here-ish
+    private var hasBackUp: Boolean = true // TODO: implement backup and then check for it here-ish
 
     override fun inflate(inflater: LayoutInflater): FragmentBackupBinding =
         FragmentBackupBinding.inflate(inflater)
@@ -76,7 +76,7 @@ class BackupFragment : BaseFragment<FragmentBackupBinding>() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         walletSetup.checkSeed().onEach {
-            hasBackUp = when(it) {
+            hasBackUp = when (it) {
                 SEED_WITH_BACKUP -> true
                 else -> false
             }
@@ -132,8 +132,8 @@ class BackupFragment : BaseFragment<FragmentBackupBinding>() {
         mainActivity!!.feedback.measure(SEED_PHRASE_LOADED) {
             val lockBox = LockBox(ZcashWalletApp.instance)
             val mnemonics = Mnemonics()
-            val seedPhrase =  lockBox.getCharsUtf8(Const.Backup.SEED_PHRASE) ?: throw RuntimeException("Seed Phrase expected but not found in storage!!")
-            val result =  mnemonics.toWordList(seedPhrase)
+            val seedPhrase = lockBox.getCharsUtf8(Const.Backup.SEED_PHRASE) ?: throw RuntimeException("Seed Phrase expected but not found in storage!!")
+            val result = mnemonics.toWordList(seedPhrase)
             result
         }
     }

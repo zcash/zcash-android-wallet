@@ -19,5 +19,4 @@ class SynchronizerModule {
     fun provideSynchronizer(appContext: Context, initializer: Initializer): Synchronizer {
         return Synchronizer(initializer)
     }
-
 }

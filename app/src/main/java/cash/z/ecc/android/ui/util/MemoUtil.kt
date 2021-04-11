@@ -12,12 +12,12 @@ const val INCLUDE_MEMO_PREFIX_STANDARD = "Reply-To:"
  * The non-standard prefixes that we will parse if other wallets send them our way.
  */
 val INCLUDE_MEMO_PREFIXES_RECOGNIZED = arrayOf(
-    INCLUDE_MEMO_PREFIX_STANDARD,   // standard
-    "reply-to",                     // standard w/o colon
-    "reply to:",                    // space instead of dash
-    "reply to",                     // space instead of dash w/o colon
-    "sent from:",                   // previous standard
-    "sent from"                     // previous standard w/o colon
+    INCLUDE_MEMO_PREFIX_STANDARD, // standard
+    "reply-to", // standard w/o colon
+    "reply to:", // space instead of dash
+    "reply to", // space instead of dash w/o colon
+    "sent from:", // previous standard
+    "sent from" // previous standard w/o colon
 )
 
 // TODO: move this to the SDK

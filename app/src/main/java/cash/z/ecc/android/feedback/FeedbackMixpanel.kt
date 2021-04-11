@@ -29,5 +29,4 @@ class FeedbackMixpanel : FeedbackCoordinator.FeedbackObserver {
     private fun track(eventName: String, properties: Map<String, Any>) {
         mixpanel.trackMap(eventName, properties)
     }
-
 }

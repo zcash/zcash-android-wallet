@@ -187,3 +187,7 @@ dependencies {
 }
 
 defaultTasks 'clean', 'assembleZcashmainnetRelease'
+
+apply from: "$rootDir/ktlint.gradle"
+preBuild.dependsOn('ktlintFormat')
+preBuild.dependsOn('ktlint')
