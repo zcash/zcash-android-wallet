@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/background_home">
+    android:background="@color/zcashBlack_0">
 
     <!--            -->
     <!-- Guidelines -->
@@ -197,7 +197,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@id/guideline_keyline_end"
         app:layout_constraintStart_toStartOf="@id/guideline_keyline_start"
-        app:layout_constraintTop_toBottomOf="@id/header"
+        app:layout_constraintTop_toBottomOf="@id/empty_footer"
         tools:itemCount="15"
         tools:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         tools:listitem="@layout/item_transaction"
@@ -211,6 +211,7 @@
         android:layout_marginEnd="2dp"
         android:layout_marginStart="2dp"
         android:alpha="0.8"
+        android:visibility="gone"
         android:background="@drawable/background_gradient_bottom"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@id/guideline_keyline_end"
@@ -220,5 +221,5 @@
         android:id="@+id/group_empty_views"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:constraint_referenced_ids="empty_footer,empty_message" />
+        app:constraint_referenced_ids="empty_message" />
 </androidx.constraintlayout.widget.ConstraintLayout>

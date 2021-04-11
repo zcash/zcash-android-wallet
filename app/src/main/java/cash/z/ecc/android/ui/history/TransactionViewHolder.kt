@@ -1,6 +1,8 @@
 package cash.z.ecc.android.ui.history
 
+import android.graphics.drawable.Drawable
 import android.view.View
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.StringRes
 import androidx.appcompat.content.res.AppCompatResources
@@ -8,13 +10,11 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import cash.z.ecc.android.R
 import cash.z.ecc.android.ext.WalletZecFormmatter
-import cash.z.ecc.android.ext.goneIf
 import cash.z.ecc.android.ext.locale
 import cash.z.ecc.android.ext.toAppColor
+import cash.z.ecc.android.ext.toAppInt
 import cash.z.ecc.android.sdk.db.entity.ConfirmedTransaction
 import cash.z.ecc.android.sdk.ext.ZcashSdk
-import cash.z.ecc.android.sdk.ext.convertZatoshiToZecString
-import cash.z.ecc.android.sdk.ext.isShielded
 import cash.z.ecc.android.sdk.ext.toAbbreviatedAddress
 import cash.z.ecc.android.ui.MainActivity
 import cash.z.ecc.android.ui.util.toUtf8Memo
@@ -26,8 +26,8 @@ class TransactionViewHolder<T : ConfirmedTransaction>(itemView: View) : Recycler
     private val amountText = itemView.findViewById<TextView>(R.id.text_transaction_amount)
     private val topText = itemView.findViewById<TextView>(R.id.text_transaction_top)
     private val bottomText = itemView.findViewById<TextView>(R.id.text_transaction_bottom)
-    private val shieldIcon = itemView.findViewById<View>(R.id.image_shield)
-    private val formatter = SimpleDateFormat(itemView.context.getString(R.string.format_date_time), itemView.context.locale())
+    private val transactionArrow = itemView.findViewById<ImageView>(R.id.image_transaction_arrow)
+    private val formatter = SimpleDateFormat(itemView.context.getString(R.string.format_transaction_history_date_time), itemView.context.locale())
 
     fun bindTo(transaction: T?) {
         val mainActivity = itemView.context as MainActivity
@@ -40,7 +40,9 @@ class TransactionViewHolder<T : ConfirmedTransaction>(itemView: View) : Recycler
             var amountColor: Int = R.color.text_light_dimmed
             var lineOneColor: Int = R.color.text_light
             var lineTwoColor: Int = R.color.text_light_dimmed
-            var indicatorBackground: Int = R.drawable.background_indicator_unknown
+            var indicatorBackground: Int = R.color.text_light
+            var arrowRotation: Int = R.integer.transaction_arrow_rotation_send
+            var arrowBackgroundTint: Int = R.color.text_light
 
             transaction?.apply {
                 itemView.setOnClickListener {
@@ -56,31 +58,35 @@ class TransactionViewHolder<T : ConfirmedTransaction>(itemView: View) : Recycler
                 val isMined = blockTimeInSeconds != 0L
                 when {
                     !toAddress.isNullOrEmpty() -> {
-                        lineOne = "${str(R.string.transaction_address_you_paid)} ${toAddress?.toAbbreviatedAddress()}"
+                        lineOne = "${if (isMined) str(R.string.transaction_address_you_paid) else str(R.string.transaction_address_paying)} ${toAddress?.toAbbreviatedAddress()}"
                         lineTwo = if (isMined) "${str(R.string.transaction_status_sent)} $timestamp" else str(R.string.transaction_status_pending)
                         // TODO: this logic works but is sloppy. Find a more robust solution to displaying information about expiration (such as expires in 1 block, etc). Then if it is way beyond expired, remove it entirely. Perhaps give the user a button for that (swipe to dismiss?)
                         if(!isMined && (expiryHeight != null) && (expiryHeight!! < mainActivity.latestHeight ?: -1)) lineTwo = str(R.string.transaction_status_expired)
                         amountDisplay = "- $amountZec"
                         if (isMined) {
-                            amountColor = R.color.zcashRed
-                            indicatorBackground = R.drawable.background_indicator_outbound
+                            arrowRotation = R.integer.transaction_arrow_rotation_send
+                            amountColor = R.color.transaction_sent
+                            indicatorBackground = R.color.transaction_sent
+                            arrowBackgroundTint = R.color.transaction_sent
                         } else {
-                            lineOneColor = R.color.text_light_dimmed
-                            lineTwoColor = R.color.text_light
+                            arrowRotation = R.integer.transaction_arrow_rotation_pending
                         }
                     }
                     toAddress.isNullOrEmpty() && value > 0L && minedHeight > 0 -> {
-                        lineOne = "${mainActivity.getSender(transaction)} ${str(R.string.transaction_address_paid_you)}"
+                        lineOne = "${str(R.string.transaction_received_from)} ${mainActivity.getSender(transaction)}"
                         lineTwo = "${str(R.string.transaction_received)} $timestamp"
                         amountDisplay = "+ $amountZec"
-                        amountColor = R.color.zcashGreen
-                        indicatorBackground = R.drawable.background_indicator_inbound
+                        amountColor = R.color.zcashYellow
+                        indicatorBackground = R.color.zcashYellow
+                        arrowBackgroundTint = R.color.zcashYellow
+                        arrowRotation = R.integer.transaction_arrow_rotation_received
                     }
                     else -> {
                         lineOne = str(R.string.unknown)
                         lineTwo = str(R.string.unknown)
                         amountDisplay = amountZec
                         amountColor = R.color.text_light
+                        arrowRotation = R.integer.transaction_arrow_rotation_received
                     }
                 }
                 // sanitize amount
@@ -96,11 +102,14 @@ class TransactionViewHolder<T : ConfirmedTransaction>(itemView: View) : Recycler
             amountText.setTextColor(amountColor.toAppColor())
             topText.setTextColor(lineOneColor.toAppColor())
             bottomText.setTextColor(lineTwoColor.toAppColor())
-            val context = itemView.context
-            indicator.background = AppCompatResources.getDrawable(itemView.context, indicatorBackground)
-
-            // TODO: change this so we see the shield if it is a z-addr in the address line but verify the intended design/behavior, first
-            shieldIcon.goneIf((transaction?.raw != null || transaction?.expiryHeight != null) && !transaction.toAddress.isShielded())
+            indicator.setBackgroundColor(indicatorBackground.toAppColor())
+            transactionArrow.setColorFilter(arrowBackgroundTint.toAppColor())
+            transactionArrow.rotation = arrowRotation.toAppInt().toFloat()
+            var bottomTextRightDrawable:Drawable? = null
+            if (transaction?.memo.toUtf8Memo().isNotEmpty()) {
+                bottomTextRightDrawable = AppCompatResources.getDrawable(itemView.context, R.drawable.ic_memo)
+            }
+            bottomText.setCompoundDrawablesWithIntrinsicBounds(null, null, bottomTextRightDrawable, null)
         }
     }
 
