@@ -13,9 +13,7 @@ import cash.z.ecc.android.ext.WalletZecFormmatter
 import cash.z.ecc.android.ext.goneIf
 import cash.z.ecc.android.feedback.Report
 import cash.z.ecc.android.feedback.Report.Tap.SEND_FINAL_CLOSE
-import cash.z.ecc.android.feedback.Report.Tap.SEND_FINAL_EXIT
 import cash.z.ecc.android.sdk.db.entity.*
-import cash.z.ecc.android.sdk.ext.convertZatoshiToZecString
 import cash.z.ecc.android.sdk.ext.toAbbreviatedAddress
 import cash.z.ecc.android.sdk.ext.twig
 import cash.z.ecc.android.ui.base.BaseFragment
@@ -35,9 +33,6 @@ class SendFinalFragment : BaseFragment<FragmentSendFinalBinding>() {
         super.onViewCreated(view, savedInstanceState)
         binding.buttonPrimary.setOnClickListener {
             onReturnToSend()
-        }
-        binding.buttonSecondary.setOnClickListener {
-            onExit().also { tapped(SEND_FINAL_EXIT) }
         }
         binding.backButtonHitArea.setOnClickListener {
             onExit().also { tapped(SEND_FINAL_CLOSE) }
@@ -64,7 +59,6 @@ class SendFinalFragment : BaseFragment<FragmentSendFinalBinding>() {
                 binding.apply {
                     backButton.goneIf(!model.showCloseIcon)
                     backButtonHitArea.goneIf(!model.showCloseIcon)
-                    buttonSecondary.goneIf(!model.showCloseIcon)
 
                     textConfirmation.text = model.title
                     lottieSending.goneIf(!model.showProgress)
@@ -73,6 +67,15 @@ class SendFinalFragment : BaseFragment<FragmentSendFinalBinding>() {
                     buttonPrimary.apply {
                         text = model.primaryButtonText
                         setOnClickListener { model.primaryAction() }
+                    }
+
+                    buttonMoreInfo.apply {
+                        setOnClickListener{
+                            val moreInfoMsg = """${getString(R.string.more_info)} : ${model.errorDescription}"""
+                            txtMoreInfo.run {
+                                text = moreInfoMsg
+                            }
+                        }
                     }
                 }
             }
@@ -123,6 +126,7 @@ class SendFinalFragment : BaseFragment<FragmentSendFinalBinding>() {
                 model.title = getString(R.string.send_final_button_primary_failed)
                 model.errorMessage = if (isFailedEncoding()) getString(R.string.send_final_error_encoding) else getString(
                                     R.string.send_final_error_submitting)
+                model.errorDescription = errorMessage.toString()
                 model.primaryButtonText = getString(R.string.send_final_button_primary_retry)
                 model.primaryAction = { onReturnToSend() }
             }
@@ -145,6 +149,7 @@ class SendFinalFragment : BaseFragment<FragmentSendFinalBinding>() {
     data class UiModel(
         var showCloseIcon: Boolean = true,
         var title: String = "",
+        var errorDescription: String = "",
         var showProgress: Boolean = false,
         var errorMessage: String = "",
         var primaryButtonText: String = "See Details",
