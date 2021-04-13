@@ -13,8 +13,10 @@ import cash.z.ecc.android.ext.WalletZecFormmatter
 import cash.z.ecc.android.ext.locale
 import cash.z.ecc.android.ext.toAppColor
 import cash.z.ecc.android.ext.toAppInt
+import cash.z.ecc.android.ext.toColoredSpan
 import cash.z.ecc.android.sdk.db.entity.ConfirmedTransaction
 import cash.z.ecc.android.sdk.ext.ZcashSdk
+import cash.z.ecc.android.sdk.ext.isShielded
 import cash.z.ecc.android.sdk.ext.toAbbreviatedAddress
 import cash.z.ecc.android.ui.MainActivity
 import cash.z.ecc.android.ui.util.toUtf8Memo
@@ -33,16 +35,17 @@ class TransactionViewHolder<T : ConfirmedTransaction>(itemView: View) : Recycler
         val mainActivity = itemView.context as MainActivity
         mainActivity.lifecycleScope.launch {
             // update view
-            var lineOne = ""
+            var lineOne:CharSequence = ""
             var lineTwo = ""
             var amountZec = ""
             var amountDisplay = ""
-            var amountColor: Int = R.color.text_light_dimmed
+            var amountColor: Int = R.color.text_light
             var lineOneColor: Int = R.color.text_light
             var lineTwoColor: Int = R.color.text_light_dimmed
-            var indicatorBackground: Int = R.color.text_light
+            var indicatorBackground: Int = R.color.text_light_dimmed
             var arrowRotation: Int = R.integer.transaction_arrow_rotation_send
             var arrowBackgroundTint: Int = R.color.text_light
+            var isLineOneSpanned = false
 
             transaction?.apply {
                 itemView.setOnClickListener {
@@ -66,19 +69,38 @@ class TransactionViewHolder<T : ConfirmedTransaction>(itemView: View) : Recycler
                         if (isMined) {
                             arrowRotation = R.integer.transaction_arrow_rotation_send
                             amountColor = R.color.transaction_sent
-                            indicatorBackground = R.color.transaction_sent
-                            arrowBackgroundTint = R.color.transaction_sent
+                            if (toAddress.isShielded()) {
+                                indicatorBackground = R.color.zcashYellow
+                                arrowBackgroundTint = R.color.zcashYellow
+                                lineOneColor = R.color.zcashYellow
+                            } else {
+                                indicatorBackground = R.color.zcashBlueDark
+                                toAddress?.toAbbreviatedAddress()?.let {
+                                    lineOne = lineOne.toColoredSpan(R.color.zcashBlueDark, it)
+                                }
+                                isLineOneSpanned = true
+                            }
                         } else {
                             arrowRotation = R.integer.transaction_arrow_rotation_pending
                         }
                     }
                     toAddress.isNullOrEmpty() && value > 0L && minedHeight > 0 -> {
-                        lineOne = "${str(R.string.transaction_received_from)} ${mainActivity.getSender(transaction)}"
+                        val senderAddress = mainActivity.getSender(transaction)
+                        lineOne = "${str(R.string.transaction_received_from)} $senderAddress"
                         lineTwo = "${str(R.string.transaction_received)} $timestamp"
                         amountDisplay = "+ $amountZec"
-                        amountColor = R.color.zcashYellow
-                        indicatorBackground = R.color.zcashYellow
-                        arrowBackgroundTint = R.color.zcashYellow
+                        if (senderAddress.isShielded()) {
+                            amountColor = R.color.zcashYellow
+                            lineOneColor = R.color.zcashYellow
+                            indicatorBackground = R.color.zcashYellow
+                            arrowBackgroundTint = R.color.zcashYellow
+                        } else if (!senderAddress.equals(str(R.string.unknown), true)) {
+                            senderAddress.toAbbreviatedAddress().let {
+                                lineOne = lineOne.toColoredSpan(R.color.zcashBlueDark, it)
+                            }
+                            isLineOneSpanned = true
+                            indicatorBackground = R.color.zcashBlueDark
+                        }
                         arrowRotation = R.integer.transaction_arrow_rotation_received
                     }
                     else -> {
@@ -100,7 +122,9 @@ class TransactionViewHolder<T : ConfirmedTransaction>(itemView: View) : Recycler
             bottomText.text = lineTwo
             amountText.text = amountDisplay
             amountText.setTextColor(amountColor.toAppColor())
-            topText.setTextColor(lineOneColor.toAppColor())
+            if (!isLineOneSpanned) {
+                topText.setTextColor(lineOneColor.toAppColor())
+            }
             bottomText.setTextColor(lineTwoColor.toAppColor())
             indicator.setBackgroundColor(indicatorBackground.toAppColor())
             transactionArrow.setColorFilter(arrowBackgroundTint.toAppColor())

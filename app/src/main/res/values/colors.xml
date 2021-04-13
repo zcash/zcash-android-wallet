@@ -83,5 +83,6 @@
 
     <!--transaction colors-->
     <color name="transaction_sent">#D70E40</color>
+    <color name="zcashBlueDark">#4A90E2</color>
 
 </resources>
