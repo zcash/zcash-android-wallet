@@ -75,7 +75,6 @@ class HistoryFragment : BaseFragment<FragmentHistoryBinding>() {
 
         binding.recyclerTransactions.apply {
             layoutManager = LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false)
-            addItemDecoration(TransactionsFooter(binding.recyclerTransactions.context))
             adapter = transactionAdapter
         }
     }
