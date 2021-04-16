@@ -150,6 +150,7 @@
     <!-- Screen: Transaction details -->
     <string name="transaction_address_paid_you">paid you</string>
     <string name="transaction_address_you_paid">You paid</string>
+    <string name="transaction_address_paying">Paying</string>
     <string name="transaction_block_height_prefix">"from block "</string>
     <string name="transaction_confirmation_count_unavailable">Confirmation count temporarily unavailable</string>
     <string name="transaction_details_button_explore">Explore</string>
@@ -158,6 +159,7 @@
     <string name="transaction_prefix_from">reply-to</string>
     <string name="transaction_prefix_to" tools:ignore="MissingTranslation">@string/translated_label_to</string>
     <string name="transaction_received">Received</string>
+    <string name="transaction_received_from">Received from</string>
     <string name="transaction_status_confirmed">Confirmed</string>
     <string name="transaction_status_confirming">of 10 confirmations</string>
     <string name="transaction_status_expired">Expired</string>
@@ -267,5 +269,7 @@
 <!--    <string name="key_decimal">@string/custom_translation_decimal_key</string>-->
     <string name="mixpanel_project">a178e1ef062133fc121079cb12fa43c7</string>
     <string name="format_date_time">@string/custom_translation_format_date_time_brief</string>
+    <string name="format_transaction_history_date_time">@string/transaction_history_format_date_time_brief</string>
+    <string name="transaction_history_format_date_time_brief">MM/dd/yy h:mma</string>
 
 </resources>
