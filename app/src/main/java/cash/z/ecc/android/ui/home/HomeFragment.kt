@@ -97,6 +97,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
             hitAreaProfile.onClickNavTo(R.id.action_nav_home_to_nav_profile) { tapped(HOME_PROFILE) }
             textHistory.onClickNavTo(R.id.action_nav_home_to_nav_history) { tapped(HOME_HISTORY) }
             hitAreaReceive.onClickNavTo(R.id.action_nav_home_to_nav_receive) { tapped(HOME_RECEIVE) }
+            textSendAmount.onClickNavTo(R.id.action_nav_home_to_nav_balance_detail) {tapped(HOME_BALANCE_DETAIL)}
 
             textBannerAction.setOnClickListener {
                 onBannerAction(BannerAction.from((it as? TextView)?.text?.toString()))

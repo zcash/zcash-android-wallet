@@ -56,6 +56,13 @@
     <string name="home_no_balance">@string/translated_balance_nofunds</string>
     <string name="home_title" tools:ignore="MissingTranslation">@string/translated_balance_amounttosend</string>
 
+    <!-- Screen: Balance Detail -->
+    <string name="balance_detail_button_send_transparent_funds" tools:ignore="MissingTranslation">Shield Transparent Funds</string>
+    <string name="balance_detail_text_shielded_zec" tools:ignore="MissingTranslation">SHIELDED ZEC</string>
+    <string name="balance_detail_text_transparent_title" tools:ignore="MissingTranslation">+ TRANSPARENT</string>
+    <string name="balance_detail_text_total_title" tools:ignore="MissingTranslation">= TOTAL</string>
+
+
     <!-- Screen: Landing -->
     <string name="landing_backup_skipped_message_1">Are you sure? Without a backup, funds can be lost FOREVER!</string>
     <string name="landing_backup_skipped_message_2">You can\'t backup later. You\'re probably going to lose your funds!</string>
