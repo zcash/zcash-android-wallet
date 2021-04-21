@@ -22,9 +22,9 @@ import cash.z.ecc.android.di.viewmodel.activityViewModel
 import cash.z.ecc.android.ext.*
 import cash.z.ecc.android.feedback.Report
 import cash.z.ecc.android.feedback.Report.Tap.*
-import cash.z.ecc.android.sdk.block.CompactBlockProcessor.WalletBalance
 import cash.z.ecc.android.sdk.ext.*
-import cash.z.ecc.android.sdk.validate.AddressType
+import cash.z.ecc.android.sdk.type.AddressType
+import cash.z.ecc.android.sdk.type.WalletBalance
 import cash.z.ecc.android.ui.base.BaseFragment
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first

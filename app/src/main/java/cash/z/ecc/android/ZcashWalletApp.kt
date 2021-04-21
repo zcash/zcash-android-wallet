@@ -10,6 +10,7 @@ import cash.z.ecc.android.di.component.DaggerAppComponent
 import cash.z.ecc.android.ext.tryWithWarning
 import cash.z.ecc.android.feedback.FeedbackCoordinator
 import cash.z.ecc.android.sdk.ext.twig
+import cash.z.ecc.android.sdk.type.ZcashNetwork
 import kotlinx.coroutines.*
 import javax.inject.Inject
 
@@ -18,6 +19,8 @@ class ZcashWalletApp : Application(), CameraXConfig.Provider {
 
     @Inject
     lateinit var coordinator: FeedbackCoordinator
+
+    lateinit var defaultNetwork: ZcashNetwork
 
     var creationTime: Long = 0
         private set
@@ -40,6 +43,7 @@ class ZcashWalletApp : Application(), CameraXConfig.Provider {
         // Setup handler for uncaught exceptions.
         super.onCreate()
 
+        defaultNetwork = ZcashNetwork.from(resources.getInteger(R.integer.zcash_network_id))
         component = DaggerAppComponent.factory().create(this)
         component.inject(this)
         feedbackScope.launch {

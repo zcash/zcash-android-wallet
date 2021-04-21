@@ -112,13 +112,14 @@ class RestoreFragment : BaseFragment<FragmentRestoreBinding>(), View.OnKeyListen
     private fun onDone() {
         mainActivity?.reportFunnel(Restore.Done)
         mainActivity?.hideKeyboard()
+        val activation = ZcashWalletApp.instance.defaultNetwork.saplingActivationHeight
         val seedPhrase = binding.chipsInput.selectedChips.joinToString(" ") {
             it.title
         }
         var birthday = binding.root.findViewById<TextView>(R.id.input_birthdate).text.toString()
             .let { birthdateString ->
-                if (birthdateString.isNullOrEmpty()) ZcashSdk.SAPLING_ACTIVATION_HEIGHT else birthdateString.toInt()
-            }.coerceAtLeast(ZcashSdk.SAPLING_ACTIVATION_HEIGHT)
+                if (birthdateString.isNullOrEmpty()) activation else birthdateString.toInt()
+            }.coerceAtLeast(activation)
 
         try {
             walletSetup.validatePhrase(seedPhrase)
