@@ -255,6 +255,7 @@ class MainActivity : AppCompatActivity() {
             synchronizerComponent.synchronizer().let { synchronizer ->
                 synchronizer.onProcessorErrorHandler = ::onProcessorError
                 synchronizer.onChainErrorHandler = ::onChainError
+                synchronizer.onCriticalErrorHandler = ::onCriticalError
                 (synchronizer as SdkSynchronizer).processor.onScanMetricCompleteListener = ::onScanMetricComplete
 
                 synchronizer.start(lifecycleScope)
@@ -274,6 +275,20 @@ class MainActivity : AppCompatActivity() {
                 reportAction(Report.Performance.ScanRate(network, batchMetrics.cumulativeItems, batchMetrics.cumulativeTime, batchMetrics.cumulativeIps))
             }
         }
+    }
+
+    private fun onCriticalError(error: Throwable?): Boolean {
+        val errorMessage = error?.message
+            ?: error?.cause?.message
+            ?: error?.toString()
+            ?: "A critical error has occurred but no details were provided. Please report and consider submitting logs to help track this one down."
+        showCriticalMessage(
+            title = "Unrecoverable Error",
+            message = errorMessage,
+        ) {
+            throw error ?: RuntimeException("A critical error occurred but it was null")
+        }
+        return false
     }
 
     fun reportScreen(screen: Report.Screen?) = reportAction(screen)
