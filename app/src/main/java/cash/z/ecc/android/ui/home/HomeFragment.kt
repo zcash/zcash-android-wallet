@@ -1,30 +1,54 @@
 package cash.z.ecc.android.ui.home
 
+import android.app.Dialog
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.lifecycle.lifecycleScope
 import cash.z.ecc.android.R
+import cash.z.ecc.android.databinding.DialogSolicitFeedbackRatingBinding
 import cash.z.ecc.android.databinding.FragmentHomeBinding
 import cash.z.ecc.android.di.viewmodel.activityViewModel
 import cash.z.ecc.android.di.viewmodel.viewModel
-import cash.z.ecc.android.ext.*
+import cash.z.ecc.android.ext.WalletZecFormmatter
+import cash.z.ecc.android.ext.disabledIf
+import cash.z.ecc.android.ext.goneIf
+import cash.z.ecc.android.ext.invisibleIf
+import cash.z.ecc.android.ext.onClickNavTo
+import cash.z.ecc.android.ext.showSharedLibraryCriticalError
+import cash.z.ecc.android.ext.toColoredSpan
+import cash.z.ecc.android.ext.transparentIf
 import cash.z.ecc.android.feedback.Report
-import cash.z.ecc.android.feedback.Report.Tap.*
-import cash.z.ecc.android.sdk.Synchronizer.Status.*
-import cash.z.ecc.android.sdk.ext.*
+import cash.z.ecc.android.feedback.Report.Tap.HOME_CLEAR_AMOUNT
+import cash.z.ecc.android.feedback.Report.Tap.HOME_FUND_NOW
+import cash.z.ecc.android.feedback.Report.Tap.HOME_HISTORY
+import cash.z.ecc.android.feedback.Report.Tap.HOME_PROFILE
+import cash.z.ecc.android.feedback.Report.Tap.HOME_RECEIVE
+import cash.z.ecc.android.feedback.Report.Tap.HOME_SEND
+import cash.z.ecc.android.sdk.Synchronizer.Status.DISCONNECTED
+import cash.z.ecc.android.sdk.Synchronizer.Status.STOPPED
+import cash.z.ecc.android.sdk.Synchronizer.Status.SYNCED
+import cash.z.ecc.android.sdk.ext.convertZecToZatoshi
+import cash.z.ecc.android.sdk.ext.onFirstWith
+import cash.z.ecc.android.sdk.ext.safelyConvertToBigDecimal
+import cash.z.ecc.android.sdk.ext.twig
 import cash.z.ecc.android.ui.base.BaseFragment
-import cash.z.ecc.android.ui.home.HomeFragment.BannerAction.*
+import cash.z.ecc.android.ui.home.HomeFragment.BannerAction.CANCEL
+import cash.z.ecc.android.ui.home.HomeFragment.BannerAction.CLEAR
+import cash.z.ecc.android.ui.home.HomeFragment.BannerAction.FUND_NOW
 import cash.z.ecc.android.ui.send.SendViewModel
 import cash.z.ecc.android.ui.setup.WalletSetupViewModel
 import cash.z.ecc.android.ui.setup.WalletSetupViewModel.WalletSetupState.NO_SEED
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onCompletion
+import kotlinx.coroutines.flow.runningReduce
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
@@ -216,9 +240,20 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
             uiModel.status == DISCONNECTED -> getString(R.string.home_button_send_disconnected)
             uiModel.isSynced -> if (uiModel.hasFunds) getString(R.string.home_button_send_has_funds) else getString(R.string.home_button_send_no_funds)
             uiModel.status == STOPPED -> getString(R.string.home_button_send_idle)
-            uiModel.isDownloading -> getString(R.string.home_button_send_downloading, snake.downloadProgress)
+            uiModel.isDownloading -> {
+                when (snake.downloadProgress) {
+                    0 -> "Preparing to download..."
+                    else -> getString(R.string.home_button_send_downloading, snake.downloadProgress)
+                }
+            }
             uiModel.isValidating -> getString(R.string.home_button_send_validating)
-            uiModel.isScanning -> getString(R.string.home_button_send_scanning, snake.scanProgress)
+            uiModel.isScanning -> {
+                when (snake.scanProgress) {
+                    0 -> "Preparing to scan..."
+                    100 -> "Finalizing..."
+                    else -> getString(R.string.home_button_send_scanning, snake.scanProgress)
+                }
+            }
             else -> getString(R.string.home_button_send_updating)
         }
 
