@@ -22,7 +22,7 @@ import cash.z.ecc.android.ext.showSharedLibraryCriticalError
 import cash.z.ecc.android.feedback.Report
 import cash.z.ecc.android.feedback.Report.Funnel.Restore
 import cash.z.ecc.android.feedback.Report.Tap.*
-import cash.z.ecc.android.ui.base.BaseFragment
+import cash.z.ecc.android.feedback.Report.Tap.RESTORE_CLEAR
 import cash.z.ecc.android.sdk.ext.ZcashSdk
 import cash.z.ecc.android.sdk.ext.twig
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -65,6 +65,21 @@ class RestoreFragment : BaseFragment<FragmentRestoreBinding>(), View.OnKeyListen
         binding.buttonSuccess.setOnClickListener {
             onEnterWallet().also { tapped(RESTORE_SUCCESS) }
         }
+
+        binding.buttonClear.setOnClickListener {
+            onClearSeedWords().also { tapped(RESTORE_CLEAR) }
+        }
+    }
+
+    private fun onClearSeedWords() {
+        mainActivity?.showConfirmation(
+            "Clear All Words",
+            "Are you sure you would like to clear all the seed words and type them again?",
+            "Clear",
+            onPositive = {
+                binding.chipsInput.clearSelectedChips()
+            }
+        )
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {

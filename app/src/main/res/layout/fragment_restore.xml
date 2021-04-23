@@ -111,6 +111,19 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/text_layout_birthdate" />
 
+    <TextView
+        android:id="@+id/button_clear"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:elevation="8dp"
+        android:text="clear"
+        android:textAllCaps="true"
+        android:textColor="@color/text_light"
+        android:textSize="12dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:padding="8dp"
+        app:layout_constraintBottom_toTopOf="@id/divider_top"/>
+
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/lottie_success"
         android:layout_width="wrap_content"

@@ -163,6 +163,7 @@ object Report {
         FEEDBACK_SUBMIT("feedback.submit"),
         RECEIVE_BACK("receive.back"),
         RESTORE_DONE("restore.done"),
+        RESTORE_CLEAR("restore.clear"),
         RESTORE_SUCCESS("restore.success"),
         RESTORE_BACK("restore.back"),
         SCAN_BACK("scan.back"),
