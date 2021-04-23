@@ -24,8 +24,25 @@ import androidx.activity.OnBackPressedCallback
 import androidx.annotation.IdRes
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
+import androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_STRONG
+import androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_WEAK
+import androidx.biometric.BiometricManager.Authenticators.DEVICE_CREDENTIAL
 import androidx.biometric.BiometricPrompt
-import androidx.biometric.BiometricPrompt.*
+import androidx.biometric.BiometricPrompt.AUTHENTICATION_RESULT_TYPE_BIOMETRIC
+import androidx.biometric.BiometricPrompt.AUTHENTICATION_RESULT_TYPE_DEVICE_CREDENTIAL
+import androidx.biometric.BiometricPrompt.ERROR_CANCELED
+import androidx.biometric.BiometricPrompt.ERROR_HW_NOT_PRESENT
+import androidx.biometric.BiometricPrompt.ERROR_HW_UNAVAILABLE
+import androidx.biometric.BiometricPrompt.ERROR_LOCKOUT
+import androidx.biometric.BiometricPrompt.ERROR_LOCKOUT_PERMANENT
+import androidx.biometric.BiometricPrompt.ERROR_NEGATIVE_BUTTON
+import androidx.biometric.BiometricPrompt.ERROR_NO_BIOMETRICS
+import androidx.biometric.BiometricPrompt.ERROR_NO_DEVICE_CREDENTIAL
+import androidx.biometric.BiometricPrompt.ERROR_NO_SPACE
+import androidx.biometric.BiometricPrompt.ERROR_TIMEOUT
+import androidx.biometric.BiometricPrompt.ERROR_UNABLE_TO_PROCESS
+import androidx.biometric.BiometricPrompt.ERROR_USER_CANCELED
+import androidx.biometric.BiometricPrompt.ERROR_VENDOR
 import androidx.core.content.ContextCompat
 import androidx.core.content.getSystemService
 import androidx.fragment.app.Fragment
@@ -294,8 +311,12 @@ class MainActivity : AppCompatActivity() {
     fun authenticate(description: String, title: String = getString(R.string.biometric_prompt_title), block: () -> Unit) {
         val callback =  object : BiometricPrompt.AuthenticationCallback() {
             override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
-                twig("Authentication success")
+                twig("Authentication success with type: ${if (result.authenticationType == AUTHENTICATION_RESULT_TYPE_DEVICE_CREDENTIAL) "DEVICE_CREDENTIAL" else if (result.authenticationType == AUTHENTICATION_RESULT_TYPE_BIOMETRIC) "BIOMETRIC" else "UNKNOWN"}  object: ${result.cryptoObject}")
                 block()
+                twig("Done authentication block")
+                // we probably only need to do this if the type is DEVICE_CREDENTIAL
+                // but it doesn't hurt to hide the keyboard every time
+                hideKeyboard()
             }
             override fun onAuthenticationFailed() {
                 twig("Authentication failed!!!!")
@@ -326,6 +347,10 @@ class MainActivity : AppCompatActivity() {
                     ERROR_TIMEOUT -> doNothing("Oops. It timed out.")
                     ERROR_UNABLE_TO_PROCESS -> doNothing(".")
                     ERROR_VENDOR -> doNothing("We got some weird error and you should report this.")
+                    else ->  {
+                        twig("Warning: unrecognized authentication error $errorCode")
+                        doNothing("Authentication failed with error code $errorCode")
+                    }
                 }
             }
         }
@@ -336,7 +361,7 @@ class MainActivity : AppCompatActivity() {
                     .setTitle(title)
                     .setConfirmationRequired(false)
                     .setDescription(description)
-                    .setDeviceCredentialAllowed(true)
+                    .setAllowedAuthenticators(BIOMETRIC_STRONG or BIOMETRIC_WEAK or DEVICE_CREDENTIAL)
                     .build()
             )
         }
