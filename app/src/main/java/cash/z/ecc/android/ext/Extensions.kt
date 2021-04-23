@@ -4,9 +4,9 @@ import android.content.Context
 import android.os.Build
 import androidx.fragment.app.Fragment
 import cash.z.ecc.android.sdk.ext.Bush
-import cash.z.ecc.android.sdk.ext.CompositeTwig
 import cash.z.ecc.android.sdk.ext.Twig
 import cash.z.ecc.android.sdk.ext.twig
+import cash.z.ecc.android.sdk.type.WalletBalance
 import java.util.*
 import kotlin.math.roundToInt
 
@@ -31,6 +31,9 @@ fun <T> String.distribute(chunks: Int, block: (Int, String) -> T) {
 }
 
 fun Boolean.asString(ifTrue: String = "", ifFalse: String = "") = if (this) ifTrue else ifFalse
+
+inline val WalletBalance.pending: Long
+    get() = (this.totalZatoshi - this.availableZatoshi).coerceAtLeast(0)
 
 inline fun <R> tryWithWarning(message: String = "", block: () -> R): R? {
     return try {

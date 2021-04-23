@@ -56,7 +56,7 @@ class HistoryFragment : BaseFragment<FragmentHistoryBinding>() {
 
     private fun onBalanceUpdated(balance: WalletBalance) {
         binding.textBalanceAvailable.text = WalletZecFormmatter.toZecStringShort(balance.availableZatoshi)
-        val change = (balance.totalZatoshi - balance.availableZatoshi)
+        val change = balance.pending
         binding.textBalanceDescription.apply {
             goneIf(change <= 0L)
             val changeString = WalletZecFormmatter.toZecStringFull(change)
