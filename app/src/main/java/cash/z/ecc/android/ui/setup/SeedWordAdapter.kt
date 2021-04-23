@@ -7,11 +7,8 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import cash.z.ecc.android.R
 import cash.z.ecc.android.ext.toAppColor
-import cash.z.ecc.android.feedback.Report
-import cash.z.ecc.android.feedback.Report.Funnel.Restore
-import cash.z.ecc.android.ui.MainActivity
-import cash.z.ecc.android.ui.setup.SeedWordChip
 import cash.z.ecc.android.sdk.ext.twig
+import cash.z.ecc.android.ui.setup.SeedWordChip
 
 class SeedWordAdapter :  ChipsAdapter {
 
@@ -30,17 +27,23 @@ class SeedWordAdapter :  ChipsAdapter {
              (holder as SeedWordHolder).seedChipView.bind(mDataSource.getSelectedChip(position), position);
         } else {
             val size = mDataSource.selectedChips.size
+
+             // tricky bugfix:
+             // keep this always enabled otherwise older versions of android crash when this
+             // view is given focus. As a work around, just hide the cursor when the user is done
+             // editing. This is not ideal but it's better than a crash during wallet restore!
+            mEditText.isEnabled = true
             mEditText.hint = if (size < 3) {
-                mEditText.isEnabled = true
+                mEditText.isCursorVisible = true
                 mEditText.setHintTextColor(R.color.text_light_dimmed.toAppColor())
                 val ordinal = when(size) {2 -> "3rd"; 1 -> "2nd"; else -> "1st"}
                 "Enter $ordinal seed word"
             } else if(size >= 24) {
                 mEditText.setHintTextColor(R.color.zcashGreen.toAppColor())
-                mEditText.isEnabled = false
+                mEditText.isCursorVisible = false
                 "done"
             } else {
-                mEditText.isEnabled = true
+                mEditText.isCursorVisible = true
                 mEditText.setHintTextColor(R.color.zcashYellow.toAppColor())
                 "${size + 1}"
             }

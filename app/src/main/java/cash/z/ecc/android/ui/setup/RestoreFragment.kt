@@ -10,21 +10,26 @@ import android.view.MotionEvent
 import android.view.MotionEvent.ACTION_DOWN
 import android.view.MotionEvent.ACTION_UP
 import android.view.View
+import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import cash.z.ecc.android.R
+import cash.z.ecc.android.ZcashWalletApp
 import cash.z.ecc.android.databinding.FragmentRestoreBinding
 import cash.z.ecc.android.di.viewmodel.activityViewModel
 import cash.z.ecc.android.ext.goneIf
+import cash.z.ecc.android.ext.showConfirmation
 import cash.z.ecc.android.ext.showInvalidSeedPhraseError
 import cash.z.ecc.android.ext.showSharedLibraryCriticalError
 import cash.z.ecc.android.feedback.Report
 import cash.z.ecc.android.feedback.Report.Funnel.Restore
-import cash.z.ecc.android.feedback.Report.Tap.*
+import cash.z.ecc.android.feedback.Report.Tap.RESTORE_BACK
 import cash.z.ecc.android.feedback.Report.Tap.RESTORE_CLEAR
-import cash.z.ecc.android.sdk.ext.ZcashSdk
+import cash.z.ecc.android.feedback.Report.Tap.RESTORE_DONE
+import cash.z.ecc.android.feedback.Report.Tap.RESTORE_SUCCESS
 import cash.z.ecc.android.sdk.ext.twig
+import cash.z.ecc.android.ui.base.BaseFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.tylersuehr.chips.Chip
 import com.tylersuehr.chips.ChipsAdapter
@@ -169,23 +174,27 @@ class RestoreFragment : BaseFragment<FragmentRestoreBinding>(), View.OnKeyListen
     }
 
     private fun onChipsModified() {
-        seedWordAdapter?.editText?.apply {
-            postDelayed({
-                requestFocus()
-            },40L)
-        }
-        setDoneEnabled()
-
-        view!!.postDelayed({
-            mainActivity!!.showKeyboard(seedWordAdapter!!.editText)
-            seedWordAdapter?.editText?.requestFocus()
-        }, 500L)
+        updateDoneViews()
+        forceShowKeyboard()
     }
 
-    private fun setDoneEnabled() {
+    private fun updateDoneViews(): Boolean {
         val count = seedWordAdapter?.itemCount ?: 0
         reportWords(count - 1) // subtract 1 for the editText
-        binding.groupDone.goneIf(count <= 24)
+        val isDone = count > 24
+        binding.groupDone.goneIf(!isDone)
+        return !isDone
+    }
+
+    // forcefully show the keyboard as a hack to fix odd behavior where the keyboard
+    // sometimes closes randomly and inexplicably in between seed word entries
+    private fun forceShowKeyboard() {
+        requireView().postDelayed({
+            val isDone = (seedWordAdapter?.itemCount ?: 0) > 24
+            val focusedView = if (isDone) binding.inputBirthdate else seedWordAdapter!!.editText
+            mainActivity!!.showKeyboard(focusedView)
+            focusedView.requestFocus()
+        }, 500L)
     }
 
     private fun reportWords(count: Int) {
