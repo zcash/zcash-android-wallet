@@ -359,10 +359,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     // TODO: spruce this up with API 26 stuff
-    fun vibrateSuccess() {
+    fun vibrateSuccess() = vibrate(0, 200, 200, 100, 100, 800)
+
+    fun vibrate(initialDelay: Long, vararg durations: Long) {
         val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
         if (vibrator.hasVibrator()) {
-            vibrator.vibrate(longArrayOf(0, 200, 200, 100, 100, 800), -1)
+            vibrator.vibrate(longArrayOf(initialDelay, *durations), -1)
         }
     }
 
