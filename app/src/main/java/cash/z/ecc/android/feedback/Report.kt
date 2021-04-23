@@ -48,7 +48,7 @@ object Report {
         sealed class UserFeedback(stepName: String, step: Int, vararg properties: Pair<String, Any>) : Feedback.Funnel("feedback", stepName, step, *properties) {
             object Started : UserFeedback("started", 0)
             object Cancelled : UserFeedback("cancelled", 1)
-            class Submitted(rating: Int, question1: String, question2: String, question3: String) : UserFeedback("submitted", 100, "rating" to rating, "question1" to question1, "question2" to question2, "question3" to question3)
+            class Submitted(rating: Int, question1: String, question2: String, question3: String, isSolicited: Boolean) : UserFeedback("submitted", 100, "rating" to rating, "question1" to question1, "question2" to question2, "question3" to question3, "isSolicited" to isSolicited)
         }
     }
 

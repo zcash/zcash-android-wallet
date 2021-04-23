@@ -7,6 +7,7 @@ import android.view.ViewTreeObserver
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.core.view.doOnLayout
+import androidx.navigation.fragment.navArgs
 import cash.z.ecc.android.R
 import cash.z.ecc.android.databinding.FragmentFeedbackBinding
 import cash.z.ecc.android.di.viewmodel.viewModel
@@ -23,6 +24,7 @@ import cash.z.ecc.android.ui.base.BaseFragment
  */
 class FeedbackFragment :  BaseFragment<FragmentFeedbackBinding>() {
     override val screen = Report.Screen.FEEDBACK
+    val args: FeedbackFragmentArgs by navArgs()
 
     override fun inflate(inflater: LayoutInflater): FragmentFeedbackBinding =
         FragmentFeedbackBinding.inflate(inflater)
@@ -59,6 +61,10 @@ class FeedbackFragment :  BaseFragment<FragmentFeedbackBinding>() {
             ratings.forEach {
                 it.setOnClickListener(::onRatingClicked)
             }
+
+            if (args.rating >= 0) {
+                onRatingClicked(ratings[args.rating])
+            }
         }
     }
 
@@ -75,8 +81,9 @@ class FeedbackFragment :  BaseFragment<FragmentFeedbackBinding>() {
         val q2 = binding.inputQuestion2.editText?.text.toString()
         val q3 = binding.inputQuestion3.editText?.text.toString()
         val rating = ratings.indexOfFirst { it.isActivated } + 1
+        val solicited = args.isSolicited
 
-        mainActivity?.reportFunnel(UserFeedback.Submitted(rating, q1, q2, q3))
+        mainActivity?.reportFunnel(UserFeedback.Submitted(rating, q1, q2, q3, solicited))
 
         mainActivity?.navController?.navigateUp()
     }

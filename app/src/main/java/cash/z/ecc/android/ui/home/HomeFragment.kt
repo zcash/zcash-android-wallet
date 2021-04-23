@@ -138,6 +138,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
 
     override fun onResume() {
         super.onResume()
+        maybeInterruptUser()
         mainActivity?.launchWhenSyncing {
             twig("HomeFragment.onResume  resumeScope.isActive: ${resumedScope.isActive}  $resumedScope")
             val existingAmount = sendViewModel.zatoshiAmount.coerceAtLeast(0)
@@ -407,7 +408,71 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
     }
 
 
+    //
+    // User Interruptions
+    //
+    //TODO: Expand this placeholder logic around when to interrupt the user.
+    // For now, we just need to get this in the app so that we can BEGIN capturing ECC feedback.
+    var hasInterrupted = false
+    private fun canInterruptUser(): Boolean {
+        // requirements:
+        //      - we want occasional random feedback that does not occur too often
+        return !hasInterrupted && Math.random() < 0.01
+    }
+    /**
+     * Interrupt the user with the various things that we want to interrupt them with. These
+     * requirements are driven by the product manager and may change over time.
+     */
+    private fun maybeInterruptUser() {
+        if (canInterruptUser()) {
+            feedbackPrompt()?.let {
+                it.show()
+            }
+        }
+    }
 
+    private fun feedbackPrompt(): Dialog {
+        lateinit var ratings: Array<View>
+        lateinit var dialog: Dialog
+        fun onRatingClicked(view: View) {
+            ratings.forEach { it.isActivated = false }
+            view.isActivated = !view.isActivated
+            lifecycleScope.launch {
+                // let the color change show
+                delay(150)
+                dialog.dismiss()
+                onFeedbackProvided(ratings.indexOfFirst { it.isActivated })
+            }
+        }
+
+        val promptViewBinding = DialogSolicitFeedbackRatingBinding.inflate(layoutInflater)
+        with(promptViewBinding) {
+            ratings = arrayOf(feedbackExp1, feedbackExp2, feedbackExp3, feedbackExp4, feedbackExp5)
+            ratings.forEach {
+                it.setOnClickListener(::onRatingClicked)
+            }
+        }
+        dialog = MaterialAlertDialogBuilder(context)
+            .setView(promptViewBinding.root)
+            .setCancelable(true)
+            .create()
+        return dialog
+    }
+
+    private fun onFeedbackProvided(rating: Int) {
+        hasInterrupted = true
+        MaterialAlertDialogBuilder(context)
+            .setTitle("Want to share details?")
+            .setNegativeButton("Yes!") { dialog, which ->
+                val action = HomeFragmentDirections.actionNavHomeToNavFeedback(rating, true)
+                mainActivity?.navController?.navigate(action)
+            }
+            .setPositiveButton("Nope") { dialog, which ->
+                Toast.makeText(mainActivity, R.string.feedback_thanks, Toast.LENGTH_LONG).show()
+                mainActivity?.reportFunnel(Report.Funnel.UserFeedback.Submitted(rating, "truncated", "truncated", "truncated", true))
+                dialog.dismiss()
+            }.show()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
