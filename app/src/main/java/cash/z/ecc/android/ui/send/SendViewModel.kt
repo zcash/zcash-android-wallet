@@ -92,6 +92,11 @@ class SendViewModel @Inject constructor() : ViewModel() {
     suspend fun validateAddress(address: String): AddressType =
         synchronizer.validateAddress(address)
 
+    suspend fun isValidAddress(address: String): Boolean = when(validateAddress(address)) {
+        is AddressType.Shielded, is AddressType.Transparent -> true
+        else -> false
+    }
+
     fun validate(context: Context, availableZatoshi: Long?, maxZatoshi: Long?) = flow<String?> {
 
         when {

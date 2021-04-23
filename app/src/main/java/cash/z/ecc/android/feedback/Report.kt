@@ -104,6 +104,7 @@ object Report {
         TRANSACTION("wallet.transaction"),
         LANDING,
         PROFILE,
+        AWESOME,
         FEEDBACK,
         RECEIVE,
         RESTORE,
@@ -139,6 +140,9 @@ object Report {
         HISTORY_BACK("history.back"),
         TRANSACTION_BACK("transaction.back"),
         PROFILE_CLOSE("profile.close"),
+        AWESOME_OPEN("profile.awesome"),
+        AWESOME_CLOSE("awesome.close"),
+        AWESOME_SHIELD("awesome.shield"),
         PROFILE_BACKUP("profile.backup"),
         PROFILE_VIEW_USER_LOGS("profile.view.user.logs"),
         PROFILE_VIEW_DEV_LOGS("profile.view.dev.logs"),
@@ -173,7 +177,8 @@ object Report {
         SEND_SUBMIT("send.submit"),
 
         // General events
-        COPY_ADDRESS("copy.address");
+        COPY_ADDRESS("copy.address"),
+        COPY_TRANSPARENT_ADDRESS("copy.address.transparent");
 
         override val key = "tap.$id"
         override fun toString() = "${key.replace('.', ' ')} button".replace("tap ", "tapped the ")

@@ -18,7 +18,7 @@ import cash.z.ecc.android.ext.onClickNavTo
 import cash.z.ecc.android.feedback.FeedbackFile
 import cash.z.ecc.android.feedback.Report
 import cash.z.ecc.android.feedback.Report.Funnel.UserFeedback
-import cash.z.ecc.android.feedback.Report.Tap.*
+import cash.z.ecc.android.feedback.Report.Tap.AWESOME_OPEN
 import cash.z.ecc.android.sdk.ext.Bush
 import cash.z.ecc.android.sdk.ext.toAbbreviatedAddress
 import cash.z.ecc.android.ui.base.BaseFragment
@@ -65,6 +65,23 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>() {
             onViewDevLogs()
             true
         }
+
+        binding.iconProfile.setOnLongClickListener {
+            tapped(AWESOME_OPEN)
+            onEnterAwesomeMode()
+            true
+        }
+
+        if (viewModel.isEasterEggTriggered()) {
+            binding.iconProfile.setImageResource(R.drawable.ic_profile_zebra_02)
+        }
+
+    }
+
+    private fun onEnterAwesomeMode() {
+        (context as? MainActivity)?.safeNavigate(R.id.action_nav_profile_to_nav_awesome)
+            ?: throw IllegalStateException("Cannot navigate from this activity. " +
+                    "Expected MainActivity but found ${context?.javaClass?.simpleName}")
     }
 
     override fun onResume() {

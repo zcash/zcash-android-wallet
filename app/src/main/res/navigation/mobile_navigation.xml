@@ -72,6 +72,9 @@
         <action
             android:id="@+id/action_nav_profile_to_nav_settings"
             app:destination="@id/nav_settings" />
+        <action
+            android:id="@+id/action_nav_profile_to_nav_awesome"
+            app:destination="@id/nav_awesome" />
     </fragment>
     <fragment
         android:id="@+id/nav_feedback"
@@ -81,6 +84,16 @@
         android:id="@+id/nav_settings"
         android:name="cash.z.ecc.android.ui.settings.SettingsFragment"
         tools:layout="@layout/fragment_settings" />
+    <fragment
+        android:id="@+id/nav_awesome"
+        android:name="cash.z.ecc.android.ui.profile.AwesomeFragment"
+        tools:layout="@layout/fragment_awesome">
+        <action
+            android:id="@+id/action_nav_awesome_to_nav_history"
+            app:destination="@id/nav_history"
+            app:popUpTo="@id/nav_home"
+            app:popUpToInclusive="false"/>
+    </fragment>
 
     <!--                 -->
     <!-- Send Navigation -->
