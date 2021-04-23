@@ -17,6 +17,9 @@ class ProfileViewModel @Inject constructor() : ViewModel() {
     @Named(Const.Name.APP_PREFS)
     lateinit var prefs: LockBox
 
+    // TODO: track this in the app and then fetch. For now, just estimate the blocks per second.
+    val bps = 40
+
     suspend fun getShieldedAddress(): String = synchronizer.getAddress()
 
     suspend fun getTransparentAddress(): String {

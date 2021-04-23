@@ -76,6 +76,17 @@ object Report {
         }
     }
 
+    sealed class Performance(name: String, vararg properties: Pair<String, Any>) : Feedback.MappedAction(
+        "metricName" to name,
+        "isPerformanceMetric" to true,
+        *properties
+    ) {
+        override val key = "performance.$name"
+        override fun toString() = "$key: ${toMap().let { if(it.size > 1) "${it.entries}" else "" }}"
+
+        class ScanRate(network: String, cumulativeItems: Int, cumulativeTime: Long, cumulativeIps: Float) : Performance("scan.bps", "network" to network, "totalBlocks" to cumulativeItems, "totalTime" to cumulativeTime, "blocksPerSecond" to cumulativeIps)
+    }
+
     // placeholder for things that we want to monitor
     sealed class Issue(name: String, vararg properties: Pair<String, Any>) : Feedback.MappedAction(
         "issueName" to name,

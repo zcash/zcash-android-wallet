@@ -55,6 +55,7 @@ import cash.z.ecc.android.sdk.Initializer
 import cash.z.ecc.android.sdk.SdkSynchronizer
 import cash.z.ecc.android.sdk.db.entity.ConfirmedTransaction
 import cash.z.ecc.android.sdk.exception.CompactBlockProcessorException
+import cash.z.ecc.android.sdk.ext.BatchMetrics
 import cash.z.ecc.android.sdk.ext.ZcashSdk
 import cash.z.ecc.android.sdk.ext.toAbbreviatedAddress
 import cash.z.ecc.android.sdk.ext.twig
@@ -238,6 +239,8 @@ class MainActivity : AppCompatActivity() {
             synchronizerComponent.synchronizer().let { synchronizer ->
                 synchronizer.onProcessorErrorHandler = ::onProcessorError
                 synchronizer.onChainErrorHandler = ::onChainError
+                (synchronizer as SdkSynchronizer).processor.onScanMetricCompleteListener = ::onScanMetricComplete
+
                 synchronizer.start(lifecycleScope)
             }
         } else {
@@ -245,6 +248,16 @@ class MainActivity : AppCompatActivity() {
         }
         mainViewModel.setLoading(false)
         twig("MainActivity.startSync COMPLETE")
+    }
+
+    private fun onScanMetricComplete(batchMetrics: BatchMetrics, isComplete: Boolean) {
+        val reportingThreshold = 100
+        if (isComplete) {
+            if (batchMetrics.cumulativeItems > reportingThreshold) {
+                val network = synchronizerComponent.synchronizer().network.networkName
+                reportAction(Report.Performance.ScanRate(network, batchMetrics.cumulativeItems, batchMetrics.cumulativeTime, batchMetrics.cumulativeIps))
+            }
+        }
     }
 
     fun reportScreen(screen: Report.Screen?) = reportAction(screen)
