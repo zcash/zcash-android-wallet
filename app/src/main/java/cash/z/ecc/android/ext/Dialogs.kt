@@ -3,6 +3,7 @@ package cash.z.ecc.android.ext
 import android.app.ActivityManager
 import android.app.Dialog
 import android.content.Context
+import android.text.Html
 import androidx.annotation.StringRes
 import androidx.core.content.getSystemService
 import cash.z.ecc.android.R
@@ -131,7 +132,10 @@ fun Context.showUpdateServerDialog(positiveResId: Int = R.string.dialog_modify_s
         }
         .setNegativeButton(R.string.dialog_modify_server_button_negative) { dialog, _ ->
             dialog.dismiss()
-            onCancel
+            onCancel()
+        }
+        .show()
+}
 
 fun Context.showRescanWalletDialog(quickDistance: String, quickEstimate: String, fullDistance: String, fullEstimate: String, onWipe: () -> Unit = {}, onFullRescan: () -> Unit = {}, onQuickRescan: () -> Unit = {}): Dialog {
     return MaterialAlertDialogBuilder(this)
