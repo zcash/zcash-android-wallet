@@ -396,21 +396,8 @@ class MainActivity : AppCompatActivity() {
     fun copyAddress(view: View? = null) {
         reportTap(COPY_ADDRESS)
         lifecycleScope.launch {
-            clipboard.setPrimaryClip(
-                ClipData.newPlainText(
-                    "Z-Address",
-                    synchronizerComponent.synchronizer().getAddress()
-                )
-            )
-            showMessage("Address copied!")
+            copyText(synchronizerComponent.synchronizer().getAddress(), "Address")
         }
-    }
-
-    suspend fun isValidAddress(address: String): Boolean {
-        try {
-            return !synchronizerComponent.synchronizer().validateAddress(address).isNotValid
-        } catch (t: Throwable) { }
-        return false
     }
 
     fun copyText(textToCopy: String, label: String = "ECC Wallet Text") {
@@ -418,6 +405,14 @@ class MainActivity : AppCompatActivity() {
             ClipData.newPlainText(label, textToCopy)
         )
         showMessage("$label copied!")
+        vibrate(0, 50)
+    }
+
+    suspend fun isValidAddress(address: String): Boolean {
+        try {
+            return !synchronizerComponent.synchronizer().validateAddress(address).isNotValid
+        } catch (t: Throwable) { }
+        return false
     }
 
     fun preventBackPress(fragment: Fragment) {
