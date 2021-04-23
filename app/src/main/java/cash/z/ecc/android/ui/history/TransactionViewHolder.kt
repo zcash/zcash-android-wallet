@@ -140,7 +140,7 @@ class TransactionViewHolder<T : ConfirmedTransaction>(itemView: View) : Recycler
 
     private fun onTransactionClicked(transaction: ConfirmedTransaction) {
         (itemView.context as MainActivity).apply {
-            historyViewModel.selectedTransaction = transaction
+            historyViewModel.selectedTransaction.value = transaction
             safeNavigate(R.id.action_nav_history_to_nav_transaction)
         }
     }
