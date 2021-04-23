@@ -132,6 +132,11 @@ class TransactionFragment : BaseFragment<FragmentTransactionBinding>() {
                     uiModel.memo?.let {
                         hitAreaMemoSubway.setOnClickListener { _ -> onToggleMemo(!isMemoExpanded, it) }
                         hitAreaMemoIcon.setOnClickListener { _ -> onToggleMemo(!isMemoExpanded, it) }
+                        subwayLabelMemo.setOnClickListener { _ -> onToggleMemo(!isMemoExpanded, it) }
+                        subwayLabelMemo.setOnLongClickListener { _ ->
+                            mainActivity?.copyText(it, "Memo")
+                            true
+                        }
                         subwayLabelMemo.movementMethod = ScrollingMovementMethod()
                         subwaySpotMemoContent.visible()
                         subwayLabelMemo.visible()
@@ -157,6 +162,7 @@ class TransactionFragment : BaseFragment<FragmentTransactionBinding>() {
             binding.subwaySpotMemoContent.rotation = 90.0f
         } else {
             binding.subwayLabelMemo.setText(getString(R.string.transaction_with_memo))
+            binding.subwayLabelMemo.scrollTo(0,0)
             binding.subwayLabelMemo.invalidate()
             twig("setting memo text to: with a memo")
             binding.groupMemoIcon.visible()
