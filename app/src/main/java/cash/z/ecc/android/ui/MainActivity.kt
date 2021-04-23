@@ -60,8 +60,7 @@ import cash.z.ecc.android.sdk.ext.ZcashSdk
 import cash.z.ecc.android.sdk.ext.toAbbreviatedAddress
 import cash.z.ecc.android.sdk.ext.twig
 import cash.z.ecc.android.ui.history.HistoryViewModel
-import cash.z.ecc.android.ui.util.INCLUDE_MEMO_PREFIXES_RECOGNIZED
-import cash.z.ecc.android.ui.util.toUtf8Memo
+import cash.z.ecc.android.ui.util.MemoUtil
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.CoroutineScope
@@ -577,31 +576,11 @@ class MainActivity : AppCompatActivity() {
 
     /* Memo functions that might possibly get moved to MemoUtils */
 
-    private val addressRegex = """zs\d\w{65,}""".toRegex()
+//    private val addressRegex = """zs\d\w{65,}""".toRegex()
 
     suspend fun getSender(transaction: ConfirmedTransaction?): String {
         if (transaction == null) return getString(R.string.unknown)
-        val memo = transaction.memo.toUtf8Memo()
-        return extractValidAddress(memo)?.toAbbreviatedAddress() ?: getString(R.string.unknown)
-    }
-
-    fun extractAddress(memo: String?) = addressRegex.findAll(memo ?: "").lastOrNull()?.value
-
-    suspend fun extractValidAddress(memo: String?): String? {
-        if (memo == null || memo.length < 25) return null
-
-        // note: cannot use substringAfterLast because we need to ignore case
-        try {
-            INCLUDE_MEMO_PREFIXES_RECOGNIZED.forEach { prefix ->
-                memo.lastIndexOf(prefix, ignoreCase = true).takeUnless { it == -1 }?.let { lastIndex ->
-                    memo.substring(lastIndex + prefix.length).trimStart().validateAddress()?.let { address ->
-                        return@extractValidAddress address
-                    }
-                }
-            }
-        } catch (t: Throwable) { }
-
-        return null
+        return MemoUtil.findAddressInMemo(transaction, ::isValidAddress)?.toAbbreviatedAddress() ?: getString(R.string.unknown)
     }
 
     suspend fun String?.validateAddress(): String? {

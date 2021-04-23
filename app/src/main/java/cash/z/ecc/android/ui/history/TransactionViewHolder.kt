@@ -19,6 +19,7 @@ import cash.z.ecc.android.sdk.ext.ZcashSdk
 import cash.z.ecc.android.sdk.ext.isShielded
 import cash.z.ecc.android.sdk.ext.toAbbreviatedAddress
 import cash.z.ecc.android.ui.MainActivity
+import cash.z.ecc.android.ui.util.MemoUtil
 import cash.z.ecc.android.ui.util.toUtf8Memo
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -146,7 +147,7 @@ class TransactionViewHolder<T : ConfirmedTransaction>(itemView: View) : Recycler
 
     private fun onTransactionLongPressed(transaction: ConfirmedTransaction) {
         val mainActivity = itemView.context as MainActivity
-        (transaction.toAddress ?: mainActivity.extractAddress(transaction.memo.toUtf8Memo()))?.let {
+        transaction.toAddress?.let {
             mainActivity.copyText(it, "Transaction Address")
         }
     }
