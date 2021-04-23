@@ -132,6 +132,26 @@ fun Context.showUpdateServerDialog(positiveResId: Int = R.string.dialog_modify_s
         .setNegativeButton(R.string.dialog_modify_server_button_negative) { dialog, _ ->
             dialog.dismiss()
             onCancel
+
+fun Context.showRescanWalletDialog(quickDistance: String, quickEstimate: String, fullDistance: String, fullEstimate: String, onWipe: () -> Unit = {}, onFullRescan: () -> Unit = {}, onQuickRescan: () -> Unit = {}): Dialog {
+    return MaterialAlertDialogBuilder(this)
+        .setTitle(R.string.dialog_rescan_wallet_title)
+        .setMessage(Html.fromHtml(getString(R.string.dialog_rescan_wallet_message, quickDistance, quickEstimate, fullDistance, fullEstimate)))
+        .setCancelable(true)
+        .setPositiveButton(R.string.dialog_rescan_wallet_button_positive) { dialog, _ ->
+            dialog.dismiss()
+            onQuickRescan()
+        }
+        .setNeutralButton(R.string.dialog_rescan_wallet_button_neutral) { dialog, _ ->
+            dialog.dismiss()
+            onWipe()
+        }
+        .setNegativeButton(R.string.dialog_rescan_wallet_button_negative) { dialog, _ ->
+            dialog.dismiss()
+            onFullRescan()
+        }
+        .show()
+}
         }
         .show()
 }

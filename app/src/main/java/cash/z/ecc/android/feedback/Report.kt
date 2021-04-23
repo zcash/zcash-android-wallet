@@ -155,6 +155,7 @@ object Report {
         AWESOME_CLOSE("awesome.close"),
         AWESOME_SHIELD("awesome.shield"),
         PROFILE_BACKUP("profile.backup"),
+        PROFILE_RESCAN("profile.rescan"),
         PROFILE_VIEW_USER_LOGS("profile.view.user.logs"),
         PROFILE_VIEW_DEV_LOGS("profile.view.dev.logs"),
         PROFILE_SEND_FEEDBACK("profile.send.feedback"),
