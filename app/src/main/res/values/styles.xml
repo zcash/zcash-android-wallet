@@ -40,6 +40,10 @@
         <item name="strokeColor">@color/zcashWhite</item>
     </style>
 
+    <style name="Zcash.Button.OutlinedButton.Primary" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="strokeColor">@color/colorPrimary</item>
+    </style>
+
     <style name="Zcash.TextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.FilledBox">
         <item name="boxBackgroundColor">@android:color/transparent</item>
     </style>

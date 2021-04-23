@@ -13,12 +13,11 @@ import cash.z.ecc.android.di.viewmodel.activityViewModel
 import cash.z.ecc.android.ext.*
 import cash.z.ecc.android.feedback.Report
 import cash.z.ecc.android.feedback.Report.Tap.HISTORY_BACK
-import cash.z.ecc.android.sdk.block.CompactBlockProcessor.WalletBalance
 import cash.z.ecc.android.sdk.db.entity.ConfirmedTransaction
 import cash.z.ecc.android.sdk.ext.collectWith
-import cash.z.ecc.android.sdk.ext.convertZatoshiToZecString
 import cash.z.ecc.android.sdk.ext.toAbbreviatedAddress
 import cash.z.ecc.android.sdk.ext.twig
+import cash.z.ecc.android.sdk.type.WalletBalance
 import cash.z.ecc.android.ui.base.BaseFragment
 import kotlinx.coroutines.launch
 
@@ -57,7 +56,7 @@ class HistoryFragment : BaseFragment<FragmentHistoryBinding>() {
 
     private fun onBalanceUpdated(balance: WalletBalance) {
         binding.textBalanceAvailable.text = WalletZecFormmatter.toZecStringShort(balance.availableZatoshi)
-        val change = (balance.totalZatoshi - balance.availableZatoshi)
+        val change = balance.pending
         binding.textBalanceDescription.apply {
             goneIf(change <= 0L)
             val changeString = WalletZecFormmatter.toZecStringFull(change)

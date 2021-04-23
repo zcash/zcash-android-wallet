@@ -124,7 +124,7 @@ class ScanFragment : BaseFragment<FragmentScanBinding>() {
         resumedScope.launch {
             val parsed = viewModel.parse(qrContent)
             if (parsed == null) {
-                val network = ZcashSdk.NETWORK
+                val network = viewModel.networkName
                 binding.textScanError.text = getString(R.string.scan_invalid_address, network, qrContent)
                 image.close()
             } else {  /* continue scanning*/

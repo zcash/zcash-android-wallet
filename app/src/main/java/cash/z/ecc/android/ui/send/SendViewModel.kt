@@ -22,7 +22,7 @@ import cash.z.ecc.android.sdk.db.entity.*
 import cash.z.ecc.android.sdk.ext.ZcashSdk
 import cash.z.ecc.android.sdk.ext.twig
 import cash.z.ecc.android.sdk.tool.DerivationTool
-import cash.z.ecc.android.sdk.validate.AddressType
+import cash.z.ecc.android.sdk.type.AddressType
 import cash.z.ecc.android.ui.util.INCLUDE_MEMO_PREFIX_STANDARD
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.Flow
@@ -64,7 +64,8 @@ class SendViewModel @Inject constructor() : ViewModel() {
         funnel(SendSelected)
         val memoToSend = createMemoToSend()
         val keys = DerivationTool.deriveSpendingKeys(
-            lockBox.getBytes(Const.Backup.SEED)!!
+            lockBox.getBytes(Const.Backup.SEED)!!,
+            synchronizer.network
         )
         funnel(SpendingKeyFound)
         reportUserInputIssues(memoToSend)
@@ -90,6 +91,11 @@ class SendViewModel @Inject constructor() : ViewModel() {
 
     suspend fun validateAddress(address: String): AddressType =
         synchronizer.validateAddress(address)
+
+    suspend fun isValidAddress(address: String): Boolean = when(validateAddress(address)) {
+        is AddressType.Shielded, is AddressType.Transparent -> true
+        else -> false
+    }
 
     fun validate(context: Context, availableZatoshi: Long?, maxZatoshi: Long?) = flow<String?> {
 

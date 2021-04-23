@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingBottom="16dp"
+    android:paddingTop="16dp">
+
+    <TextView
+        android:id="@+id/dialog_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Rate your experience!"
+        android:textSize="22sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Ratings -->
+    <TextView
+        android:id="@+id/feedback_exp_1"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="?attr/dialogPreferredPadding"
+        android:layout_marginTop="30dp"
+        android:background="@drawable/background_circle"
+        android:backgroundTint="@color/selector_feedback_button"
+        android:gravity="center"
+        android:text="1"
+        android:textColor="@color/text_dark"
+        android:textSize="30dp"
+        app:layout_constraintBottom_toBottomOf="@id/background_buttons"
+        app:layout_constraintEnd_toStartOf="@id/feedback_exp_2"
+        app:layout_constraintHorizontal_chainStyle="spread_inside"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/dialog_title" />
+
+    <TextView
+        android:id="@+id/feedback_exp_2"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@drawable/background_circle"
+        android:backgroundTint="@color/selector_feedback_button"
+        android:gravity="center"
+        android:text="2"
+        android:textColor="@color/text_dark"
+        android:textSize="30dp"
+        app:layout_constraintBottom_toBottomOf="@id/background_buttons"
+        app:layout_constraintEnd_toStartOf="@id/feedback_exp_3"
+        app:layout_constraintStart_toEndOf="@id/feedback_exp_1"
+        app:layout_constraintTop_toTopOf="@id/feedback_exp_1" />
+
+    <TextView
+        android:id="@+id/feedback_exp_3"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@drawable/background_circle"
+        android:backgroundTint="@color/selector_feedback_button"
+        android:gravity="center"
+        android:text="3"
+        android:textColor="@color/text_dark"
+        android:textSize="30dp"
+        app:layout_constraintBottom_toBottomOf="@id/background_buttons"
+        app:layout_constraintEnd_toStartOf="@id/feedback_exp_4"
+        app:layout_constraintStart_toEndOf="@id/feedback_exp_2"
+        app:layout_constraintTop_toTopOf="@id/feedback_exp_1" />
+
+    <TextView
+        android:id="@+id/feedback_exp_4"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@drawable/background_circle"
+        android:backgroundTint="@color/selector_feedback_button"
+        android:gravity="center"
+        android:text="4"
+        android:textColor="@color/text_dark"
+        android:textSize="30dp"
+        app:layout_constraintBottom_toBottomOf="@id/background_buttons"
+        app:layout_constraintEnd_toStartOf="@id/feedback_exp_5"
+        app:layout_constraintStart_toEndOf="@id/feedback_exp_3"
+        app:layout_constraintTop_toTopOf="@id/feedback_exp_1" />
+
+    <TextView
+        android:id="@+id/feedback_exp_5"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="?attr/dialogPreferredPadding"
+        android:background="@drawable/background_circle"
+        android:backgroundTint="@color/selector_feedback_button"
+        android:gravity="center"
+        android:text="5"
+        android:textColor="@color/text_dark"
+        android:textSize="30dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/feedback_exp_4"
+        app:layout_constraintTop_toTopOf="@id/feedback_exp_1" />
+
+    <TextView
+        android:id="@+id/label_rating_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:text="Very Bad"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="@id/feedback_exp_1"
+        app:layout_constraintStart_toStartOf="@id/feedback_exp_1"
+        app:layout_constraintTop_toBottomOf="@id/feedback_exp_1" />
+
+    <TextView
+        android:id="@+id/label_rating_5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:text="Very Good"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="@id/feedback_exp_5"
+        app:layout_constraintStart_toStartOf="@id/feedback_exp_5"
+        app:layout_constraintTop_toBottomOf="@id/feedback_exp_5" />
+</androidx.constraintlayout.widget.ConstraintLayout>
