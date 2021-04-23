@@ -8,6 +8,27 @@ import cash.z.ecc.android.sdk.ext.CompositeTwig
 import cash.z.ecc.android.sdk.ext.Twig
 import cash.z.ecc.android.sdk.ext.twig
 import java.util.*
+import kotlin.math.roundToInt
+
+/**
+ * Distribute a string into evenly-sized chunks and then execute a function with each chunk.
+ *
+ * @param chunks the number of chunks to create
+ * @param block a function to be applied to each zero-indexed chunk.
+ */
+fun <T> String.distribute(chunks: Int, block: (Int, String) -> T) {
+    val charsPerChunk = length / chunks.toFloat()
+    val wholeCharsPerChunk = charsPerChunk.toInt()
+    val chunksWithExtra = ((charsPerChunk - wholeCharsPerChunk) * chunks).roundToInt()
+    repeat(chunks) { i ->
+        val part = if (i < chunksWithExtra) {
+            substring(i * (wholeCharsPerChunk + 1), (i + 1) * (wholeCharsPerChunk + 1))
+        } else {
+            substring(i * wholeCharsPerChunk + chunksWithExtra, (i + 1) * wholeCharsPerChunk + chunksWithExtra)
+        }
+        block(i, part)
+    }
+}
 
 fun Boolean.asString(ifTrue: String = "", ifFalse: String = "") = if (this) ifTrue else ifFalse
 
