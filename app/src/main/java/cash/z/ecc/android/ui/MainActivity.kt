@@ -57,6 +57,7 @@ import cash.z.ecc.android.di.component.MainActivitySubcomponent
 import cash.z.ecc.android.di.component.SynchronizerSubcomponent
 import cash.z.ecc.android.di.viewmodel.activityViewModel
 import cash.z.ecc.android.ext.goneIf
+import cash.z.ecc.android.ext.showCriticalMessage
 import cash.z.ecc.android.ext.showCriticalProcessorError
 import cash.z.ecc.android.ext.showScanFailure
 import cash.z.ecc.android.ext.showUninitializedError
@@ -84,6 +85,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import java.lang.RuntimeException
 import javax.inject.Inject
 
 
@@ -447,6 +449,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showMessage(message: String, linger: Boolean = false) {
+        twig("toast: $message")
         Toast.makeText(this, message, if (linger) Toast.LENGTH_LONG else Toast.LENGTH_SHORT).show()
     }
 
@@ -606,14 +609,6 @@ class MainActivity : AppCompatActivity() {
 
 
 
-    fun toTxId(tx: ByteArray?): String? {
-        if (tx == null) return null
-        val sb = StringBuilder(tx.size * 2)
-        for(i in (tx.size - 1) downTo 0) {
-            sb.append(String.format("%02x", tx[i]))
-        }
-        return sb.toString()
-    }
 
     /* Memo functions that might possibly get moved to MemoUtils */
 
