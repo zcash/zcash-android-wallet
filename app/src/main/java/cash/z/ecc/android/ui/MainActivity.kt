@@ -213,6 +213,10 @@ class MainActivity : AppCompatActivity() {
         findViewById<TextView>(R.id.text_message).text = message
     }
 
+    fun popBackTo(@IdRes destination: Int, inclusive: Boolean = false) {
+        navController?.popBackStack(destination, inclusive)
+    }
+
     fun safeNavigate(@IdRes destination: Int, extras: Navigator.Extras? = null) {
         if (navController == null) {
             navInitListeners.add {
