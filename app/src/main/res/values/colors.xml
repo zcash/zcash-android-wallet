@@ -43,6 +43,7 @@
     <color name="zcashGreen">#66BB6A</color>
     <color name="zcashRed">#BB666A</color>
     <color name="zcashBlue">#26DAB6</color>
+    <color name="zcashBlueDark">#4A90E2</color>
 
     <!-- yellows -->
     <color name="zcashYellow_light">#FFCF4A</color>
@@ -82,7 +83,6 @@
     <color name="tx_primary">#F5A623</color>
 
     <!--transaction colors-->
-    <color name="transaction_sent">#D70E40</color>
-    <color name="zcashBlueDark">#4A90E2</color>
+    <color name="transaction_sent">#B8B8B8</color>
 
 </resources>
