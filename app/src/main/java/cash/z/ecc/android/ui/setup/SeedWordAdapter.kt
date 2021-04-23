@@ -74,9 +74,15 @@ class SeedWordAdapter :  ChipsAdapter {
         }
     }
 
+    // this function is called with the contents of the field, split by the delimiter
     override fun onKeyboardDelimiter(text: String) {
-        if (mDataSource.filteredChips.size > 0) {
-            onKeyboardActionDone((mDataSource.filteredChips.first() as SeedWordChip).word)
+        val firstMatchingWord = (mDataSource.filteredChips.firstOrNull() as? SeedWordChip)?.word?.takeUnless {
+            !it.startsWith(text)
+        }
+        if (firstMatchingWord != null) {
+            onKeyboardActionDone(firstMatchingWord)
+        } else {
+            onKeyboardActionDone(text)
         }
     }
 
