@@ -247,9 +247,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun startSync(initializer: Initializer) {
+    fun startSync(initializer: Initializer, isRestart: Boolean = false) {
         twig("MainActivity.startSync")
-        if (!isInitialized) {
+        if (!isInitialized || isRestart) {
             mainViewModel.setLoading(true)
             synchronizerComponent = ZcashWalletApp.component.synchronizerSubcomponent().create(
                 initializer
