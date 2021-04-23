@@ -79,12 +79,6 @@ android {
             signingConfig signingConfigs.placeholder
         }
     }
-
-    configurations {
-        cleanedAnnotations
-        compile.exclude group: 'com.intellij' , module:'annotations'
-//        compile.exclude group: 'org.jetbrains' , module:'annotations'
-    }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8

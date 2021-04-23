@@ -1,6 +1,33 @@
 Change Log
 ==========
 
+Version 1.0.0-alpha67 *(2021-04-22)*
+------------------------------------
+- Fix: Crash after entering 24th seed word on certain devices
+- Fix: Correct errors on certain devices around biometrics.
+- Fix: Display information when invalid addresses are scanned.
+- Fix: Prevent memo for transparent transactions [Credit @mandeepbhalothia].
+- Fix: Security finding: remove aparent logging [Credit @mandeepbhalothia].
+- New: View more info for failed sends [Credit @herou].
+- New: Switch away from google libraries for QR code parsing [Credit @herou].
+- New: Ability to make testnet releases [Credit @herou].
+- New: Updated design for wallet history [Credit @mandeepbhalothia].
+- New: Added responsible disclosure document for vulnerabilities [Credit: @zebambam]
+- New: Update to latest SDK changes, including using one library instead of two.
+- New: Auto-shielding Easter Egg.
+- New: Periodically solicit user feedback.
+- New: Wallet restore improvements including 'clear' feature.
+- New: Rescan/Wipe feature for fixing wallet errors
+- New: Add ability to copy the contents of the memo.
+- New: Add ability to paste and parse an entire seed phrase at once
+- New: Basic support for QRs prefixed with zcash:
+- New: Made it easier to add vibration and leveraged it whenever text is copied.
+- New: Adds cleanup and removal of failed transactions.
+- New: Improved logic for determining the wallet birthday.
+- New: Capture performance metrics for scanning.
+- New: Additional messaging during a scan for better responsiveness.
+- New: Improved handling of critical errors.
+
 Version 1.0.0-alpha43 *(2020-12-20)*
 ------------------------------------
 - Fix: Repaired the upgrade flow, which could not reorg because of missing birthday height
