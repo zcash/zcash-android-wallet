@@ -3,21 +3,22 @@ package cash.z.ecc.android
 object Deps {
     // For use in the top-level build.gradle which gives an error when provided
     // `Deps.Kotlin.version` directly
-    const val kotlinVersion =       "1.4.10"
+    const val kotlinVersion =       "1.4.32"
+    const val navigationVersion =   "2.3.0"
 
     const val compileSdkVersion =   29
     const val buildToolsVersion =   "29.0.2"
     const val minSdkVersion =       21
     const val targetSdkVersion =    29
-    const val versionName =         "1.0.0-alpha43"
-    const val versionCode =         1_00_00_143  // last digits are alpha(0XX) beta(2XX) rc(4XX) release(8XX). Ex: 1_08_04_401 is an release candidate build of version 1.8.4 and 1_08_04_800 would be the final release.
+    const val versionName =         "1.0.0-alpha67"
+    const val versionCode =         1_00_00_167  // last digits are alpha(0XX) beta(2XX) rc(4XX) release(8XX). Ex: 1_08_04_401 is an release candidate build of version 1.8.4 and 1_08_04_800 would be the final release.
     const val packageName =         "cash.z.ecc.android"
 
 
     object AndroidX {
         const val ANNOTATION =              "androidx.annotation:annotation:1.1.0"
-        const val APPCOMPAT =               "androidx.appcompat:appcompat:1.1.0"
-        const val BIOMETRICS =              "androidx.biometric:biometric:1.2.0-alpha01"
+        const val APPCOMPAT =               "androidx.appcompat:appcompat:1.3.0-rc01"
+        const val BIOMETRICS =              "androidx.biometric:biometric:1.2.0-alpha03"
         const val CONSTRAINT_LAYOUT =       "androidx.constraintlayout:constraintlayout:1.1.3"
         const val CORE_KTX =                "androidx.core:core-ktx:1.1.0"
         const val FRAGMENT_KTX =            "androidx.fragment:fragment-ktx:1.1.0-beta01"
@@ -34,15 +35,14 @@ object Deps {
                 val VIEW =                  "androidx.camera:camera-view:$version"
             }
         }
-        object Lifecycle :       Version("2.2.0") {
+        object Lifecycle :       Version("2.3.1") {
             val LIFECYCLE_RUNTIME_KTX =     "androidx.lifecycle:lifecycle-runtime-ktx:$version"
-            val LIFECYCLE_EXTENSIONS =      "androidx.lifecycle:lifecycle-extensions:$version"
         }
-        object Navigation :     Version("2.3.0") {
+        object Navigation :     Version(navigationVersion) {
             val FRAGMENT_KTX =              "androidx.navigation:navigation-fragment-ktx:$version"
             val UI_KTX =                    "androidx.navigation:navigation-ui-ktx:$version"
         }
-        object Room :           Version("2.2.5") {
+        object Room :           Version("2.3.0") {
             val ROOM_COMPILER =             "androidx.room:room-compiler:$version"
             val ROOM_KTX =                  "androidx.room:room-ktx:$version"
         }
@@ -58,7 +58,7 @@ object Deps {
         const val GUAVA =                   "com.google.guava:guava:27.0.1-android"
         const val MATERIAL =                "com.google.android.material:material:1.1.0-beta01"
     }
-    object Grpc :               Version("1.25.0") {
+    object Grpc :               Version("1.37.0") {
         val ANDROID =                       "io.grpc:grpc-android:$version"
         val OKHTTP =                        "io.grpc:grpc-okhttp:$version"
         val PROTOBUG =                      "io.grpc:grpc-protobuf-lite:$version"
@@ -74,7 +74,7 @@ object Deps {
     }
     object Kotlin :             Version(kotlinVersion) {
         val STDLIB =                         "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$version"
-        object Coroutines :     Version("1.3.9") {
+        object Coroutines :     Version("1.4.2") {
             val ANDROID =                    "org.jetbrains.kotlinx:kotlinx-coroutines-android:$version"
             val CORE =                       "org.jetbrains.kotlinx:kotlinx-coroutines-core:$version"
             val TEST =                       "org.jetbrains.kotlinx:kotlinx-coroutines-test:$version"
@@ -82,15 +82,12 @@ object Deps {
     }
     object Zcash {
         const val ANDROID_WALLET_PLUGINS =   "cash.z.ecc.android:zcash-android-wallet-plugins:1.0.0"
-        const val KOTLIN_BIP39 =            "cash.z.ecc.android:kotlin-bip39:1.0.1"
-        object Sdk :            Version("1.2.1-beta03") {
-            val MAINNET =                    "cash.z.ecc.android:zcash-android-sdk-mainnet:$version"
-            val TESTNET =                    "cash.z.ecc.android:zcash-android-sdk-testnet:$version"
-        }
+        const val KOTLIN_BIP39 =             "cash.z.ecc.android:kotlin-bip39:1.0.1"
+        const val SDK =                      "cash.z.ecc.android:zcash-android-sdk:1.3.0-beta05"
     }
     object Misc {
         const val LOTTIE =                   "com.airbnb.android:lottie:3.1.0"
-        const val CHIPS =                    "com.github.gmale:chips-input-layout:2.3.1"
+        const val CHIPS =                    "com.github.gmale:chips-input-layout:2.3.4"
         object Plugins {
             const val SECURE_STORAGE =       "com.github.gmale:secure-storage-android:0.0.3"//"de.adorsys.android:securestoragelibrary:1.2.2"
             const val QR_SCANNER =           "com.google.zxing:core:3.4.1"
@@ -101,7 +98,6 @@ object Deps {
         const val JUNIT =                    "junit:junit:4.12"
         const val MOKITO =                   "org.mockito:mockito-android:3.5.10"
         const val MOKITO_KOTLIN =            "com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0"
-        const val COROUTINES_TEST =          "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.3.9"
         object Android {
             const val JUNIT =                "androidx.test.ext:junit:1.1.1"
             const val ESPRESSO =             "androidx.test.espresso:espresso-core:3.2.0"

@@ -18,6 +18,7 @@ object Const {
      */
     object Pref {
         const val FIRST_USE_VIEW_TX = "const.pref.first_use_view_tx"
+        const val EASTER_EGG_TRIGGERED_SHIELDING = "const.pref.easter_egg_shielding"
         const val FEEDBACK_ENABLED = "const.pref.feedback_enabled"
         const val SERVER_HOST = "const.pref.server_host"
         const val SERVER_PORT = "const.pref.server_port"
@@ -35,6 +36,7 @@ object Const {
 
         // Config
         const val VIEWING_KEY = "cash.z.ecc.android.VIEWING_KEY"
+        const val PUBLIC_KEY = "cash.z.ecc.android.PUBLIC_KEY"
         const val BIRTHDAY_HEIGHT = "cash.z.ecc.android.BIRTHDAY_HEIGHT"
     }
 

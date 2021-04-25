@@ -42,7 +42,14 @@ class MagicSnakeLoader(
     var downloadProgress: Int = 0
         set(value) {
             field = value
-            if (value > 0) startMaybe()
+            if (value > 0) {
+                startMaybe()
+            } else {
+//                if (!isSynced) {
+//                    lottie.progress = 0.0f
+//                    if(!isStarted) startMaybe()
+//                }
+            }
         }
 
     private fun startMaybe() {
