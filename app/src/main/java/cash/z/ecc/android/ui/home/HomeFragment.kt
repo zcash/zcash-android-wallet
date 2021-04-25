@@ -23,12 +23,7 @@ import cash.z.ecc.android.ext.showSharedLibraryCriticalError
 import cash.z.ecc.android.ext.toColoredSpan
 import cash.z.ecc.android.ext.transparentIf
 import cash.z.ecc.android.feedback.Report
-import cash.z.ecc.android.feedback.Report.Tap.HOME_CLEAR_AMOUNT
-import cash.z.ecc.android.feedback.Report.Tap.HOME_FUND_NOW
-import cash.z.ecc.android.feedback.Report.Tap.HOME_HISTORY
-import cash.z.ecc.android.feedback.Report.Tap.HOME_PROFILE
-import cash.z.ecc.android.feedback.Report.Tap.HOME_RECEIVE
-import cash.z.ecc.android.feedback.Report.Tap.HOME_SEND
+import cash.z.ecc.android.feedback.Report.Tap.*
 import cash.z.ecc.android.sdk.Synchronizer.Status.DISCONNECTED
 import cash.z.ecc.android.sdk.Synchronizer.Status.STOPPED
 import cash.z.ecc.android.sdk.Synchronizer.Status.SYNCED
@@ -120,7 +115,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
             )
             hitAreaProfile.onClickNavTo(R.id.action_nav_home_to_nav_profile) { tapped(HOME_PROFILE) }
             textHistory.onClickNavTo(R.id.action_nav_home_to_nav_history) { tapped(HOME_HISTORY) }
-            hitAreaReceive.onClickNavTo(R.id.action_nav_home_to_nav_tab_layout) { tapped(HOME_RECEIVE) }
+            hitAreaReceive.onClickNavTo(R.id.action_nav_home_to_nav_tab_layout) { tapped(TAB_LAYOUT) }
 
             textBannerAction.setOnClickListener {
                 onBannerAction(BannerAction.from((it as? TextView)?.text?.toString()))
