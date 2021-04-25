@@ -67,13 +67,15 @@
         android:layout_marginStart="8dp"
         android:layout_marginEnd="16dp"
         android:elevation="1dp"
-        android:text="@string/balance_detail_text_shielded_zec"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
         android:textColor="@color/zcashYellow"
         app:layout_constraintBottom_toBottomOf="@+id/icon_receive_funds"
         app:layout_constraintEnd_toStartOf="@+id/guideline_content_end"
         app:layout_constraintStart_toEndOf="@+id/icon_receive_funds"
-        app:layout_constraintTop_toTopOf="@+id/icon_receive_funds" />
+        app:layout_constraintTop_toTopOf="@+id/icon_receive_funds"
+        android:textAllCaps="true"
+        android:text="shielded zec"
+        />
 
 
     <TextView
@@ -100,12 +102,14 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:elevation="6dp"
-        android:text="@string/balance_detail_text_transparent_title"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
         app:layout_constraintEnd_toEndOf="@+id/text_shield_amount"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/text_shield_amount"
-        app:layout_constraintTop_toBottomOf="@+id/text_shield_amount" />
+        app:layout_constraintTop_toBottomOf="@+id/text_shield_amount"
+        android:textAllCaps="true"
+        android:text="+ transparent"
+        />
 
     <TextView
         android:id="@+id/text_transparent_amount"
@@ -135,7 +139,8 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/text_transparent_amount"
         app:layout_constraintTop_toBottomOf="@+id/text_transparent_amount"
-        android:text="@string/balance_detail_text_total_title" />
+        android:textAllCaps="true"
+        android:text="= total" />
 
     <TextView
         android:id="@+id/text_total_amount"

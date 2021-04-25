@@ -58,8 +58,6 @@
 
     <!-- Screen: Balance Detail -->
     <string name="balance_detail_button_send_transparent_funds" tools:ignore="MissingTranslation">Shield Transparent Funds</string>
-    <string name="balance_detail_text_shielded_zec" tools:ignore="MissingTranslation">SHIELDED ZEC</string>
-    <string name="balance_detail_text_transparent_title" tools:ignore="MissingTranslation">+ TRANSPARENT</string>
     <string name="balance_detail_text_total_title" tools:ignore="MissingTranslation">= TOTAL</string>
 
 
