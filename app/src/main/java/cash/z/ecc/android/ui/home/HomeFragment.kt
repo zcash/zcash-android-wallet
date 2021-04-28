@@ -9,6 +9,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
 import cash.z.ecc.android.R
 import cash.z.ecc.android.databinding.DialogSolicitFeedbackRatingBinding
 import cash.z.ecc.android.databinding.FragmentHomeBinding
@@ -162,31 +163,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
 
     override fun onResume() {
         super.onResume()
-        maybeInterruptUser()
-        mainActivity?.launchWhenSyncing {
-            twig("HomeFragment.onResume  resumeScope.isActive: ${resumedScope.isActive}  $resumedScope")
-            val existingAmount = sendViewModel.zatoshiAmount.coerceAtLeast(0)
-            viewModel.initializeMaybe(WalletZecFormmatter.toZecStringFull(existingAmount))
-            if (existingAmount == 0L) onClearAmount()
-            viewModel.uiModels.runningReduce { old, new ->
-                onModelUpdated(old, new)
-                new
-            }.onCompletion {
-                twig("uiModel.scanReduce completed.")
-            }.catch { e ->
-                twig("exception while processing uiModels $e")
-                throw e
-            }.launchIn(resumedScope)
+        twig("HomeFragment.onResume  resumeScope.isActive: ${resumedScope.isActive}  $resumedScope")
 
-            // TODO: see if there is a better way to trigger a refresh of the uiModel on resume
-            //       the latest one should just be in the viewmodel and we should just "resubscribe"
-            //       but for some reason, this doesn't always happen, which kind of defeats the purpose
-            //       of having a cold stream in the view model
-            resumedScope.launch {
-                viewModel.refreshBalance()
-            }
-            twig("HomeFragment.onResume COMPLETE")
-        }
+        monitorUiModelChanges()
+        maybeInterruptUser()
+
+        twig("HomeFragment.onResume COMPLETE")
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -409,6 +391,21 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
 
     private fun onNoFunds() {
         setBanner(getString(R.string.home_no_balance), FUND_NOW)
+    }
+
+    private fun monitorUiModelChanges() {
+        val existingAmount = sendViewModel.zatoshiAmount.coerceAtLeast(0)
+        viewModel.initializeMaybe(WalletZecFormmatter.toZecStringFull(existingAmount))
+        if (existingAmount == 0L) onClearAmount()
+        viewModel.uiModels.runningReduce { old, new ->
+            onModelUpdated(old, new)
+            new
+        }.onCompletion {
+            twig("uiModel.scanReduce completed.")
+        }.catch { e ->
+            twig("exception while processing uiModels $e")
+            throw e
+        }.launchIn(resumedScope)
     }
 
 
