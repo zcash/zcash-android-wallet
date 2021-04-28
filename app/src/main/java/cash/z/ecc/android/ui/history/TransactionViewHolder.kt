@@ -76,13 +76,11 @@ class TransactionViewHolder<T : ConfirmedTransaction>(itemView: View) : Recycler
                             arrowRotation = R.integer.transaction_arrow_rotation_send
                             amountColor = R.color.transaction_sent
                             if (toAddress.isShielded()) {
-                                arrowBackgroundTint = R.color.zcashYellow
                                 lineOneColor = R.color.zcashYellow
                             } else {
                                 toAddress?.toAbbreviatedAddress()?.let {
                                     lineOne = lineOne.toColoredSpan(R.color.zcashBlueDark, it)
                                 }
-                                isLineOneSpanned = true
                             }
                         } else {
                             arrowRotation = R.integer.transaction_arrow_rotation_pending
@@ -97,7 +95,6 @@ class TransactionViewHolder<T : ConfirmedTransaction>(itemView: View) : Recycler
                         if (senderAddress.isShielded()) {
                             amountColor = R.color.zcashYellow
                             lineOneColor = R.color.zcashYellow
-                            arrowBackgroundTint = R.color.zcashYellow
                         } else {
                             senderAddress.toAbbreviatedAddress().let {
                                 lineOne = if (senderAddress.equals(str(R.string.unknown), true)) {
@@ -106,7 +103,6 @@ class TransactionViewHolder<T : ConfirmedTransaction>(itemView: View) : Recycler
                                     lineOne.toColoredSpan(R.color.zcashBlueDark, it)
                                 }
                             }
-                            isLineOneSpanned = true
                         }
                         arrowRotation = R.integer.transaction_arrow_rotation_received
                     }
