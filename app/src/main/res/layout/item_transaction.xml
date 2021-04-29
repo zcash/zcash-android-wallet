@@ -96,15 +96,26 @@
             android:ellipsize="end"
             android:gravity="top"
             android:maxLines="1"
-            android:paddingEnd="8dp"
+            android:paddingEnd="2dp"
             android:textColor="@color/text_light_dimmed"
             android:textSize="14sp"
             app:autoSizeTextType="uniform"
-            app:drawableEndCompat="@drawable/ic_memo"
-            app:layout_constraintEnd_toEndOf="@id/text_transaction_top"
+            app:layout_constraintEnd_toStartOf="@id/image_memo"
             app:layout_constraintStart_toStartOf="@+id/text_transaction_top"
             app:layout_constraintTop_toBottomOf="@id/text_transaction_top"
             tools:text="This is a very long sentence and it better not messup the UI" />
+
+        <ImageView
+            android:id="@+id/image_memo"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_marginStart="8dp"
+            android:paddingBottom="3dp"
+            android:paddingTop="2dp"
+            android:src="@drawable/ic_memo"
+            app:layout_constraintBottom_toBottomOf="@id/text_transaction_bottom"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/text_transaction_bottom" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -112,16 +123,19 @@
         android:id="@+id/text_transaction_amount"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="4dp"
-        android:gravity="center_vertical"
+        android:layout_marginEnd="8dp"
+        android:gravity="right"
         android:maxLines="1"
         android:paddingStart="8dp"
         android:textColor="@color/colorPrimary"
         android:textSize="16sp"
+        app:autoSizeMaxTextSize="16sp"
+        app:autoSizeMinTextSize="8sp"
+        app:autoSizeTextType="uniform"
         app:layout_constraintBottom_toBottomOf="@id/indicator"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/indicator"
         app:layout_constraintWidth_percent="0.23"
-        tools:text="+ 434.2444234" />
+        tools:text="+ 434888.12345678" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

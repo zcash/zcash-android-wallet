@@ -48,7 +48,7 @@ object Report {
         sealed class UserFeedback(stepName: String, step: Int, vararg properties: Pair<String, Any>) : Feedback.Funnel("feedback", stepName, step, *properties) {
             object Started : UserFeedback("started", 0)
             object Cancelled : UserFeedback("cancelled", 1)
-            class Submitted(rating: Int, question1: String, question2: String, question3: String) : UserFeedback("submitted", 100, "rating" to rating, "question1" to question1, "question2" to question2, "question3" to question3)
+            class Submitted(rating: Int, question1: String, question2: String, question3: String, isSolicited: Boolean) : UserFeedback("submitted", 100, "rating" to rating, "question1" to question1, "question2" to question2, "question3" to question3, "isSolicited" to isSolicited)
         }
     }
 
@@ -74,6 +74,17 @@ object Report {
             class TxEncodeError(errorCode: Int?, errorMessage: String?) : TxError("encode", errorCode, errorMessage)
             class TxSubmitError(errorCode: Int?, errorMessage: String?) : TxError("submit", errorCode, errorMessage)
         }
+    }
+
+    sealed class Performance(name: String, vararg properties: Pair<String, Any>) : Feedback.MappedAction(
+        "metricName" to name,
+        "isPerformanceMetric" to true,
+        *properties
+    ) {
+        override val key = "performance.$name"
+        override fun toString() = "$key: ${toMap().let { if(it.size > 1) "${it.entries}" else "" }}"
+
+        class ScanRate(network: String, cumulativeItems: Int, cumulativeTime: Long, cumulativeIps: Float) : Performance("scan.bps", "network" to network, "totalBlocks" to cumulativeItems, "totalTime" to cumulativeTime, "blocksPerSecond" to cumulativeIps)
     }
 
     // placeholder for things that we want to monitor
@@ -104,6 +115,7 @@ object Report {
         TRANSACTION("wallet.transaction"),
         LANDING,
         PROFILE,
+        AWESOME,
         FEEDBACK,
         RECEIVE,
         RESTORE,
@@ -140,7 +152,11 @@ object Report {
         HISTORY_BACK("history.back"),
         TRANSACTION_BACK("transaction.back"),
         PROFILE_CLOSE("profile.close"),
+        AWESOME_OPEN("profile.awesome"),
+        AWESOME_CLOSE("awesome.close"),
+        AWESOME_SHIELD("awesome.shield"),
         PROFILE_BACKUP("profile.backup"),
+        PROFILE_RESCAN("profile.rescan"),
         PROFILE_VIEW_USER_LOGS("profile.view.user.logs"),
         PROFILE_VIEW_DEV_LOGS("profile.view.dev.logs"),
         PROFILE_SEND_FEEDBACK("profile.send.feedback"),
@@ -148,6 +164,7 @@ object Report {
         FEEDBACK_SUBMIT("feedback.submit"),
         RECEIVE_BACK("receive.back"),
         RESTORE_DONE("restore.done"),
+        RESTORE_CLEAR("restore.clear"),
         RESTORE_SUCCESS("restore.success"),
         RESTORE_BACK("restore.back"),
         SCAN_BACK("scan.back"),
@@ -174,7 +191,8 @@ object Report {
         SEND_SUBMIT("send.submit"),
 
         // General events
-        COPY_ADDRESS("copy.address");
+        COPY_ADDRESS("copy.address"),
+        COPY_TRANSPARENT_ADDRESS("copy.address.transparent");
 
         override val key = "tap.$id"
         override fun toString() = "${key.replace('.', ' ')} button".replace("tap ", "tapped the ")

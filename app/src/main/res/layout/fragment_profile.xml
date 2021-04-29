@@ -186,6 +186,20 @@
         app:layout_constraintStart_toStartOf="@id/guideline_content_start"
         app:layout_constraintTop_toBottomOf="@id/button_feedback" />
 
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/button_rescan"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        style="@style/Zcash.Button.OutlinedButton.Primary"
+        android:gravity="center"
+        android:padding="12dp"
+        android:text="@string/profile_rescan_wallet"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+        android:textColor="@color/colorPrimary"
+        app:layout_constraintEnd_toEndOf="@id/guideline_content_end"
+        app:layout_constraintStart_toStartOf="@id/guideline_content_start"
+        app:layout_constraintTop_toBottomOf="@id/button_backup" />
+
     <TextView
         android:id="@+id/button_logs"
         android:layout_width="wrap_content"
@@ -197,7 +211,7 @@
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/button_backup" />
+        app:layout_constraintTop_toBottomOf="@id/button_rescan" />
 
     <!--        -->
     <!-- Banner -->
@@ -227,7 +241,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:elevation="6dp"
-        tools:text="@string/profile_app_version"
+        tools:text="v1.0.0-alpha05"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
         android:textColor="@color/text_light_dimmed"
         app:layout_constraintBaseline_toBaselineOf="@id/text_banner_message"
