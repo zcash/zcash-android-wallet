@@ -163,7 +163,6 @@
         android:id="@+id/view_amounts_container"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="@drawable/background_balance_detail_amounts_container"
         app:layout_constraintBottom_toTopOf="@+id/view_send_amount_bottom"
         app:layout_constraintEnd_toStartOf="@+id/guideline_content_end"
         app:layout_constraintHorizontal_bias="0.0"
