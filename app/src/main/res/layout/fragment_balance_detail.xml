@@ -169,6 +169,7 @@
         app:layout_constraintStart_toStartOf="@+id/guideline_content_start"
         app:layout_constraintTop_toTopOf="@+id/guideline_send_amount_top"
         app:layout_constraintVertical_bias="1.0">
+
     </View>
 
     <View
