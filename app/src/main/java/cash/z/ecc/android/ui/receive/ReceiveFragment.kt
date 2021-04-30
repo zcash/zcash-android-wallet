@@ -11,6 +11,7 @@ import cash.z.android.qrecycler.QRecycler
 import cash.z.ecc.android.R
 import cash.z.ecc.android.databinding.FragmentReceiveNewBinding
 import cash.z.ecc.android.di.viewmodel.viewModel
+import cash.z.ecc.android.ext.distribute
 import cash.z.ecc.android.ext.onClickNavBack
 import cash.z.ecc.android.ext.onClickNavTo
 import cash.z.ecc.android.feedback.Report
@@ -71,20 +72,6 @@ class ReceiveFragment : BaseFragment<FragmentReceiveNewBinding>() {
 
         address.distribute(8) { i, part ->
             setAddressPart(i, part)
-        }
-    }
-
-    private fun <T> String.distribute(chunks: Int, block: (Int, String) -> T) {
-        val charsPerChunk = length / 8.0
-        val wholeCharsPerChunk = charsPerChunk.toInt()
-        val chunksWithExtra = ((charsPerChunk - wholeCharsPerChunk) * chunks).roundToInt()
-        repeat(chunks) { i ->
-            val part = if (i < chunksWithExtra) {
-                substring(i * (wholeCharsPerChunk + 1), (i + 1) * (wholeCharsPerChunk + 1))
-            } else {
-                substring(i * wholeCharsPerChunk + chunksWithExtra, (i + 1) * wholeCharsPerChunk + chunksWithExtra)
-            }
-            block(i, part)
         }
     }
 

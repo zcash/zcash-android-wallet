@@ -7,7 +7,6 @@
     android:layout_height="wrap_content"
     android:paddingStart="16dp"
     android:paddingEnd="16dp"
-    android:paddingTop="16dp"
     android:clickable="true">
     <com.tylersuehr.chips.CircleImageView
         android:id="@+id/image"
@@ -22,7 +21,9 @@
         android:id="@+id/title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:padding="16dp"
+        android:paddingTop="16dp"
+        android:paddingRight="16dp"
+        android:paddingLeft="16dp"
         android:textSize="18dp"
         android:includeFontPadding="false"
         android:textColor="@color/selector_button_text_light_to_dimmed"
