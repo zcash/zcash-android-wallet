@@ -33,6 +33,7 @@
         <action
             android:id="@+id/action_nav_home_to_nav_balance_detail"
             app:destination="@id/nav_balance_detail" />
+        <action
             android:id="@+id/action_nav_home_to_nav_feedback"
             app:destination="@id/nav_feedback" />
     </fragment>

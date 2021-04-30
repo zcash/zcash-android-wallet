@@ -28,6 +28,7 @@ import cash.z.ecc.android.feedback.Report.Tap.HOME_FUND_NOW
 import cash.z.ecc.android.feedback.Report.Tap.HOME_HISTORY
 import cash.z.ecc.android.feedback.Report.Tap.HOME_PROFILE
 import cash.z.ecc.android.feedback.Report.Tap.HOME_RECEIVE
+import cash.z.ecc.android.feedback.Report.Tap.HOME_BALANCE_DETAIL
 import cash.z.ecc.android.feedback.Report.Tap.HOME_SEND
 import cash.z.ecc.android.sdk.Synchronizer.Status.DISCONNECTED
 import cash.z.ecc.android.sdk.Synchronizer.Status.STOPPED
