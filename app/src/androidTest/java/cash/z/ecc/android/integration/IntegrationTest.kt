@@ -5,7 +5,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import cash.z.ecc.android.lockbox.LockBox
 import cash.z.ecc.android.sdk.Initializer
-import cash.z.ecc.kotlin.mnemonic.Mnemonics
+import cash.z.ecc.android.sdk.type.ZcashNetwork
 import okio.Buffer
 import okio.GzipSink
 import okio.Okio
@@ -19,6 +19,7 @@ import org.junit.runner.RunWith
 class IntegrationTest {
 
     private lateinit var appContext: Context
+    private val network = ZcashNetwork.Testnet
     private val mnemonics = Mnemonics()
     private val phrase =
         "human pulse approve subway climb stairs mind gentle raccoon warfare fog roast sponsor" +
@@ -82,14 +83,14 @@ class IntegrationTest {
     fun testAddress() {
         val seed = mnemonics.toSeed(phrase.toCharArray())
         val initializer = Initializer(appContext) { config ->
-            config.new(seed)
+            config.newWallet(seed, network)
         }
         assertEquals(
             "Generated incorrect z-address!",
             "zs1gn2ah0zqhsxnrqwuvwmgxpl5h3ha033qexhsz8tems53fw877f4gug353eefd6z8z3n4zxty65c",
-            initializer.rustBackend.getAddress()
+            initializer.rustBackend.getShieldedAddress()
         )
-        initializer.clear()
+        initializer.erase()
     }
 
     private fun ByteArray.toHex(): String {

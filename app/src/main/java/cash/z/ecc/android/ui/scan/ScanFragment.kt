@@ -20,7 +20,6 @@ import cash.z.ecc.android.di.viewmodel.viewModel
 import cash.z.ecc.android.ext.onClickNavBack
 import cash.z.ecc.android.feedback.Report
 import cash.z.ecc.android.feedback.Report.Tap.SCAN_BACK
-import cash.z.ecc.android.sdk.ext.ZcashSdk
 import cash.z.ecc.android.sdk.ext.twig
 import cash.z.ecc.android.ui.base.BaseFragment
 import cash.z.ecc.android.ui.send.SendViewModel
@@ -136,7 +135,7 @@ class ScanFragment : BaseFragment<FragmentScanBinding>() {
         resumedScope.launch {
             val parsed = viewModel.parse(qrContent)
             if (parsed == null) {
-                val network = ZcashSdk.NETWORK
+                val network = viewModel.networkName
                 binding.textScanError.text = getString(R.string.scan_invalid_address, network, qrContent)
                 image.close()
             } else { /* continue scanning*/

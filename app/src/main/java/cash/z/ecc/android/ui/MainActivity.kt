@@ -24,7 +24,12 @@ import androidx.activity.OnBackPressedCallback
 import androidx.annotation.IdRes
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
+import androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_STRONG
+import androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_WEAK
+import androidx.biometric.BiometricManager.Authenticators.DEVICE_CREDENTIAL
 import androidx.biometric.BiometricPrompt
+import androidx.biometric.BiometricPrompt.AUTHENTICATION_RESULT_TYPE_BIOMETRIC
+import androidx.biometric.BiometricPrompt.AUTHENTICATION_RESULT_TYPE_DEVICE_CREDENTIAL
 import androidx.biometric.BiometricPrompt.ERROR_CANCELED
 import androidx.biometric.BiometricPrompt.ERROR_HW_NOT_PRESENT
 import androidx.biometric.BiometricPrompt.ERROR_HW_UNAVAILABLE
@@ -52,6 +57,7 @@ import cash.z.ecc.android.di.component.MainActivitySubcomponent
 import cash.z.ecc.android.di.component.SynchronizerSubcomponent
 import cash.z.ecc.android.di.viewmodel.activityViewModel
 import cash.z.ecc.android.ext.goneIf
+import cash.z.ecc.android.ext.showCriticalMessage
 import cash.z.ecc.android.ext.showCriticalProcessorError
 import cash.z.ecc.android.ext.showScanFailure
 import cash.z.ecc.android.ext.showUninitializedError
@@ -67,18 +73,19 @@ import cash.z.ecc.android.sdk.Initializer
 import cash.z.ecc.android.sdk.SdkSynchronizer
 import cash.z.ecc.android.sdk.db.entity.ConfirmedTransaction
 import cash.z.ecc.android.sdk.exception.CompactBlockProcessorException
+import cash.z.ecc.android.sdk.ext.BatchMetrics
 import cash.z.ecc.android.sdk.ext.ZcashSdk
 import cash.z.ecc.android.sdk.ext.toAbbreviatedAddress
 import cash.z.ecc.android.sdk.ext.twig
 import cash.z.ecc.android.ui.history.HistoryViewModel
-import cash.z.ecc.android.ui.util.INCLUDE_MEMO_PREFIXES_RECOGNIZED
-import cash.z.ecc.android.ui.util.toUtf8Memo
+import cash.z.ecc.android.ui.util.MemoUtil
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import java.lang.RuntimeException
 import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
@@ -207,6 +214,10 @@ class MainActivity : AppCompatActivity() {
         findViewById<TextView>(R.id.text_message).text = message
     }
 
+    fun popBackTo(@IdRes destination: Int, inclusive: Boolean = false) {
+        navController?.popBackStack(destination, inclusive)
+    }
+
     fun safeNavigate(@IdRes destination: Int, extras: Navigator.Extras? = null) {
         if (navController == null) {
             navInitListeners.add {
@@ -237,9 +248,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun startSync(initializer: Initializer) {
+    fun startSync(initializer: Initializer, isRestart: Boolean = false) {
         twig("MainActivity.startSync")
-        if (!isInitialized) {
+        if (!isInitialized || isRestart) {
             mainViewModel.setLoading(true)
             synchronizerComponent = ZcashWalletApp.component.synchronizerSubcomponent().create(
                 initializer
@@ -249,6 +260,9 @@ class MainActivity : AppCompatActivity() {
             synchronizerComponent.synchronizer().let { synchronizer ->
                 synchronizer.onProcessorErrorHandler = ::onProcessorError
                 synchronizer.onChainErrorHandler = ::onChainError
+                synchronizer.onCriticalErrorHandler = ::onCriticalError
+                (synchronizer as SdkSynchronizer).processor.onScanMetricCompleteListener = ::onScanMetricComplete
+
                 synchronizer.start(lifecycleScope)
             }
         } else {
@@ -256,6 +270,30 @@ class MainActivity : AppCompatActivity() {
         }
         mainViewModel.setLoading(false)
         twig("MainActivity.startSync COMPLETE")
+    }
+
+    private fun onScanMetricComplete(batchMetrics: BatchMetrics, isComplete: Boolean) {
+        val reportingThreshold = 100
+        if (isComplete) {
+            if (batchMetrics.cumulativeItems > reportingThreshold) {
+                val network = synchronizerComponent.synchronizer().network.networkName
+                reportAction(Report.Performance.ScanRate(network, batchMetrics.cumulativeItems, batchMetrics.cumulativeTime, batchMetrics.cumulativeIps))
+            }
+        }
+    }
+
+    private fun onCriticalError(error: Throwable?): Boolean {
+        val errorMessage = error?.message
+            ?: error?.cause?.message
+            ?: error?.toString()
+            ?: "A critical error has occurred but no details were provided. Please report and consider submitting logs to help track this one down."
+        showCriticalMessage(
+            title = "Unrecoverable Error",
+            message = errorMessage,
+        ) {
+            throw error ?: RuntimeException("A critical error occurred but it was null")
+        }
+        return false
     }
 
     fun reportScreen(screen: Report.Screen?) = reportAction(screen)
@@ -293,8 +331,12 @@ class MainActivity : AppCompatActivity() {
     fun authenticate(description: String, title: String = getString(R.string.biometric_prompt_title), block: () -> Unit) {
         val callback = object : BiometricPrompt.AuthenticationCallback() {
             override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
-                twig("Authentication success")
+                twig("Authentication success with type: ${if (result.authenticationType == AUTHENTICATION_RESULT_TYPE_DEVICE_CREDENTIAL) "DEVICE_CREDENTIAL" else if (result.authenticationType == AUTHENTICATION_RESULT_TYPE_BIOMETRIC) "BIOMETRIC" else "UNKNOWN"}  object: ${result.cryptoObject}")
                 block()
+                twig("Done authentication block")
+                // we probably only need to do this if the type is DEVICE_CREDENTIAL
+                // but it doesn't hurt to hide the keyboard every time
+                hideKeyboard()
             }
             override fun onAuthenticationFailed() {
                 twig("Authentication failed!!!!")
@@ -325,6 +367,10 @@ class MainActivity : AppCompatActivity() {
                     ERROR_TIMEOUT -> doNothing("Oops. It timed out.")
                     ERROR_UNABLE_TO_PROCESS -> doNothing(".")
                     ERROR_VENDOR -> doNothing("We got some weird error and you should report this.")
+                    else -> {
+                        twig("Warning: unrecognized authentication error $errorCode")
+                        doNothing("Authentication failed with error code $errorCode")
+                    }
                 }
             }
         }
@@ -335,7 +381,7 @@ class MainActivity : AppCompatActivity() {
                     .setTitle(title)
                     .setConfirmationRequired(false)
                     .setDescription(description)
-                    .setDeviceCredentialAllowed(true)
+                    .setAllowedAuthenticators(BIOMETRIC_STRONG or BIOMETRIC_WEAK or DEVICE_CREDENTIAL)
                     .build()
             )
         }
@@ -358,31 +404,20 @@ class MainActivity : AppCompatActivity() {
     }
 
     // TODO: spruce this up with API 26 stuff
-    fun vibrateSuccess() {
+    fun vibrateSuccess() = vibrate(0, 200, 200, 100, 100, 800)
+
+    fun vibrate(initialDelay: Long, vararg durations: Long) {
         val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
         if (vibrator.hasVibrator()) {
-            vibrator.vibrate(longArrayOf(0, 200, 200, 100, 100, 800), -1)
+            vibrator.vibrate(longArrayOf(initialDelay, *durations), -1)
         }
     }
 
     fun copyAddress(view: View? = null) {
         reportTap(COPY_ADDRESS)
         lifecycleScope.launch {
-            clipboard.setPrimaryClip(
-                ClipData.newPlainText(
-                    "Z-Address",
-                    synchronizerComponent.synchronizer().getAddress()
-                )
-            )
-            showMessage("Address copied!")
+            copyText(synchronizerComponent.synchronizer().getAddress(), "Address")
         }
-    }
-
-    suspend fun isValidAddress(address: String): Boolean {
-        try {
-            return !synchronizerComponent.synchronizer().validateAddress(address).isNotValid
-        } catch (t: Throwable) { }
-        return false
     }
 
     fun copyText(textToCopy: String, label: String = "ECC Wallet Text") {
@@ -390,6 +425,14 @@ class MainActivity : AppCompatActivity() {
             ClipData.newPlainText(label, textToCopy)
         )
         showMessage("$label copied!")
+        vibrate(0, 50)
+    }
+
+    suspend fun isValidAddress(address: String): Boolean {
+        try {
+            return !synchronizerComponent.synchronizer().validateAddress(address).isNotValid
+        } catch (t: Throwable) { }
+        return false
     }
 
     fun preventBackPress(fragment: Fragment) {
@@ -408,6 +451,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showMessage(message: String, linger: Boolean = false) {
+        twig("toast: $message")
         Toast.makeText(this, message, if (linger) Toast.LENGTH_LONG else Toast.LENGTH_SHORT).show()
     }
 
@@ -568,42 +612,11 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
-    fun toTxId(tx: ByteArray?): String? {
-        if (tx == null) return null
-        val sb = StringBuilder(tx.size * 2)
-        for (i in (tx.size - 1) downTo 0) {
-            sb.append(String.format("%02x", tx[i]))
-        }
-        return sb.toString()
-    }
-
     /* Memo functions that might possibly get moved to MemoUtils */
-
-    private val addressRegex = """zs\d\w{65,}""".toRegex()
 
     suspend fun getSender(transaction: ConfirmedTransaction?): String {
         if (transaction == null) return getString(R.string.unknown)
-        val memo = transaction.memo.toUtf8Memo()
-        return extractValidAddress(memo)?.toAbbreviatedAddress() ?: getString(R.string.unknown)
-    }
-
-    fun extractAddress(memo: String?) = addressRegex.findAll(memo ?: "").lastOrNull()?.value
-
-    suspend fun extractValidAddress(memo: String?): String? {
-        if (memo == null || memo.length < 25) return null
-
-        // note: cannot use substringAfterLast because we need to ignore case
-        try {
-            INCLUDE_MEMO_PREFIXES_RECOGNIZED.forEach { prefix ->
-                memo.lastIndexOf(prefix, ignoreCase = true).takeUnless { it == -1 }?.let { lastIndex ->
-                    memo.substring(lastIndex + prefix.length).trimStart().validateAddress()?.let { address ->
-                        return@extractValidAddress address
-                    }
-                }
-            }
-        } catch (t: Throwable) { }
-
-        return null
+        return MemoUtil.findAddressInMemo(transaction, ::isValidAddress)?.toAbbreviatedAddress() ?: getString(R.string.unknown)
     }
 
     suspend fun String?.validateAddress(): String? {

@@ -27,8 +27,8 @@ import java.util.Locale
 object ConversionsUniform {
     val ONE_ZEC_IN_ZATOSHI = BigDecimal(ZcashSdk.ZATOSHI_PER_ZEC, MathContext.DECIMAL128)
     val LONG_SCALE = 8
-    val SHORT_SCALE = 8
-    val SHORT_FORMATTER = from(SHORT_SCALE)
+    val SHORT_SCALE = 4
+    val SHORT_FORMATTER = from(SHORT_SCALE, SHORT_SCALE)
     val FULL_FORMATTER = from(LONG_SCALE)
 
     val roundingMode = RoundingMode.HALF_EVEN

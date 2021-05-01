@@ -4,7 +4,6 @@ import android.content.res.ColorStateList
 import android.graphics.ColorMatrix
 import android.graphics.ColorMatrixColorFilter
 import android.os.Bundle
-import android.text.format.DateUtils
 import android.text.method.ScrollingMovementMethod
 import android.view.LayoutInflater
 import android.view.View
@@ -16,11 +15,9 @@ import androidx.transition.ChangeTransform
 import androidx.transition.Transition
 import androidx.transition.TransitionSet
 import cash.z.ecc.android.R
-import cash.z.ecc.android.ZcashWalletApp
 import cash.z.ecc.android.databinding.FragmentTransactionBinding
 import cash.z.ecc.android.di.viewmodel.activityViewModel
 import cash.z.ecc.android.ext.Const
-import cash.z.ecc.android.ext.WalletZecFormmatter
 import cash.z.ecc.android.ext.gone
 import cash.z.ecc.android.ext.invisible
 import cash.z.ecc.android.ext.onClickNavBack
@@ -28,13 +25,12 @@ import cash.z.ecc.android.ext.toAppColor
 import cash.z.ecc.android.ext.toColoredSpan
 import cash.z.ecc.android.ext.visible
 import cash.z.ecc.android.feedback.Report
-import cash.z.ecc.android.sdk.db.entity.ConfirmedTransaction
-import cash.z.ecc.android.sdk.ext.ZcashSdk
 import cash.z.ecc.android.sdk.ext.toAbbreviatedAddress
 import cash.z.ecc.android.sdk.ext.twig
-import cash.z.ecc.android.ui.MainActivity
 import cash.z.ecc.android.ui.base.BaseFragment
-import cash.z.ecc.android.ui.util.toUtf8Memo
+import cash.z.ecc.android.ui.history.HistoryViewModel.UiModel
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class TransactionFragment : BaseFragment<FragmentTransactionBinding>() {
@@ -78,12 +74,12 @@ class TransactionFragment : BaseFragment<FragmentTransactionBinding>() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.apply {
-            ViewCompat.setTransitionName(topBoxValue, "test_amount_anim_${viewModel.selectedTransaction!!.id}")
-            ViewCompat.setTransitionName(topBoxBackground, "test_bg_anim_${viewModel.selectedTransaction!!.id}")
+            ViewCompat.setTransitionName(topBoxValue, "test_amount_anim_${viewModel.selectedTransaction.value?.id}")
+            ViewCompat.setTransitionName(topBoxBackground, "test_bg_anim_${viewModel.selectedTransaction.value?.id}")
             backButtonHitArea.onClickNavBack { tapped(Report.Tap.TRANSACTION_BACK) }
 
             lifecycleScope.launch {
-                viewModel.selectedTransaction.toUiModel(viewModel.latestHeight).let { uiModel ->
+                viewModel.uiModels.stateIn(lifecycleScope).collect { uiModel ->
                     topBoxLabel.text = uiModel.topLabel
                     topBoxValue.text = uiModel.topValue
                     bottomBoxLabel.text = uiModel.bottomLabel
@@ -137,6 +133,11 @@ class TransactionFragment : BaseFragment<FragmentTransactionBinding>() {
                     uiModel.memo?.let {
                         hitAreaMemoSubway.setOnClickListener { _ -> onToggleMemo(!isMemoExpanded, it) }
                         hitAreaMemoIcon.setOnClickListener { _ -> onToggleMemo(!isMemoExpanded, it) }
+                        subwayLabelMemo.setOnClickListener { _ -> onToggleMemo(!isMemoExpanded, it) }
+                        subwayLabelMemo.setOnLongClickListener { _ ->
+                            mainActivity?.copyText(it, "Memo")
+                            true
+                        }
                         subwayLabelMemo.movementMethod = ScrollingMovementMethod()
                         subwaySpotMemoContent.visible()
                         subwayLabelMemo.visible()
@@ -162,6 +163,7 @@ class TransactionFragment : BaseFragment<FragmentTransactionBinding>() {
             binding.subwaySpotMemoContent.rotation = 90.0f
         } else {
             binding.subwayLabelMemo.setText(getString(R.string.transaction_with_memo))
+            binding.subwayLabelMemo.scrollTo(0, 0)
             binding.subwayLabelMemo.invalidate()
             twig("setting memo text to: with a memo")
             binding.groupMemoIcon.visible()
@@ -195,110 +197,4 @@ class TransactionFragment : BaseFragment<FragmentTransactionBinding>() {
             it.toColoredSpan(R.color.tx_text_light_dimmed, if (address == null) it else prefix)
         }
     }
-
-    private suspend fun ConfirmedTransaction?.toUiModel(latestHeight: Int? = null): UiModel = UiModel().apply {
-        this@toUiModel.let { tx ->
-            txId = mainActivity?.toTxId(tx?.rawTransactionId)
-            isInbound = when {
-                !(tx?.toAddress.isNullOrEmpty()) -> false
-                tx != null && tx.toAddress.isNullOrEmpty() && tx.value > 0L && tx.minedHeight > 0 -> true
-                else -> null
-            }
-            isMined = tx?.minedHeight != null && tx.minedHeight > ZcashSdk.SAPLING_ACTIVATION_HEIGHT
-            topValue = if (tx == null) "" else "\$${WalletZecFormmatter.toZecStringFull(tx.value)}"
-            minedHeight = (tx?.minedHeight ?: 0).toString()
-            val flags =
-                DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_SHOW_YEAR or DateUtils.FORMAT_ABBREV_MONTH
-            timestamp = if (tx == null) getString(R.string.transaction_timestamp_unavailable) else DateUtils.getRelativeDateTimeString(
-                ZcashWalletApp.instance,
-                tx.blockTimeInSeconds * 1000,
-                DateUtils.SECOND_IN_MILLIS,
-                DateUtils.WEEK_IN_MILLIS,
-                flags
-            ).toString()
-
-            // memo logic
-            val txMemo = tx?.memo.toUtf8Memo()
-            if (!txMemo.isEmpty()) {
-                memo = txMemo
-            }
-
-            // confirmation logic
-            // TODO: clean all of this up and remove/improve reliance on `isSufficientlyOld` function. Also, add a constant for the number of confirmations we expect.
-            tx?.let {
-                val isMined = it.blockTimeInSeconds != 0L
-                if (isMined) {
-                    val hasLatestHeight = latestHeight != null && latestHeight > ZcashSdk.SAPLING_ACTIVATION_HEIGHT
-                    if (it.minedHeight > 0 && hasLatestHeight) {
-                        val confirmations = latestHeight!! - it.minedHeight + 1
-                        confirmation = if (confirmations >= 10) getString(R.string.transaction_status_confirmed) else "$confirmations ${getString(R.string.transaction_status_confirming)}"
-                    } else {
-                        if (!hasLatestHeight && isSufficientlyOld(tx)) {
-                            twig("Warning: could not load latestheight from server to determine confirmations but this transaction is mined and old enough to be considered confirmed")
-                            confirmation = getString(R.string.transaction_status_confirmed)
-                        } else {
-                            twig("Warning: could not determine confirmation text value so it will be left null!")
-                            confirmation = getString(R.string.transaction_confirmation_count_unavailable)
-                        }
-                    }
-                } else {
-                    confirmation = getString(R.string.transaction_status_pending)
-                }
-            }
-
-            val mainActivity = (context as MainActivity)
-            // inbound v. outbound values
-            when (isInbound) {
-                true -> {
-                    topLabel = getString(R.string.transaction_story_inbound)
-                    bottomLabel = getString(R.string.transaction_story_inbound_total)
-                    bottomValue = "\$${WalletZecFormmatter.toZecStringFull(tx?.value)}"
-                    iconRotation = 315f
-                    source = getString(R.string.transaction_story_to_shielded)
-                    address = mainActivity.extractValidAddress(tx?.memo.toUtf8Memo())
-                }
-                false -> {
-                    topLabel = getString(R.string.transaction_story_outbound)
-                    bottomLabel = getString(R.string.transaction_story_outbound_total)
-                    bottomValue = "\$${WalletZecFormmatter.toZecStringFull(tx?.value?.plus(ZcashSdk.MINERS_FEE_ZATOSHI))}"
-                    iconRotation = 135f
-                    fee = getString(R.string.transaction_story_network_fee, WalletZecFormmatter.toZecStringFull(ZcashSdk.MINERS_FEE_ZATOSHI))
-                    source = getString(R.string.transaction_story_from_shielded)
-                    address = tx?.toAddress
-                }
-                null -> {
-                    twig("Error: transaction appears to be invalid.")
-                }
-            }
-        }
-    }
-
-    // TODO: determine this in a more generic and technically correct way. For now, this is good enough.
-    //       the goal is just to improve the edge cases where the latest height isn't known but other
-    //       information suggests that the TX is confirmed. We can improve this, later.
-    private fun isSufficientlyOld(tx: ConfirmedTransaction): Boolean {
-        val threshold = 75 * 1000 * 25 // approx 25 blocks
-        val delta = System.currentTimeMillis() / 1000L - tx.blockTimeInSeconds
-        return tx.minedHeight > ZcashSdk.SAPLING_ACTIVATION_HEIGHT &&
-            delta < threshold
-    }
-
-    data class UiModel(
-        var topLabel: String = "",
-        var topValue: String = "",
-        var bottomLabel: String = "",
-        var bottomValue: String = "",
-        var minedHeight: String = "",
-        var timestamp: String = "",
-        var iconRotation: Float = -1f,
-
-        var fee: String? = null,
-        var source: String? = null,
-        var memo: String? = null,
-        var address: String? = null,
-        var isInbound: Boolean? = null,
-        var isMined: Boolean = false,
-        var confirmation: String? = null,
-        var txId: String? = null
-    )
 }

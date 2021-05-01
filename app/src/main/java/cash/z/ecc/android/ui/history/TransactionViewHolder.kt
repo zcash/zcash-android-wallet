@@ -5,11 +5,11 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.StringRes
-import androidx.appcompat.content.res.AppCompatResources
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import cash.z.ecc.android.R
 import cash.z.ecc.android.ext.WalletZecFormmatter
+import cash.z.ecc.android.ext.goneIf
 import cash.z.ecc.android.ext.locale
 import cash.z.ecc.android.ext.toAppColor
 import cash.z.ecc.android.ext.toAppInt
@@ -24,12 +24,14 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 
 class TransactionViewHolder<T : ConfirmedTransaction>(itemView: View) : RecyclerView.ViewHolder(itemView) {
+
     private val indicator = itemView.findViewById<View>(R.id.indicator)
     private val amountText = itemView.findViewById<TextView>(R.id.text_transaction_amount)
     private val topText = itemView.findViewById<TextView>(R.id.text_transaction_top)
     private val bottomText = itemView.findViewById<TextView>(R.id.text_transaction_bottom)
     private val transactionArrow = itemView.findViewById<ImageView>(R.id.image_transaction_arrow)
     private val formatter = SimpleDateFormat(itemView.context.getString(R.string.format_transaction_history_date_time), itemView.context.locale())
+    private val iconMemo = itemView.findViewById<ImageView>(R.id.image_memo)
 
     fun bindTo(transaction: T?) {
         val mainActivity = itemView.context as MainActivity
@@ -61,6 +63,7 @@ class TransactionViewHolder<T : ConfirmedTransaction>(itemView: View) : Recycler
                 val isMined = blockTimeInSeconds != 0L
                 when {
                     !toAddress.isNullOrEmpty() -> {
+                        indicatorBackground = if (isMined) R.color.zcashRed else R.color.zcashGray
                         lineOne = "${if (isMined) str(R.string.transaction_address_you_paid) else str(R.string.transaction_address_paying)} ${toAddress?.toAbbreviatedAddress()}"
                         lineTwo = if (isMined) "${str(R.string.transaction_status_sent)} $timestamp" else str(R.string.transaction_status_pending)
                         // TODO: this logic works but is sloppy. Find a more robust solution to displaying information about expiration (such as expires in 1 block, etc). Then if it is way beyond expired, remove it entirely. Perhaps give the user a button for that (swipe to dismiss?)
@@ -70,11 +73,9 @@ class TransactionViewHolder<T : ConfirmedTransaction>(itemView: View) : Recycler
                             arrowRotation = R.integer.transaction_arrow_rotation_send
                             amountColor = R.color.transaction_sent
                             if (toAddress.isShielded()) {
-                                indicatorBackground = R.color.zcashYellow
                                 arrowBackgroundTint = R.color.zcashYellow
                                 lineOneColor = R.color.zcashYellow
                             } else {
-                                indicatorBackground = R.color.zcashBlueDark
                                 toAddress?.toAbbreviatedAddress()?.let {
                                     lineOne = lineOne.toColoredSpan(R.color.zcashBlueDark, it)
                                 }
@@ -85,6 +86,7 @@ class TransactionViewHolder<T : ConfirmedTransaction>(itemView: View) : Recycler
                         }
                     }
                     toAddress.isNullOrEmpty() && value > 0L && minedHeight > 0 -> {
+                        indicatorBackground = R.color.zcashGreen
                         val senderAddress = mainActivity.getSender(transaction)
                         lineOne = "${str(R.string.transaction_received_from)} $senderAddress"
                         lineTwo = "${str(R.string.transaction_received)} $timestamp"
@@ -92,14 +94,16 @@ class TransactionViewHolder<T : ConfirmedTransaction>(itemView: View) : Recycler
                         if (senderAddress.isShielded()) {
                             amountColor = R.color.zcashYellow
                             lineOneColor = R.color.zcashYellow
-                            indicatorBackground = R.color.zcashYellow
                             arrowBackgroundTint = R.color.zcashYellow
-                        } else if (!senderAddress.equals(str(R.string.unknown), true)) {
+                        } else {
                             senderAddress.toAbbreviatedAddress().let {
-                                lineOne = lineOne.toColoredSpan(R.color.zcashBlueDark, it)
+                                lineOne = if (senderAddress.equals(str(R.string.unknown), true)) {
+                                    lineOne.toColoredSpan(R.color.zcashYellow, it)
+                                } else {
+                                    lineOne.toColoredSpan(R.color.zcashBlueDark, it)
+                                }
                             }
                             isLineOneSpanned = true
-                            indicatorBackground = R.color.zcashBlueDark
                         }
                         arrowRotation = R.integer.transaction_arrow_rotation_received
                     }
@@ -112,7 +116,7 @@ class TransactionViewHolder<T : ConfirmedTransaction>(itemView: View) : Recycler
                     }
                 }
                 // sanitize amount
-                if (value < ZcashSdk.MINERS_FEE_ZATOSHI) amountDisplay = "< 0.001"
+                if (value < ZcashSdk.MINERS_FEE_ZATOSHI * 10) amountDisplay = "< 0.0001"
                 else if (amountZec.length > 10) { // 10 allows 3 digits to the left and 6 to the right of the decimal
                     amountDisplay = str(R.string.transaction_instruction_tap)
                 }
@@ -129,24 +133,23 @@ class TransactionViewHolder<T : ConfirmedTransaction>(itemView: View) : Recycler
             indicator.setBackgroundColor(indicatorBackground.toAppColor())
             transactionArrow.setColorFilter(arrowBackgroundTint.toAppColor())
             transactionArrow.rotation = arrowRotation.toAppInt().toFloat()
+
             var bottomTextRightDrawable: Drawable? = null
-            if (transaction?.memo.toUtf8Memo().isNotEmpty()) {
-                bottomTextRightDrawable = AppCompatResources.getDrawable(itemView.context, R.drawable.ic_memo)
-            }
+            iconMemo.goneIf(!transaction?.memo.toUtf8Memo().isNotEmpty())
             bottomText.setCompoundDrawablesWithIntrinsicBounds(null, null, bottomTextRightDrawable, null)
         }
     }
 
     private fun onTransactionClicked(transaction: ConfirmedTransaction) {
         (itemView.context as MainActivity).apply {
-            historyViewModel.selectedTransaction = transaction
+            historyViewModel.selectedTransaction.value = transaction
             safeNavigate(R.id.action_nav_history_to_nav_transaction)
         }
     }
 
     private fun onTransactionLongPressed(transaction: ConfirmedTransaction) {
         val mainActivity = itemView.context as MainActivity
-        (transaction.toAddress ?: mainActivity.extractAddress(transaction.memo.toUtf8Memo()))?.let {
+        transaction.toAddress?.let {
             mainActivity.copyText(it, "Transaction Address")
         }
     }

@@ -3,6 +3,7 @@ package cash.z.ecc.android.ext
 import android.app.ActivityManager
 import android.app.Dialog
 import android.content.Context
+import android.text.Html
 import androidx.annotation.StringRes
 import androidx.core.content.getSystemService
 import cash.z.ecc.android.R
@@ -83,9 +84,13 @@ fun Context.showScanFailure(error: Throwable?, onCancel: () -> Unit = {}, onDism
 }
 
 fun Context.showCriticalMessage(@StringRes titleResId: Int, @StringRes messageResId: Int, onDismiss: () -> Unit = {}): Dialog {
+    return showCriticalMessage(titleResId.toAppString(), messageResId.toAppString(), onDismiss)
+}
+
+fun Context.showCriticalMessage(title: String, message: String, onDismiss: () -> Unit = {}): Dialog {
     return MaterialAlertDialogBuilder(this)
-        .setTitle(titleResId)
-        .setMessage(messageResId)
+        .setTitle(title)
+        .setMessage(message)
         .setCancelable(false)
         .setPositiveButton(android.R.string.ok) { d, _ ->
             d.dismiss()
@@ -133,7 +138,41 @@ fun Context.showUpdateServerDialog(positiveResId: Int = R.string.dialog_modify_s
         }
         .setNegativeButton(R.string.dialog_modify_server_button_negative) { dialog, _ ->
             dialog.dismiss()
-            onCancel
+            onCancel()
+        }
+        .show()
+}
+
+fun Context.showRescanWalletDialog(quickDistance: String, quickEstimate: String, fullDistance: String, fullEstimate: String, onWipe: () -> Unit = {}, onFullRescan: () -> Unit = {}, onQuickRescan: () -> Unit = {}): Dialog {
+    return MaterialAlertDialogBuilder(this)
+        .setTitle(R.string.dialog_rescan_wallet_title)
+        .setMessage(Html.fromHtml(getString(R.string.dialog_rescan_wallet_message, quickDistance, quickEstimate, fullDistance, fullEstimate)))
+        .setCancelable(true)
+        .setPositiveButton(R.string.dialog_rescan_wallet_button_positive) { dialog, _ ->
+            dialog.dismiss()
+            onQuickRescan()
+        }
+        .setNeutralButton(R.string.dialog_rescan_wallet_button_neutral) { dialog, _ ->
+            dialog.dismiss()
+            onWipe()
+        }
+        .setNegativeButton(R.string.dialog_rescan_wallet_button_negative) { dialog, _ ->
+            dialog.dismiss()
+            onFullRescan()
+        }
+        .show()
+}
+
+fun Context.showConfirmation(title: String, message: String, positiveButton: String, negativeButton: String = "Cancel", onPositive: () -> Unit = {}): Dialog {
+    return MaterialAlertDialogBuilder(this)
+        .setTitle(title)
+        .setMessage(message)
+        .setPositiveButton(positiveButton) { dialog, _ ->
+            dialog.dismiss()
+            onPositive()
+        }
+        .setNegativeButton("Cancel") { dialog, _ ->
+            dialog.dismiss()
         }
         .show()
 }

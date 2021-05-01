@@ -26,17 +26,23 @@ class SeedWordAdapter : ChipsAdapter {
             (holder as SeedWordHolder).seedChipView.bind(mDataSource.getSelectedChip(position), position)
         } else {
             val size = mDataSource.selectedChips.size
+
+            // tricky bugfix:
+            // keep this always enabled otherwise older versions of android crash when this
+            // view is given focus. As a work around, just hide the cursor when the user is done
+            // editing. This is not ideal but it's better than a crash during wallet restore!
+            mEditText.isEnabled = true
             mEditText.hint = if (size < 3) {
-                mEditText.isEnabled = true
+                mEditText.isCursorVisible = true
                 mEditText.setHintTextColor(R.color.text_light_dimmed.toAppColor())
                 val ordinal = when (size) { 2 -> "3rd"; 1 -> "2nd"; else -> "1st" }
                 "Enter $ordinal seed word"
             } else if (size >= 24) {
                 mEditText.setHintTextColor(R.color.zcashGreen.toAppColor())
-                mEditText.isEnabled = false
+                mEditText.isCursorVisible = false
                 "done"
             } else {
-                mEditText.isEnabled = true
+                mEditText.isCursorVisible = true
                 mEditText.setHintTextColor(R.color.zcashYellow.toAppColor())
                 "${size + 1}"
             }
@@ -70,9 +76,15 @@ class SeedWordAdapter : ChipsAdapter {
         }
     }
 
+    // this function is called with the contents of the field, split by the delimiter
     override fun onKeyboardDelimiter(text: String) {
-        if (mDataSource.filteredChips.size > 0) {
-            onKeyboardActionDone((mDataSource.filteredChips.first() as SeedWordChip).word)
+        val firstMatchingWord = (mDataSource.filteredChips.firstOrNull() as? SeedWordChip)?.word?.takeUnless {
+            !it.startsWith(text)
+        }
+        if (firstMatchingWord != null) {
+            onKeyboardActionDone(firstMatchingWord)
+        } else {
+            onKeyboardActionDone(text)
         }
     }
 

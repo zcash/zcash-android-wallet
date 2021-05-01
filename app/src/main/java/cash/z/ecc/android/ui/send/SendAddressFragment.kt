@@ -26,11 +26,11 @@ import cash.z.ecc.android.feedback.Report.Tap.SEND_ADDRESS_MAX
 import cash.z.ecc.android.feedback.Report.Tap.SEND_ADDRESS_NEXT
 import cash.z.ecc.android.feedback.Report.Tap.SEND_ADDRESS_PASTE
 import cash.z.ecc.android.feedback.Report.Tap.SEND_ADDRESS_SCAN
-import cash.z.ecc.android.sdk.block.CompactBlockProcessor.WalletBalance
 import cash.z.ecc.android.sdk.ext.ZcashSdk
 import cash.z.ecc.android.sdk.ext.collectWith
 import cash.z.ecc.android.sdk.ext.twig
-import cash.z.ecc.android.sdk.validate.AddressType
+import cash.z.ecc.android.sdk.type.AddressType
+import cash.z.ecc.android.sdk.type.WalletBalance
 import cash.z.ecc.android.ui.base.BaseFragment
 import kotlinx.coroutines.launch
 

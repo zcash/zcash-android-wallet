@@ -80,6 +80,9 @@ class SendFinalFragment : BaseFragment<FragmentSendFinalBinding>() {
                             txtMoreInfo.run {
                                 text = moreInfoMsg
                             }
+
+                            if (model.errorDescription.isNotEmpty())
+                                buttonMoreInfo.text = getString(R.string.translated_button_done)
                         }
                     }
                 }

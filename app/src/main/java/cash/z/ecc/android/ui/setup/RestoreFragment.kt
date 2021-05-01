@@ -14,17 +14,19 @@ import android.widget.TextView
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import cash.z.ecc.android.R
+import cash.z.ecc.android.ZcashWalletApp
 import cash.z.ecc.android.databinding.FragmentRestoreBinding
 import cash.z.ecc.android.di.viewmodel.activityViewModel
 import cash.z.ecc.android.ext.goneIf
+import cash.z.ecc.android.ext.showConfirmation
 import cash.z.ecc.android.ext.showInvalidSeedPhraseError
 import cash.z.ecc.android.ext.showSharedLibraryCriticalError
 import cash.z.ecc.android.feedback.Report
 import cash.z.ecc.android.feedback.Report.Funnel.Restore
 import cash.z.ecc.android.feedback.Report.Tap.RESTORE_BACK
+import cash.z.ecc.android.feedback.Report.Tap.RESTORE_CLEAR
 import cash.z.ecc.android.feedback.Report.Tap.RESTORE_DONE
 import cash.z.ecc.android.feedback.Report.Tap.RESTORE_SUCCESS
-import cash.z.ecc.android.sdk.ext.ZcashSdk
 import cash.z.ecc.android.ui.base.BaseFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.tylersuehr.chips.Chip
@@ -64,6 +66,21 @@ class RestoreFragment : BaseFragment<FragmentRestoreBinding>(), View.OnKeyListen
         binding.buttonSuccess.setOnClickListener {
             onEnterWallet().also { tapped(RESTORE_SUCCESS) }
         }
+
+        binding.buttonClear.setOnClickListener {
+            onClearSeedWords().also { tapped(RESTORE_CLEAR) }
+        }
+    }
+
+    private fun onClearSeedWords() {
+        mainActivity?.showConfirmation(
+            "Clear All Words",
+            "Are you sure you would like to clear all the seed words and type them again?",
+            "Clear",
+            onPositive = {
+                binding.chipsInput.clearSelectedChips()
+            }
+        )
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -110,13 +127,14 @@ class RestoreFragment : BaseFragment<FragmentRestoreBinding>(), View.OnKeyListen
     private fun onDone() {
         mainActivity?.reportFunnel(Restore.Done)
         mainActivity?.hideKeyboard()
+        val activation = ZcashWalletApp.instance.defaultNetwork.saplingActivationHeight
         val seedPhrase = binding.chipsInput.selectedChips.joinToString(" ") {
             it.title
         }
         var birthday = binding.root.findViewById<TextView>(R.id.input_birthdate).text.toString()
             .let { birthdateString ->
-                if (birthdateString.isNullOrEmpty()) ZcashSdk.SAPLING_ACTIVATION_HEIGHT else birthdateString.toInt()
-            }.coerceAtLeast(ZcashSdk.SAPLING_ACTIVATION_HEIGHT)
+                if (birthdateString.isNullOrEmpty()) activation else birthdateString.toInt()
+            }.coerceAtLeast(activation)
 
         try {
             walletSetup.validatePhrase(seedPhrase)
@@ -151,29 +169,30 @@ class RestoreFragment : BaseFragment<FragmentRestoreBinding>(), View.OnKeyListen
     }
 
     private fun onChipsModified() {
-        seedWordAdapter?.editText?.apply {
-            postDelayed(
-                {
-                    requestFocus()
-                },
-                40L
-            )
-        }
-        setDoneEnabled()
+        updateDoneViews()
+        forceShowKeyboard()
+    }
 
-        view!!.postDelayed(
+    private fun updateDoneViews(): Boolean {
+        val count = seedWordAdapter?.itemCount ?: 0
+        reportWords(count - 1) // subtract 1 for the editText
+        val isDone = count > 24
+        binding.groupDone.goneIf(!isDone)
+        return !isDone
+    }
+
+    // forcefully show the keyboard as a hack to fix odd behavior where the keyboard
+    // sometimes closes randomly and inexplicably in between seed word entries
+    private fun forceShowKeyboard() {
+        requireView().postDelayed(
             {
-                mainActivity!!.showKeyboard(seedWordAdapter!!.editText)
-                seedWordAdapter?.editText?.requestFocus()
+                val isDone = (seedWordAdapter?.itemCount ?: 0) > 24
+                val focusedView = if (isDone) binding.inputBirthdate else seedWordAdapter!!.editText
+                mainActivity!!.showKeyboard(focusedView)
+                focusedView.requestFocus()
             },
             500L
         )
-    }
-
-    private fun setDoneEnabled() {
-        val count = seedWordAdapter?.itemCount ?: 0
-        reportWords(count - 1) // subtract 1 for the editText
-        binding.groupDone.goneIf(count <= 24)
     }
 
     private fun reportWords(count: Int) {

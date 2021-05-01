@@ -26,6 +26,13 @@ internal inline fun @receiver:StringRes Int.toAppString(lowercase: Boolean = fal
 }
 
 /**
+ * Grab a formatted string from the application resources
+ */
+internal inline fun @receiver:StringRes Int.toAppStringFormatted(vararg formatArgs: Any): String {
+    return ZcashWalletApp.instance.getString(this, *formatArgs)
+}
+
+/**
  * Grab an integer from the application resources
  */
 internal inline fun @receiver:IntegerRes Int.toAppInt(): Int {

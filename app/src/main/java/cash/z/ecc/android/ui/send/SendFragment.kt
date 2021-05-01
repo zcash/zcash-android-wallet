@@ -33,13 +33,12 @@ import cash.z.ecc.android.feedback.Report.Tap.SEND_ADDRESS_SCAN
 import cash.z.ecc.android.feedback.Report.Tap.SEND_MEMO_EXCLUDE
 import cash.z.ecc.android.feedback.Report.Tap.SEND_MEMO_INCLUDE
 import cash.z.ecc.android.feedback.Report.Tap.SEND_SUBMIT
-import cash.z.ecc.android.sdk.block.CompactBlockProcessor.WalletBalance
 import cash.z.ecc.android.sdk.ext.ZcashSdk
 import cash.z.ecc.android.sdk.ext.collectWith
 import cash.z.ecc.android.sdk.ext.onFirstWith
 import cash.z.ecc.android.sdk.ext.toAbbreviatedAddress
-import cash.z.ecc.android.sdk.ext.twig
-import cash.z.ecc.android.sdk.validate.AddressType
+import cash.z.ecc.android.sdk.type.AddressType
+import cash.z.ecc.android.sdk.type.WalletBalance
 import cash.z.ecc.android.ui.base.BaseFragment
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
@@ -156,19 +155,14 @@ class SendFragment :
             val validation = sendViewModel.validateAddress(address)
             binding.buttonSend.isActivated = !validation.isNotValid
             var type = when (validation) {
-                is AddressType.Transparent -> {
-                    R.string.send_validation_address_valid_taddr to R.color.zcashGreen
-                }
-                is AddressType.Shielded -> {
-                    R.string.send_validation_address_valid_zaddr to R.color.zcashGreen
-                }
-                is AddressType.Invalid -> {
-                    R.string.send_validation_address_invalid to R.color.zcashRed
-                }
+                is AddressType.Transparent -> R.string.send_validation_address_valid_taddr to R.color.zcashGreen
+                is AddressType.Shielded -> R.string.send_validation_address_valid_zaddr to R.color.zcashGreen
+                else -> R.string.send_validation_address_invalid to R.color.zcashRed
             }
             updateAddressUi(validation is AddressType.Transparent)
-            if (address == sendViewModel.synchronizer.getAddress()) type =
-                R.string.send_validation_address_self to R.color.zcashRed
+            if (address == sendViewModel.synchronizer.getAddress() || address == sendViewModel.synchronizer.getTransparentAddress()) {
+                type = R.string.send_validation_address_self to R.color.zcashRed
+            }
             binding.textLayoutAddress.helperText = getString(type.first)
             binding.textLayoutAddress.setHelperTextColor(ColorStateList.valueOf(type.second.toAppColor()))
 
@@ -176,7 +170,7 @@ class SendFragment :
             if (binding.imageClipboardAddressSelected.isVisible) {
                 loadAddressFromClipboard().let { clipboardAddress ->
                     if (address != clipboardAddress) {
-                        updateClipboardBanner(false, clipboardAddress)
+                        updateClipboardBanner(clipboardAddress, false)
                     }
                 }
             }
@@ -184,7 +178,7 @@ class SendFragment :
             if (binding.imageLastUsedAddressSelected.isVisible) {
                 loadLastUsedAddress().let { lastAddress ->
                     if (address != lastAddress) {
-                        updateLastUsedBanner(false, lastAddress)
+                        updateLastUsedBanner(lastAddress, false)
                     }
                 }
             }
@@ -248,8 +242,7 @@ class SendFragment :
 
     override fun onResume() {
         super.onResume()
-        updateClipboardBanner()
-        updateLastUsedBanner()
+        onPrimaryClipChanged()
         sendViewModel.synchronizer.balances.collectWith(resumedScope) {
             onBalanceUpdated(it)
         }
@@ -266,12 +259,13 @@ class SendFragment :
     }
 
     override fun onPrimaryClipChanged() {
-        twig("clipboard changed!")
-        updateClipboardBanner()
-        updateLastUsedBanner()
+        resumedScope.launch {
+            updateClipboardBanner(loadAddressFromClipboard())
+            updateLastUsedBanner(loadLastUsedAddress())
+        }
     }
 
-    private fun updateClipboardBanner(selected: Boolean = false, address: String? = loadAddressFromClipboard()) {
+    private fun updateClipboardBanner(address: String?, selected: Boolean = false) {
         binding.apply {
             updateAddressBanner(
                 groupClipboard,
@@ -283,12 +277,11 @@ class SendFragment :
                 address
             )
         }
-//        binding.dividerClipboard.text = "On Clipboard"
     }
 
-    private fun updateLastUsedBanner(
-        selected: Boolean = false,
-        address: String? = loadLastUsedAddress()
+    private suspend fun updateLastUsedBanner(
+        address: String? = null,
+        selected: Boolean = false
     ) {
         val isBoth = address == loadAddressFromClipboard()
         binding.apply {
@@ -312,18 +305,20 @@ class SendFragment :
         shieldIcon: ImageView,
         addressLabel: TextView,
         selected: Boolean = false,
-        address: String? = loadLastUsedAddress()
+        address: String? = null
     ) {
         resumedScope.launch {
             if (address == null) {
                 group.gone()
             } else {
-                val userAddress = sendViewModel.synchronizer.getAddress()
+                val userShieldedAddr = sendViewModel.synchronizer.getAddress()
+                val userTransparentAddr = sendViewModel.synchronizer.getTransparentAddress()
                 group.visible()
                 addressTextView.text = address.toAbbreviatedAddress(16, 16)
                 checkIcon.goneIf(!selected)
                 ImageViewCompat.setImageTintList(shieldIcon, ColorStateList.valueOf(if (selected) R.color.colorPrimary.toAppColor() else R.color.zcashWhite_12.toAppColor()))
-                addressLabel.setText(if (address == userAddress) R.string.send_banner_address_user else R.string.send_banner_address_unknown)
+                addressLabel.setText(if (address == userShieldedAddr) R.string.send_banner_address_user else R.string.send_banner_address_unknown)
+                if (address == userTransparentAddr) addressLabel.setText("Your Auto-Shielding Address")
                 addressLabel.setTextColor(if (selected) R.color.colorPrimary.toAppColor() else R.color.text_light.toAppColor())
                 addressTextView.setTextColor(if (selected) R.color.text_light.toAppColor() else R.color.text_light_dimmed.toAppColor())
             }
@@ -335,30 +330,26 @@ class SendFragment :
             if (clipboard.hasPrimaryClip()) {
                 val address = clipboard.text().toString()
                 val applyValue = binding.imageClipboardAddressSelected.isGone
-                updateClipboardBanner(applyValue, address)
+                updateClipboardBanner(address, applyValue)
                 binding.inputZcashAddress.setText(address.takeUnless { !applyValue })
             }
         }
     }
 
     private fun onReuse() {
-        val address = loadLastUsedAddress()
-        val applyValue = binding.imageLastUsedAddressSelected.isGone
-        updateLastUsedBanner(applyValue, address)
-        binding.inputZcashAddress.setText(address.takeUnless { !applyValue })
+        sendViewModel.viewModelScope.launch {
+            val address = loadLastUsedAddress()
+            val applyValue = binding.imageLastUsedAddressSelected.isGone
+            updateLastUsedBanner(address, applyValue)
+            binding.inputZcashAddress.setText(address.takeUnless { !applyValue })
+        }
     }
 
-    private fun loadAddressFromClipboard(): String? {
+    private suspend fun loadAddressFromClipboard(): String? {
         mainActivity?.clipboard?.apply {
             if (hasPrimaryClip()) {
-                text()?.let { text ->
-                    if (text.startsWith("zs") && text.length > 70) {
-                        return@loadAddressFromClipboard text.toString()
-                    }
-                    // treat t-addrs differently in the future
-                    if (text.startsWith("t1") && text.length > 32) {
-                        return@loadAddressFromClipboard text.toString()
-                    }
+                text().toString().let { text ->
+                    if (sendViewModel.isValidAddress(text)) return@loadAddressFromClipboard text
                 }
             }
         }
@@ -366,10 +357,10 @@ class SendFragment :
     }
 
     private var lastUsedAddress: String? = null
-    private fun loadLastUsedAddress(): String? {
-        if (lastUsedAddress == null) sendViewModel.viewModelScope.launch {
+    private suspend fun loadLastUsedAddress(): String? {
+        if (lastUsedAddress == null) {
             lastUsedAddress = sendViewModel.synchronizer.sentTransactions.first().firstOrNull { !it.toAddress.isNullOrEmpty() }?.toAddress
-            updateLastUsedBanner(binding.imageLastUsedAddressSelected.isVisible, lastUsedAddress)
+            updateLastUsedBanner(lastUsedAddress, binding.imageLastUsedAddressSelected.isVisible)
         }
         return lastUsedAddress
     }

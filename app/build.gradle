@@ -4,6 +4,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
+apply plugin: "androidx.navigation.safeargs.kotlin"
 //apply plugin: 'com.github.ben-manes.versions'
 
 archivesBaseName = 'zcash-android-wallet'
@@ -25,7 +26,6 @@ android {
         testInstrumentationRunnerArguments clearPackageData: 'true'
         multiDexEnabled true
         resValue 'string', 'bugsnag_api_key', "${(project.findProperty('BUGSNAG_API_KEY') ?: System.getenv('BUGSNAG_API_KEY')) ?: ''}"
-        resValue 'string', 'file_authority', "${Deps.packageName}.fileprovider"
 
         // this setting allows using color resources in vector drawables, rather than hardcoded values (note: only works when minApi is 21)
         // per https://google.github.io/android-gradle-dsl/current/com.android.build.gradle.internal.dsl.VectorDrawablesOptions.html: If set to an empty collection, all special handling of vector drawables will be disabled.
@@ -75,11 +75,10 @@ android {
             initWith debug
             debuggable true
             applicationIdSuffix ".internal"
-            resValue 'string', 'file_authority', "${Deps.packageName}.internal.fileprovider"
             matchingFallbacks = ['debug']
+            signingConfig signingConfigs.placeholder
         }
     }
-
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -87,8 +86,12 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
         freeCompilerArgs += "-Xopt-in=kotlinx.coroutines.ExperimentalCoroutinesApi"
+        freeCompilerArgs += "-Xopt-in=kotlin.time.ExperimentalTime"
 //        freeCompilerArgs += "-Xopt-in=kotlinx.coroutines.ObsoleteCoroutinesApi"
 //        freeCompilerArgs += "-Xopt-in=kotlinx.coroutines.FlowPreview"
+    }
+    testOptions {
+        execution 'ANDROIDX_TEST_ORCHESTRATOR'
     }
     kapt {
         arguments {
@@ -120,8 +123,7 @@ dependencies {
 
     // Zcash
     implementation Deps.Zcash.ANDROID_WALLET_PLUGINS
-    zcashtestnetImplementation Deps.Zcash.Sdk.TESTNET
-    zcashmainnetImplementation Deps.Zcash.Sdk.MAINNET
+    implementation Deps.Zcash.SDK
 
     //  Kotlin
     implementation Deps.Kotlin.STDLIB
@@ -141,7 +143,6 @@ dependencies {
     implementation Deps.AndroidX.CameraX.LIFECYCLE
     implementation Deps.AndroidX.CameraX.View.EXT
     implementation Deps.AndroidX.CameraX.View.VIEW
-    implementation Deps.AndroidX.Lifecycle.LIFECYCLE_EXTENSIONS
     implementation Deps.AndroidX.Lifecycle.LIFECYCLE_RUNTIME_KTX
     implementation Deps.AndroidX.Navigation.FRAGMENT_KTX
     implementation Deps.AndroidX.Navigation.UI_KTX
@@ -174,12 +175,9 @@ dependencies {
     implementation Deps.Misc.Plugins.QR_SCANNER
 
     // Tests
-    testImplementation Deps.Test.COROUTINES_TEST
     testImplementation Deps.Test.JUNIT
     testImplementation Deps.Test.MOKITO
     testImplementation Deps.Test.MOKITO_KOTLIN
-    testImplementation Deps.Test.COROUTINES_TEST
-    testImplementation Deps.Zcash.Sdk.TESTNET
 
     androidTestImplementation Deps.Test.Android.JUNIT
     androidTestImplementation Deps.Test.Android.ESPRESSO

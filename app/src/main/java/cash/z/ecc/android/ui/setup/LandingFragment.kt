@@ -7,6 +7,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import cash.z.ecc.android.R
+import cash.z.ecc.android.ZcashWalletApp
 import cash.z.ecc.android.databinding.FragmentLandingBinding
 import cash.z.ecc.android.di.viewmodel.activityViewModel
 import cash.z.ecc.android.ext.locale
@@ -24,6 +25,7 @@ import cash.z.ecc.android.feedback.Report.Tap.LANDING_BACKUP_SKIPPED_3
 import cash.z.ecc.android.feedback.Report.Tap.LANDING_NEW
 import cash.z.ecc.android.feedback.Report.Tap.LANDING_RESTORE
 import cash.z.ecc.android.sdk.ext.twig
+import cash.z.ecc.android.sdk.type.ZcashNetwork
 import cash.z.ecc.android.ui.base.BaseFragment
 import cash.z.ecc.android.ui.setup.WalletSetupViewModel.WalletSetupState.SEED_WITHOUT_BACKUP
 import cash.z.ecc.android.ui.setup.WalletSetupViewModel.WalletSetupState.SEED_WITH_BACKUP
@@ -31,6 +33,7 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import java.lang.RuntimeException
 
 class LandingFragment : BaseFragment<FragmentLandingBinding>() {
     override val screen = Report.Screen.LANDING
@@ -97,7 +100,12 @@ class LandingFragment : BaseFragment<FragmentLandingBinding>() {
 
     override fun onResume() {
         super.onResume()
-        mainActivity?.hideKeyboard()
+        view?.postDelayed(
+            {
+                mainActivity?.hideKeyboard()
+            },
+            25L
+        )
     }
 
     private fun onSkip(count: Int) {
@@ -125,8 +133,22 @@ class LandingFragment : BaseFragment<FragmentLandingBinding>() {
 
     // AKA import wallet
     private fun onUseDevWallet() {
-        val seedPhrase = "still champion voice habit trend flight survey between bitter process artefact blind carbon truly provide dizzy crush flush breeze blouse charge solid fish spread"
-        val birthday = 991645 // 663174
+        val seedPhrase: String
+        val birthday: Int
+
+        // new testnet dev wallet
+        when (ZcashWalletApp.instance.defaultNetwork) {
+            ZcashNetwork.Mainnet -> {
+                seedPhrase = "still champion voice habit trend flight survey between bitter process artefact blind carbon truly provide dizzy crush flush breeze blouse charge solid fish spread"
+                birthday = 991645 // 663174
+            }
+            ZcashNetwork.Testnet -> {
+                seedPhrase = "quantum whisper lion route fury lunar pelican image job client hundred sauce chimney barely life cliff spirit admit weekend message recipe trumpet impact kitten"
+                birthday = 1330190
+            }
+            else -> throw RuntimeException("No developer wallet exists for network ${ZcashWalletApp.instance.defaultNetwork}")
+        }
+
         mainActivity?.apply {
             lifecycleScope.launch {
                 try {

@@ -6,17 +6,17 @@ buildscript {
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.2.0-rc01'
+        classpath 'com.android.tools.build:gradle:4.1.3'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${Deps.kotlinVersion}"
         classpath 'com.bugsnag:bugsnag-android-gradle-plugin:4.7.5'
         classpath 'com.google.gms:google-services:4.3.5'
         classpath 'com.google.firebase:firebase-crashlytics-gradle:2.5.2'
+        classpath "androidx.navigation:navigation-safe-args-gradle-plugin:${Deps.navigationVersion}"
     }
 }
 
 allprojects {
     repositories {
-        mavenLocal()
         google()
         jcenter()
         maven { url 'https://jitpack.io' }
