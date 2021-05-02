@@ -31,9 +31,6 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <!-- Firebase options -->
-        <meta-data android:name="com.google.firebase.ml.vision.DEPENDENCIES" android:value="barcode" />
-
         <!-- Mixpanel options -->
         <meta-data android:name="com.mixpanel.android.MPConfig.AutoShowMixpanelUpdates" android:value="false" />
         <meta-data android:name="com.mixpanel.android.MPConfig.EnableDebugLogging" android:value="false" />
