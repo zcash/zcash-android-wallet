@@ -19,21 +19,17 @@ class TabLayoutFragment: BaseFragment<FragmentTabLayoutBinding>() {
     override fun inflate(inflater: LayoutInflater): FragmentTabLayoutBinding =
         FragmentTabLayoutBinding.inflate(inflater)
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        tabLayout = TabLayout(requireContext())
-        viewPager = ViewPager(requireContext())
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        tabLayout = view.findViewById(R.id.tabLayout)
         tabLayout.tabGravity = TabLayout.GRAVITY_FILL
 
-        var viewPager: ViewPager = view.findViewById(R.id.viewPager)
+        viewPager = view.findViewById(R.id.viewPager)
 
         val adapter = ViewPagerAdapter(activity?.supportFragmentManager)
-        adapter.addFrag(ReceiveFragment(), "Fragment 1")
-        adapter.addFrag(AwesomeFragment(), "Fragment 2")
+        adapter.addFrag(ReceiveFragment(), "Shielded")
+        adapter.addFrag(AwesomeFragment(), "Transparent")
 
         viewPager.adapter = adapter
 
