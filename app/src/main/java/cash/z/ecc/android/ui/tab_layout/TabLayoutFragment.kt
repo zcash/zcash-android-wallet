@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import androidx.viewpager.widget.ViewPager
+import cash.z.ecc.android.R
 import cash.z.ecc.android.databinding.FragmentTabLayoutBinding
 import cash.z.ecc.android.ui.base.BaseFragment
 import cash.z.ecc.android.ui.profile.AwesomeFragment
@@ -28,12 +29,15 @@ class TabLayoutFragment: BaseFragment<FragmentTabLayoutBinding>() {
         super.onViewCreated(view, savedInstanceState)
         tabLayout.tabGravity = TabLayout.GRAVITY_FILL
 
+        var viewPager: ViewPager = view.findViewById(R.id.viewPager)
+
         val adapter = ViewPagerAdapter(activity?.supportFragmentManager)
-        adapter.addFrag(AwesomeFragment(), "Awesome")
-        adapter.addFrag(ReceiveFragment(), "Receive")
+        adapter.addFrag(ReceiveFragment(), "Fragment 1")
+        adapter.addFrag(AwesomeFragment(), "Fragment 2")
 
         viewPager.adapter = adapter
-        tabLayout.setupWithViewPager(viewPager);
+
+        tabLayout.setupWithViewPager(viewPager)
 
     }
 }
