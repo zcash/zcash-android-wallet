@@ -10,8 +10,8 @@ object Deps {
     const val buildToolsVersion =   "29.0.2"
     const val minSdkVersion =       21
     const val targetSdkVersion =    29
-    const val versionName =         "1.0.0-alpha67"
-    const val versionCode =         1_00_00_167  // last digits are alpha(0XX) beta(2XX) rc(4XX) release(8XX). Ex: 1_08_04_401 is an release candidate build of version 1.8.4 and 1_08_04_800 would be the final release.
+    const val versionName =         "1.0.0-alpha69"
+    const val versionCode =         1_00_00_169  // last digits are alpha(0XX) beta(2XX) rc(4XX) release(8XX). Ex: 1_08_04_401 is an release candidate build of version 1.8.4 and 1_08_04_800 would be the final release.
     const val packageName =         "cash.z.ecc.android"
 
 
@@ -83,7 +83,7 @@ object Deps {
     object Zcash {
         const val ANDROID_WALLET_PLUGINS =   "cash.z.ecc.android:zcash-android-wallet-plugins:1.0.0"
         const val KOTLIN_BIP39 =             "cash.z.ecc.android:kotlin-bip39:1.0.1"
-        const val SDK =                      "cash.z.ecc.android:zcash-android-sdk:1.3.0-beta05"
+        const val SDK =                      "cash.z.ecc.android:zcash-android-sdk:1.3.0-beta08"
     }
     object Misc {
         const val LOTTIE =                   "com.airbnb.android:lottie:3.1.0"

@@ -81,11 +81,8 @@ import cash.z.ecc.android.ui.history.HistoryViewModel
 import cash.z.ecc.android.ui.util.MemoUtil
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import java.lang.RuntimeException
 import javax.inject.Inject
 
 
@@ -265,6 +262,7 @@ class MainActivity : AppCompatActivity() {
                 (synchronizer as SdkSynchronizer).processor.onScanMetricCompleteListener = ::onScanMetricComplete
 
                 synchronizer.start(lifecycleScope)
+                mainViewModel.setSyncReady(true)
             }
         } else {
             twig("Ignoring request to start sync because sync has already been started!")
@@ -309,24 +307,6 @@ class MainActivity : AppCompatActivity() {
 
     fun setLoading(isLoading: Boolean, message: String? = null) {
         mainViewModel.setLoading(isLoading, message)
-    }
-
-    /**
-     * Launch the given block if the synchronizer is ready and syncing. Otherwise, wait until it is.
-     * The block will be scoped to the synchronizer when it runs.
-     */
-    fun launchWhenSyncing(block: suspend CoroutineScope.() -> Unit) {
-        // TODO: update this quick and dirty implementation, after the holidays. For now, this gets
-        //  the job done but the synchronizer should expose a method that helps with this so that
-        //  any complexity is taken care of at the library level.
-        lifecycleScope.launch {
-            while (mainViewModel.isLoading) {
-                delay(25L)
-            }
-            (synchronizerComponent.synchronizer() as SdkSynchronizer).coroutineScope.launch {
-                block()
-            }
-        }
     }
 
     fun authenticate(description: String, title: String = getString(R.string.biometric_prompt_title), block: () -> Unit) {
