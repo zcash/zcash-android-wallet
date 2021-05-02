@@ -95,14 +95,18 @@ class WalletSetupViewModel @Inject constructor() : ViewModel() {
      */
     private suspend fun loadConfig(): Initializer.Config {
         twig("Loading config variables")
+        var overwriteVks = false
         val network = ZcashWalletApp.instance.defaultNetwork
-        val vk = loadUnifiedViewingKey() ?: onMissingViewingKey(network)
+        val vk = loadUnifiedViewingKey() ?: onMissingViewingKey(network).also { overwriteVks = true }
         val birthdayHeight = loadBirthdayHeight() ?: onMissingBirthday(network)
         val host = prefs[Const.Pref.SERVER_HOST] ?: Const.Default.Server.HOST
         val port = prefs[Const.Pref.SERVER_PORT] ?: Const.Default.Server.PORT
 
         twig("Done loading config variables")
-        return Initializer.Config { it.importWallet(vk, birthdayHeight, network, host, port) }
+        return Initializer.Config {
+            it.importWallet(vk, birthdayHeight, network, host, port)
+            it.setOverwriteKeys(overwriteVks)
+        }
     }
 
     private fun loadUnifiedViewingKey(): UnifiedViewingKey? {
