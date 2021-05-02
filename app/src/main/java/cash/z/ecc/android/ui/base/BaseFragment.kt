@@ -11,6 +11,9 @@ import androidx.viewbinding.ViewBinding
 import cash.z.ecc.android.feedback.Report
 import cash.z.ecc.android.ui.MainActivity
 import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.onEach
 
 abstract class BaseFragment<T : ViewBinding> : Fragment() {
     val mainActivity: MainActivity? get() = activity as MainActivity?
@@ -58,4 +61,22 @@ abstract class BaseFragment<T : ViewBinding> : Fragment() {
         mainActivity?.reportTap(tap)
     }
 
+    /**
+     * Launch the given block once, within the 'resumedScope', once the Synchronizer is ready. This
+     * utility function helps solve the problem of taking action with the synchronizer before it
+     * is created. This surfaced while loading keys from secure storage: the HomeFragment would
+     * resume and start monitoring the synchronizer for changes BEFORE the onAttach function
+     * returned, meaning before the synchronizerComponent is created. So a state variable needed to
+     * exist with a longer lifecycle than the synchronizer. This function just takes care of all the
+     * boilerplate of monitoring that state variable until it returns true.
+     */
+    fun launchWhenSyncReady(block: () -> Unit) {
+        resumedScope.launch {
+            mainActivity?.let {
+                it.mainViewModel.syncReady.filter { isReady -> isReady }.onEach {
+                    block()
+                }.first()
+            }
+        }
+    }
 }

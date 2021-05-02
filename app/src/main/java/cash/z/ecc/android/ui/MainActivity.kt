@@ -262,6 +262,7 @@ class MainActivity : AppCompatActivity() {
                 (synchronizer as SdkSynchronizer).processor.onScanMetricCompleteListener = ::onScanMetricComplete
 
                 synchronizer.start(lifecycleScope)
+                mainViewModel.setSyncReady(true)
             }
         } else {
             twig("Ignoring request to start sync because sync has already been started!")

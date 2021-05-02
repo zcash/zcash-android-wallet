@@ -165,10 +165,15 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
         super.onResume()
         twig("HomeFragment.onResume  resumeScope.isActive: ${resumedScope.isActive}  $resumedScope")
 
+        launchWhenSyncReady(::onSyncReady)
+    }
+
+    private fun onSyncReady() {
+        twig("Sync ready! Monitoring synchronizer state...")
         monitorUiModelChanges()
         maybeInterruptUser()
 
-        twig("HomeFragment.onResume COMPLETE")
+        twig("HomeFragment.onSyncReady COMPLETE")
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
