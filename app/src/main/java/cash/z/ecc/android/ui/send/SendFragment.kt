@@ -186,8 +186,7 @@ class SendFragment :
     }
 
     /**
-     * To hide input Memo and reply-to option for T type address and show a info message about memo option availability
-     * */
+     * To hide input Memo and reply-to option for T type address and show a info message about memo option availability */
     private fun updateAddressUi(isMemoHidden: Boolean) {
         if (isMemoHidden) {
             binding.textLayoutMemo.gone()
