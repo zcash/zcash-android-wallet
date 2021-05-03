@@ -52,7 +52,7 @@ class SendFinalFragment : BaseFragment<FragmentSendFinalBinding>() {
         mainActivity?.apply {
             sendViewModel.send().onEach {
                 onPendingTxUpdated(it)
-            }.launchIn(lifecycleScope)
+            }.launchIn(resumedScope)
         }
     }
 
