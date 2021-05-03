@@ -6,7 +6,11 @@ import android.os.Bundle
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
-import androidx.camera.core.*
+import androidx.camera.core.AspectRatio
+import androidx.camera.core.CameraSelector
+import androidx.camera.core.ImageAnalysis
+import androidx.camera.core.ImageProxy
+import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import cash.z.ecc.android.R
@@ -16,7 +20,6 @@ import cash.z.ecc.android.di.viewmodel.viewModel
 import cash.z.ecc.android.ext.onClickNavBack
 import cash.z.ecc.android.feedback.Report
 import cash.z.ecc.android.feedback.Report.Tap.SCAN_BACK
-import cash.z.ecc.android.sdk.ext.ZcashSdk
 import cash.z.ecc.android.sdk.ext.twig
 import cash.z.ecc.android.ui.base.BaseFragment
 import cash.z.ecc.android.ui.send.SendViewModel
@@ -26,7 +29,9 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 class ScanFragment : BaseFragment<FragmentScanBinding>() {
+
     override val screen = Report.Screen.SCAN
+
     private val viewModel: ScanViewModel by viewModel()
 
     private val sendViewModel: SendViewModel by activityViewModel()
@@ -54,9 +59,12 @@ class ScanFragment : BaseFragment<FragmentScanBinding>() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         cameraProviderFuture = ProcessCameraProvider.getInstance(context)
-        cameraProviderFuture.addListener(Runnable {
-            bindPreview(cameraProviderFuture.get())
-        }, ContextCompat.getMainExecutor(context))
+        cameraProviderFuture.addListener(
+            Runnable {
+                bindPreview(cameraProviderFuture.get())
+            },
+            ContextCompat.getMainExecutor(context)
+        )
     }
 
     override fun onDestroyView() {
@@ -87,9 +95,12 @@ class ScanFragment : BaseFragment<FragmentScanBinding>() {
             .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
             .build()
 
-        imageAnalysis.setAnalyzer(cameraExecutor!!, QrAnalyzer { q, i ->
-            onQrScanned(q, i)
-        })
+        imageAnalysis.setAnalyzer(
+            cameraExecutor!!,
+            QrAnalyzer { q, i ->
+                onQrScanned(q, i)
+            }
+        )
 
         // Must unbind the use-cases before rebinding them
         cameraProvider.unbindAll()
@@ -102,7 +113,6 @@ class ScanFragment : BaseFragment<FragmentScanBinding>() {
             mainActivity?.feedback?.report(t)
             twig("Error while opening the camera: $t")
         }
-
     }
 
     /**
@@ -114,7 +124,8 @@ class ScanFragment : BaseFragment<FragmentScanBinding>() {
             height
         )
         if (kotlin.math.abs(previewRatio - (4.0 / 3.0))
-            <= kotlin.math.abs(previewRatio - (16.0 / 9.0))) {
+            <= kotlin.math.abs(previewRatio - (16.0 / 9.0))
+        ) {
             return AspectRatio.RATIO_4_3
         }
         return AspectRatio.RATIO_16_9
@@ -127,7 +138,7 @@ class ScanFragment : BaseFragment<FragmentScanBinding>() {
                 val network = viewModel.networkName
                 binding.textScanError.text = getString(R.string.scan_invalid_address, network, qrContent)
                 image.close()
-            } else {  /* continue scanning*/
+            } else { /* continue scanning*/
                 binding.textScanError.text = ""
                 sendViewModel.toAddress = parsed
                 mainActivity?.safeNavigate(R.id.action_nav_scan_to_nav_send)
@@ -157,12 +168,6 @@ class ScanFragment : BaseFragment<FragmentScanBinding>() {
 //        overlay.set(list)
 //    }
 
-
-
-
-
-
-
     //
     // Permissions
     //
@@ -171,7 +176,7 @@ class ScanFragment : BaseFragment<FragmentScanBinding>() {
         get() {
             return try {
                 val info = mainActivity?.packageManager
-                    ?.getPackageInfo(mainActivity?.packageName, PackageManager.GET_PERMISSIONS)
+                    ?.getPackageInfo(mainActivity?.packageName ?: "", PackageManager.GET_PERMISSIONS)
                 val ps = info?.requestedPermissions
                 if (ps != null && ps.isNotEmpty()) {
                     ps

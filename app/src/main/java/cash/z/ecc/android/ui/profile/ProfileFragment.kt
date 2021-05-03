@@ -40,7 +40,6 @@ import cash.z.ecc.android.ui.util.DebugFileTwig
 import kotlinx.coroutines.launch
 import java.io.File
 
-
 class ProfileFragment : BaseFragment<FragmentProfileBinding>() {
     override val screen = Report.Screen.PROFILE
 
@@ -93,13 +92,14 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>() {
         if (viewModel.isEasterEggTriggered()) {
             binding.iconProfile.setImageResource(R.drawable.ic_profile_zebra_02)
         }
-
     }
 
     private fun onEnterAwesomeMode() {
         (context as? MainActivity)?.safeNavigate(R.id.action_nav_profile_to_nav_awesome)
-            ?: throw IllegalStateException("Cannot navigate from this activity. " +
-                    "Expected MainActivity but found ${context?.javaClass?.simpleName}")
+            ?: throw IllegalStateException(
+                "Cannot navigate from this activity. " +
+                    "Expected MainActivity but found ${context?.javaClass?.simpleName}"
+            )
     }
 
     override fun onResume() {
@@ -135,7 +135,7 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>() {
                 viewModel.quickRescan()
                 Toast.makeText(ZcashWalletApp.instance, "Performing quick rescan!", Toast.LENGTH_LONG).show()
                 mainActivity?.navController?.popBackStack()
-            } catch(t: Throwable) {
+            } catch (t: Throwable) {
                 mainActivity?.showCriticalMessage("Quick Rescan Failed", "Unable to perform quick rescan due to error:\n\n${t.message}")
             }
         }
@@ -145,8 +145,8 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>() {
         mainActivity?.showConfirmation(
             "Are you sure?",
             "Wiping your data will close the app. Since your seed is preserved, " +
-                    "this operation is probably safe but please backup your seed anyway." +
-                    "\n\nContinue?",
+                "this operation is probably safe but please backup your seed anyway." +
+                "\n\nContinue?",
             "Wipe"
         ) {
             viewModel.wipe()

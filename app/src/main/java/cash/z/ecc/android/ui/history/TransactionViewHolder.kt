@@ -4,10 +4,7 @@ import android.graphics.drawable.Drawable
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.annotation.ColorRes
-import androidx.annotation.IntegerRes
 import androidx.annotation.StringRes
-import androidx.appcompat.content.res.AppCompatResources
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import cash.z.ecc.android.R
@@ -22,12 +19,12 @@ import cash.z.ecc.android.sdk.ext.ZcashSdk
 import cash.z.ecc.android.sdk.ext.isShielded
 import cash.z.ecc.android.sdk.ext.toAbbreviatedAddress
 import cash.z.ecc.android.ui.MainActivity
-import cash.z.ecc.android.ui.util.MemoUtil
 import cash.z.ecc.android.ui.util.toUtf8Memo
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 
 class TransactionViewHolder<T : ConfirmedTransaction>(itemView: View) : RecyclerView.ViewHolder(itemView) {
+
     private val indicator = itemView.findViewById<View>(R.id.indicator)
     private val amountText = itemView.findViewById<TextView>(R.id.text_transaction_amount)
     private val topText = itemView.findViewById<TextView>(R.id.text_transaction_top)
@@ -40,7 +37,7 @@ class TransactionViewHolder<T : ConfirmedTransaction>(itemView: View) : Recycler
         val mainActivity = itemView.context as MainActivity
         mainActivity.lifecycleScope.launch {
             // update view
-            var lineOne:CharSequence = ""
+            var lineOne: CharSequence = ""
             var lineTwo = ""
             var amountZec = ""
             var amountDisplay = ""
@@ -70,7 +67,7 @@ class TransactionViewHolder<T : ConfirmedTransaction>(itemView: View) : Recycler
                         lineOne = "${if (isMined) str(R.string.transaction_address_you_paid) else str(R.string.transaction_address_paying)} ${toAddress?.toAbbreviatedAddress()}"
                         lineTwo = if (isMined) "${str(R.string.transaction_status_sent)} $timestamp" else str(R.string.transaction_status_pending)
                         // TODO: this logic works but is sloppy. Find a more robust solution to displaying information about expiration (such as expires in 1 block, etc). Then if it is way beyond expired, remove it entirely. Perhaps give the user a button for that (swipe to dismiss?)
-                        if(!isMined && (expiryHeight != null) && (expiryHeight!! < mainActivity.latestHeight ?: -1)) lineTwo = str(R.string.transaction_status_expired)
+                        if (!isMined && (expiryHeight != null) && (expiryHeight!! < mainActivity.latestHeight ?: -1)) lineTwo = str(R.string.transaction_status_expired)
                         amountDisplay = "- $amountZec"
                         if (isMined) {
                             arrowRotation = R.integer.transaction_arrow_rotation_send
@@ -132,7 +129,8 @@ class TransactionViewHolder<T : ConfirmedTransaction>(itemView: View) : Recycler
             indicator.setBackgroundColor(indicatorBackground.toAppColor())
             transactionArrow.setColorFilter(arrowBackgroundTint.toAppColor())
             transactionArrow.rotation = arrowRotation.toAppInt().toFloat()
-            var bottomTextRightDrawable:Drawable? = null
+
+            var bottomTextRightDrawable: Drawable? = null
             iconMemo.goneIf(!transaction?.memo.toUtf8Memo().isNotEmpty())
             bottomText.setCompoundDrawablesWithIntrinsicBounds(null, null, bottomTextRightDrawable, null)
         }
@@ -153,7 +151,4 @@ class TransactionViewHolder<T : ConfirmedTransaction>(itemView: View) : Recycler
     }
 
     private inline fun str(@StringRes resourceId: Int) = itemView.context.getString(resourceId)
-    
 }
-
-

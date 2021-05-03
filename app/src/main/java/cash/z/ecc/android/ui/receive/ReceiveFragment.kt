@@ -8,20 +8,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.TextView
 import cash.z.android.qrecycler.QRecycler
-import cash.z.ecc.android.R
 import cash.z.ecc.android.databinding.FragmentReceiveNewBinding
 import cash.z.ecc.android.di.viewmodel.viewModel
 import cash.z.ecc.android.ext.distribute
 import cash.z.ecc.android.ext.onClickNavBack
-import cash.z.ecc.android.ext.onClickNavTo
 import cash.z.ecc.android.feedback.Report
-import cash.z.ecc.android.feedback.Report.Tap.*
-import cash.z.ecc.android.ui.base.BaseFragment
-import cash.z.ecc.android.sdk.ext.toAbbreviatedAddress
+import cash.z.ecc.android.feedback.Report.Tap.RECEIVE_BACK
 import cash.z.ecc.android.sdk.ext.twig
+import cash.z.ecc.android.ui.base.BaseFragment
 import cash.z.ecc.android.ui.util.AddressPartNumberSpan
 import kotlinx.coroutines.launch
-import kotlin.math.roundToInt
 
 class ReceiveFragment : BaseFragment<FragmentReceiveNewBinding>() {
     override val screen = Report.Screen.RECEIVE

@@ -9,7 +9,6 @@ import androidx.core.content.getSystemService
 import cash.z.ecc.android.R
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
-
 fun Context.showClearDataConfirmation(onDismiss: () -> Unit = {}, onCancel: () -> Unit = {}): Dialog {
     return MaterialAlertDialogBuilder(this)
         .setTitle(R.string.dialog_nuke_wallet_title)
@@ -39,10 +38,13 @@ fun Context.showUninitializedError(error: Throwable? = null, onDismiss: () -> Un
             if (error != null) throw error
         }
         .setNegativeButton(getString(R.string.dialog_error_uninitialized_button_negative)) { dialog, _ ->
-            showClearDataConfirmation(onDismiss, onCancel = {
-                // do not let the user back into the app because we cannot recover from this case
-                showUninitializedError(error, onDismiss)
-            })
+            showClearDataConfirmation(
+                onDismiss,
+                onCancel = {
+                    // do not let the user back into the app because we cannot recover from this case
+                    showUninitializedError(error, onDismiss)
+                }
+            )
         }
         .show()
 }

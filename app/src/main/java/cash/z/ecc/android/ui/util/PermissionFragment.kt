@@ -1,15 +1,15 @@
 package cash.z.ecc.android.ui.util
 //
-//import android.Manifest
-//import android.content.Context
-//import android.content.pm.PackageManager
-//import android.os.Bundle
-//import android.widget.Toast
-//import androidx.core.content.ContextCompat
-//import androidx.fragment.app.Fragment
-//import cash.z.ecc.android.ui.MainActivity
+// import android.Manifest
+// import android.content.Context
+// import android.content.pm.PackageManager
+// import android.os.Bundle
+// import android.widget.Toast
+// import androidx.core.content.ContextCompat
+// import androidx.fragment.app.Fragment
+// import cash.z.ecc.android.ui.MainActivity
 //
-//class PermissionFragment : Fragment() {
+// class PermissionFragment : Fragment() {
 //
 //    val activity get() = context as MainActivity
 //
@@ -44,4 +44,4 @@ package cash.z.ecc.android.ui.util
 //            ContextCompat.checkSelfPermission(context, it) == PackageManager.PERMISSION_GRANTED
 //        }
 //    }
-//}
+// }

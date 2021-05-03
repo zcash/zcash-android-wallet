@@ -11,9 +11,12 @@ import cash.z.ecc.android.ext.tryWithWarning
 import cash.z.ecc.android.feedback.FeedbackCoordinator
 import cash.z.ecc.android.sdk.ext.twig
 import cash.z.ecc.android.sdk.type.ZcashNetwork
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
-
 
 class ZcashWalletApp : Application(), CameraXConfig.Provider {
 
@@ -102,10 +105,9 @@ class ZcashWalletApp : Application(), CameraXConfig.Provider {
     }
 }
 
-
 fun ZcashWalletApp.isEmulator(): Boolean {
-    val goldfish = Build.HARDWARE.contains("goldfish");
-    val emu = (System.getProperty("ro.kernel.qemu", "")?.length ?: 0) > 0;
+    val goldfish = Build.HARDWARE.contains("goldfish")
+    val emu = (System.getProperty("ro.kernel.qemu", "")?.length ?: 0) > 0
     val sdk = Build.MODEL.toLowerCase().contains("sdk")
-    return goldfish || emu || sdk;
+    return goldfish || emu || sdk
 }

@@ -4,32 +4,34 @@ import android.content.res.ColorStateList
 import android.graphics.ColorMatrix
 import android.graphics.ColorMatrixColorFilter
 import android.os.Bundle
-import android.text.format.DateUtils
 import android.text.method.ScrollingMovementMethod
 import android.view.LayoutInflater
 import android.view.View
 import androidx.core.view.ViewCompat
 import androidx.lifecycle.lifecycleScope
-import androidx.transition.*
+import androidx.transition.ChangeBounds
+import androidx.transition.ChangeClipBounds
+import androidx.transition.ChangeTransform
+import androidx.transition.Transition
+import androidx.transition.TransitionSet
 import cash.z.ecc.android.R
-import cash.z.ecc.android.ZcashWalletApp
 import cash.z.ecc.android.databinding.FragmentTransactionBinding
 import cash.z.ecc.android.di.viewmodel.activityViewModel
-import cash.z.ecc.android.ext.*
+import cash.z.ecc.android.ext.Const
+import cash.z.ecc.android.ext.gone
+import cash.z.ecc.android.ext.invisible
+import cash.z.ecc.android.ext.onClickNavBack
+import cash.z.ecc.android.ext.toAppColor
+import cash.z.ecc.android.ext.toColoredSpan
+import cash.z.ecc.android.ext.visible
 import cash.z.ecc.android.feedback.Report
-import cash.z.ecc.android.sdk.db.entity.ConfirmedTransaction
-import cash.z.ecc.android.sdk.ext.ZcashSdk
 import cash.z.ecc.android.sdk.ext.toAbbreviatedAddress
 import cash.z.ecc.android.sdk.ext.twig
-import cash.z.ecc.android.ui.MainActivity
 import cash.z.ecc.android.ui.base.BaseFragment
 import cash.z.ecc.android.ui.history.HistoryViewModel.UiModel
-import cash.z.ecc.android.ui.util.toUtf8Memo
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import java.util.*
-
 
 class TransactionFragment : BaseFragment<FragmentTransactionBinding>() {
     override val screen = Report.Screen.TRANSACTION
@@ -53,7 +55,7 @@ class TransactionFragment : BaseFragment<FragmentTransactionBinding>() {
 //        sharedElementReturnTransition = ChangeBounds().apply { duration = 1500 }
 //        enterTransition = Fade().apply {
 //            duration = 1800
-////            slideEdge = Gravity.END
+// //            slideEdge = Gravity.END
 //        }
     }
 
@@ -117,7 +119,6 @@ class TransactionFragment : BaseFragment<FragmentTransactionBinding>() {
                     uiModel.toAddressLabel()?.let { subwaySpotAddress.visible(); subwayLabelAddress.visible(); subwayLabelAddress.text = it }
                     uiModel.toAddressClickListener()?.let { subwayLabelAddress.setOnClickListener(it) }
 
-
                     // TODO: remove logic from sections below and add more fields or extension functions to UiModel
                     uiModel.confirmation?.let {
                         subwaySpotConfirmations.visible(); subwayLabelConfirmations.visible()
@@ -162,7 +163,7 @@ class TransactionFragment : BaseFragment<FragmentTransactionBinding>() {
             binding.subwaySpotMemoContent.rotation = 90.0f
         } else {
             binding.subwayLabelMemo.setText(getString(R.string.transaction_with_memo))
-            binding.subwayLabelMemo.scrollTo(0,0)
+            binding.subwayLabelMemo.scrollTo(0, 0)
             binding.subwayLabelMemo.invalidate()
             twig("setting memo text to: with a memo")
             binding.groupMemoIcon.visible()
@@ -196,12 +197,4 @@ class TransactionFragment : BaseFragment<FragmentTransactionBinding>() {
             it.toColoredSpan(R.color.tx_text_light_dimmed, if (address == null) it else prefix)
         }
     }
-
-
-
-
 }
-
-
-
-

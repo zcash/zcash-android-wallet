@@ -7,7 +7,7 @@ import cash.z.ecc.android.sdk.ext.Bush
 import cash.z.ecc.android.sdk.ext.Twig
 import cash.z.ecc.android.sdk.ext.twig
 import cash.z.ecc.android.sdk.type.WalletBalance
-import java.util.*
+import java.util.Locale
 import kotlin.math.roundToInt
 
 /**

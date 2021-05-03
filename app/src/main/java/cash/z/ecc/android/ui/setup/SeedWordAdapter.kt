@@ -7,10 +7,9 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import cash.z.ecc.android.R
 import cash.z.ecc.android.ext.toAppColor
-import cash.z.ecc.android.sdk.ext.twig
 import cash.z.ecc.android.ui.setup.SeedWordChip
 
-class SeedWordAdapter :  ChipsAdapter {
+class SeedWordAdapter : ChipsAdapter {
 
     constructor(existingAdapter: ChipsAdapter) : super(existingAdapter.mDataSource, existingAdapter.mEditText, existingAdapter.mOptions)
 
@@ -22,23 +21,23 @@ class SeedWordAdapter :  ChipsAdapter {
         else object : RecyclerView.ViewHolder(mEditText) {}
     }
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-         if (getItemViewType(position) == CHIP) { // Chips
+        if (getItemViewType(position) == CHIP) { // Chips
             // Display the chip information on the chip view
-             (holder as SeedWordHolder).seedChipView.bind(mDataSource.getSelectedChip(position), position);
+            (holder as SeedWordHolder).seedChipView.bind(mDataSource.getSelectedChip(position), position)
         } else {
             val size = mDataSource.selectedChips.size
 
-             // tricky bugfix:
-             // keep this always enabled otherwise older versions of android crash when this
-             // view is given focus. As a work around, just hide the cursor when the user is done
-             // editing. This is not ideal but it's better than a crash during wallet restore!
+            // tricky bugfix:
+            // keep this always enabled otherwise older versions of android crash when this
+            // view is given focus. As a work around, just hide the cursor when the user is done
+            // editing. This is not ideal but it's better than a crash during wallet restore!
             mEditText.isEnabled = true
             mEditText.hint = if (size < 3) {
                 mEditText.isCursorVisible = true
                 mEditText.setHintTextColor(R.color.text_light_dimmed.toAppColor())
-                val ordinal = when(size) {2 -> "3rd"; 1 -> "2nd"; else -> "1st"}
+                val ordinal = when (size) { 2 -> "3rd"; 1 -> "2nd"; else -> "1st" }
                 "Enter $ordinal seed word"
-            } else if(size >= 24) {
+            } else if (size >= 24) {
                 mEditText.setHintTextColor(R.color.zcashGreen.toAppColor())
                 mEditText.isCursorVisible = false
                 "done"
@@ -66,10 +65,13 @@ class SeedWordAdapter :  ChipsAdapter {
         if (mDataSource.originalChips.firstOrNull { it.title == text } != null) {
             mDataSource.addSelectedChip(DefaultCustomChip(text))
             mEditText.apply {
-                postDelayed({
-                    setText("")
-                    requestFocus()
-                }, 50L)
+                postDelayed(
+                    {
+                        setText("")
+                        requestFocus()
+                    },
+                    50L
+                )
             }
         }
     }
@@ -99,4 +101,3 @@ class SeedWordAdapter :  ChipsAdapter {
         }
     }
 }
-

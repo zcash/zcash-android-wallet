@@ -68,7 +68,6 @@ class HistoryViewModel @Inject constructor() : ViewModel() {
         var txId: String? = null
     )
 
-
     private suspend fun ConfirmedTransaction?.toUiModel(latestHeight: Int? = null): UiModel = UiModel().apply {
         this@toUiModel.let { tx ->
             txId = toTxId(tx?.rawTransactionId)
@@ -105,7 +104,8 @@ class HistoryViewModel @Inject constructor() : ViewModel() {
                     if (it.minedHeight > 0 && hasLatestHeight) {
                         val confirmations = latestHeight!! - it.minedHeight + 1
                         confirmation = if (confirmations >= 10) getString(R.string.transaction_status_confirmed) else "$confirmations ${getString(
-                            R.string.transaction_status_confirming)}"
+                            R.string.transaction_status_confirming
+                        )}"
                     } else {
                         if (!hasLatestHeight && isSufficientlyOld(tx)) {
                             twig("Warning: could not load latestheight from server to determine confirmations but this transaction is mined and old enough to be considered confirmed")
@@ -118,11 +118,8 @@ class HistoryViewModel @Inject constructor() : ViewModel() {
                 } else {
                     confirmation = getString(R.string.transaction_status_pending)
                 }
-
             }
 
-//            val mainActivity = (context as MainActivity)
-            // inbound v. outbound values
             when (isInbound) {
                 true -> {
                     topLabel = getString(R.string.transaction_story_inbound)
@@ -154,7 +151,7 @@ class HistoryViewModel @Inject constructor() : ViewModel() {
     private fun toTxId(tx: ByteArray?): String? {
         if (tx == null) return null
         val sb = StringBuilder(tx.size * 2)
-        for(i in (tx.size - 1) downTo 0) {
+        for (i in (tx.size - 1) downTo 0) {
             sb.append(String.format("%02x", tx[i]))
         }
         return sb.toString()
@@ -164,10 +161,9 @@ class HistoryViewModel @Inject constructor() : ViewModel() {
     //       the goal is just to improve the edge cases where the latest height isn't known but other
     //       information suggests that the TX is confirmed. We can improve this, later.
     private fun isSufficientlyOld(tx: ConfirmedTransaction): Boolean {
-        val threshold = 75 * 1000 * 25 //approx 25 blocks
+        val threshold = 75 * 1000 * 25 // approx 25 blocks
         val delta = System.currentTimeMillis() / 1000L - tx.blockTimeInSeconds
-        return tx.minedHeight > synchronizer.network.saplingActivationHeight
-                && delta < threshold
+        return tx.minedHeight > synchronizer.network.saplingActivationHeight &&
+            delta < threshold
     }
-
 }

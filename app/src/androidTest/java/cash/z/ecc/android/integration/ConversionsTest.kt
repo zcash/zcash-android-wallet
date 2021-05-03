@@ -14,7 +14,6 @@ class ConversionsTest {
 
     @Before
     fun setUp() {
-
     }
 
     @Test
@@ -73,7 +72,6 @@ class ConversionsTest {
         Assert.assertEquals(1000, result.longValueExact())
     }
 
-
     @Test
     fun testToBigDecimal_thousandCommaWithDecimal() {
         val input = "1,000.00"
@@ -108,12 +106,6 @@ class ConversionsTest {
         val result = WalletZecFormmatter.toBigDecimal(input)!!
         Assert.assertEquals(1, result.longValueExact())
     }
-
-
-
-
-
-
 
     @Test
     fun testToZecString_full() {

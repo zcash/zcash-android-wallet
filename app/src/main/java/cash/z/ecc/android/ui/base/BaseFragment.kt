@@ -10,10 +10,15 @@ import androidx.lifecycle.lifecycleScope
 import androidx.viewbinding.ViewBinding
 import cash.z.ecc.android.feedback.Report
 import cash.z.ecc.android.ui.MainActivity
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 
 abstract class BaseFragment<T : ViewBinding> : Fragment() {
     val mainActivity: MainActivity? get() = activity as MainActivity?

@@ -5,14 +5,23 @@ import cash.z.ecc.android.R
 import cash.z.ecc.android.ext.toAppString
 import cash.z.ecc.android.sdk.SdkSynchronizer
 import cash.z.ecc.android.sdk.Synchronizer
-import cash.z.ecc.android.sdk.Synchronizer.Status.*
+import cash.z.ecc.android.sdk.Synchronizer.Status.DISCONNECTED
+import cash.z.ecc.android.sdk.Synchronizer.Status.DOWNLOADING
+import cash.z.ecc.android.sdk.Synchronizer.Status.SCANNING
+import cash.z.ecc.android.sdk.Synchronizer.Status.SYNCED
+import cash.z.ecc.android.sdk.Synchronizer.Status.VALIDATING
 import cash.z.ecc.android.sdk.block.CompactBlockProcessor
 import cash.z.ecc.android.sdk.exception.RustLayerException
 import cash.z.ecc.android.sdk.ext.ZcashSdk.MINERS_FEE_ZATOSHI
 import cash.z.ecc.android.sdk.ext.ZcashSdk.ZATOSHI_PER_ZEC
 import cash.z.ecc.android.sdk.ext.twig
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.conflate
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.scan
 import javax.inject.Inject
 import kotlin.math.roundToInt
 
@@ -39,14 +48,14 @@ class HomeViewModel @Inject constructor() : ViewModel() {
         }
         _typedChars = ConflatedBroadcastChannel()
         val typedChars = _typedChars.asFlow()
-        val decimal = '.'// R.string.key_decimal.toAppString()[0]
+        val decimal = '.' // R.string.key_decimal.toAppString()[0]
         val backspace = R.string.key_backspace.toAppString()[0]
         val zec = typedChars.scan(preTypedChars) { acc, c ->
             when {
                 // no-op cases
-                acc == "0" && c == '0'
-                        || (c == backspace && acc == "0")
-                        || (c == decimal && acc.contains(decimal)) -> {
+                acc == "0" && c == '0' ||
+                    (c == backspace && acc == "0")
+                    || (c == decimal && acc.contains(decimal)) -> {
                     acc
                 }
                 c == backspace && acc.length <= 1 -> {
@@ -68,9 +77,9 @@ class HomeViewModel @Inject constructor() : ViewModel() {
         }
         twig("initializing view models stream")
         uiModels = synchronizer.run {
-            combine(status, processorInfo, balances, zec) { s, p, b, z->
+            combine(status, processorInfo, balances, zec) { s, p, b, z ->
                 UiModel(s, p, b.availableZatoshi, b.totalZatoshi, z)
-            }.onStart{ emit(UiModel()) }
+            }.onStart { emit(UiModel()) }
         }.conflate()
     }
 

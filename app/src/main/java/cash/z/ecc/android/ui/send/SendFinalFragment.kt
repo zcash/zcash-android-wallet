@@ -13,7 +13,12 @@ import cash.z.ecc.android.ext.WalletZecFormmatter
 import cash.z.ecc.android.ext.goneIf
 import cash.z.ecc.android.feedback.Report
 import cash.z.ecc.android.feedback.Report.Tap.SEND_FINAL_CLOSE
-import cash.z.ecc.android.sdk.db.entity.*
+import cash.z.ecc.android.sdk.db.entity.PendingTransaction
+import cash.z.ecc.android.sdk.db.entity.isCancelled
+import cash.z.ecc.android.sdk.db.entity.isCreating
+import cash.z.ecc.android.sdk.db.entity.isFailedEncoding
+import cash.z.ecc.android.sdk.db.entity.isFailure
+import cash.z.ecc.android.sdk.db.entity.isSubmitSuccess
 import cash.z.ecc.android.sdk.ext.toAbbreviatedAddress
 import cash.z.ecc.android.sdk.ext.twig
 import cash.z.ecc.android.ui.base.BaseFragment
@@ -70,13 +75,13 @@ class SendFinalFragment : BaseFragment<FragmentSendFinalBinding>() {
                     }
 
                     buttonMoreInfo.apply {
-                        setOnClickListener{
+                        setOnClickListener {
                             val moreInfoMsg = """${getString(R.string.more_info)} : ${model.errorDescription}"""
                             txtMoreInfo.run {
                                 text = moreInfoMsg
                             }
 
-                            if(model.errorDescription.isNotEmpty())
+                            if (model.errorDescription.isNotEmpty())
                                 buttonMoreInfo.text = getString(R.string.translated_button_done)
                         }
                     }
@@ -115,7 +120,7 @@ class SendFinalFragment : BaseFragment<FragmentSendFinalBinding>() {
 
     private fun PendingTransaction.toUiModel() = UiModel().also { model ->
         when {
-           isCancelled() -> {
+            isCancelled() -> {
                 model.title = getString(R.string.send_final_result_cancelled)
                 model.primaryButtonText = getString(R.string.send_final_button_primary_back)
                 model.primaryAction = { onReturnToSend() }
@@ -128,7 +133,8 @@ class SendFinalFragment : BaseFragment<FragmentSendFinalBinding>() {
             isFailure() -> {
                 model.title = getString(R.string.send_final_button_primary_failed)
                 model.errorMessage = if (isFailedEncoding()) getString(R.string.send_final_error_encoding) else getString(
-                                    R.string.send_final_error_submitting)
+                    R.string.send_final_error_submitting
+                )
                 model.errorDescription = errorMessage.toString()
                 model.primaryButtonText = getString(R.string.send_final_button_primary_retry)
                 model.primaryAction = { onReturnToSend() }
@@ -156,7 +162,6 @@ class SendFinalFragment : BaseFragment<FragmentSendFinalBinding>() {
         var showProgress: Boolean = false,
         var errorMessage: String = "",
         var primaryButtonText: String = "See Details",
-        var primaryAction: () ->  Unit = {}
+        var primaryAction: () -> Unit = {}
     )
-
 }

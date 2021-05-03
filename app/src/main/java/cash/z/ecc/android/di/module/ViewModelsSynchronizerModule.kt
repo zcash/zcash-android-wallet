@@ -1,6 +1,5 @@
 package cash.z.ecc.android.di.module
 
-
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import cash.z.ecc.android.di.annotation.SynchronizerScope
@@ -65,7 +64,7 @@ abstract class ViewModelsSynchronizerModule {
     @IntoMap
     @ViewModelKey(SettingsViewModel::class)
     abstract fun bindSettingsViewModel(implementation: SettingsViewModel): ViewModel
-    
+
     /**
      * Factory for view models that are not created until the Synchronizer exists. Only VMs that
      * require the Synchronizer should wait until it is created. In other words, these are the VMs

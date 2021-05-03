@@ -68,7 +68,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
     override fun inflate(inflater: LayoutInflater): FragmentHomeBinding =
         FragmentHomeBinding.inflate(inflater)
 
-
     //
     // LifeCycle
     //
@@ -144,7 +143,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
             // if the model already existed, cool but let the sendViewModel be the source of truth for the amount
             onModelUpdated(null, uiModel.copy(pendingSend = WalletZecFormmatter.toZecStringFull(sendViewModel.zatoshiAmount.coerceAtLeast(0))))
         }
-
     }
 
     private fun onClearAmount() {
@@ -189,7 +187,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
 //            onModelUpdated(HomeViewModel.UiModel(), inState.getParcelable("uiModel")!!)
         }
     }
-
 
     //
     // Public UI API
@@ -277,7 +274,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
                 val change = WalletZecFormmatter.toZecStringFull(totalBalance - availableBalance)
                 "(${getString(R.string.home_banner_expecting)} +$change ZEC)".toColoredSpan(R.color.text_light, "+$change")
             } else {
-               getString(R.string.home_instruction_enter_amount)
+                getString(R.string.home_instruction_enter_amount)
             }
         }
     }
@@ -293,7 +290,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
             textBannerAction.text = action.action
         }
     }
-
 
     //
     // Private UI Events
@@ -320,9 +316,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
             else -> {
                 buildString {
                     append("UiModel(")
-                    if (old.status != new.status) append ("status=${new.status}")
+                    if (old.status != new.status) append("status=${new.status}")
                     if (old.processorInfo != new.processorInfo) {
-                        append ("${maybeComma()}processorInfo=ProcessorInfo(")
+                        append("${maybeComma()}processorInfo=ProcessorInfo(")
                         val startLength = length
                         fun innerComma() = if (length > startLength) ", " else ""
                         if (old.processorInfo.networkBlockHeight != new.processorInfo.networkBlockHeight) append("networkBlockHeight=${new.processorInfo.networkBlockHeight}")
@@ -332,9 +328,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
                         if (old.processorInfo.lastScanRange != new.processorInfo.lastScanRange) append("${innerComma()}lastScanRange=${new.processorInfo.lastScanRange}")
                         append(")")
                     }
-                    if (old.availableBalance != new.availableBalance) append ("${maybeComma()}availableBalance=${new.availableBalance}")
-                    if (old.totalBalance != new.totalBalance) append ("${maybeComma()}totalBalance=${new.totalBalance}")
-                    if (old.pendingSend != new.pendingSend) append ("${maybeComma()}pendingSend=${new.pendingSend}")
+                    if (old.availableBalance != new.availableBalance) append("${maybeComma()}availableBalance=${new.availableBalance}")
+                    if (old.totalBalance != new.totalBalance) append("${maybeComma()}totalBalance=${new.totalBalance}")
+                    if (old.pendingSend != new.pendingSend) append("${maybeComma()}pendingSend=${new.pendingSend}")
                     append(")")
                 }
             }
@@ -413,7 +409,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
         }.launchIn(resumedScope)
     }
 
-
     //
     // Inner classes and extensions
     //
@@ -444,11 +439,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
         return this
     }
 
-
     //
     // User Interruptions
     //
-    //TODO: Expand this placeholder logic around when to interrupt the user.
+    // TODO: Expand this placeholder logic around when to interrupt the user.
     // For now, we just need to get this in the app so that we can BEGIN capturing ECC feedback.
     var hasInterrupted = false
     private fun canInterruptUser(): Boolean {

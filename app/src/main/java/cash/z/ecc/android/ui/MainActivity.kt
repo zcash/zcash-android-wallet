@@ -85,7 +85,6 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-
 class MainActivity : AppCompatActivity() {
 
     @Inject
@@ -224,9 +223,9 @@ class MainActivity : AppCompatActivity() {
                 } catch (t: Throwable) {
                     twig(
                         "WARNING: during callback, did not navigate to destination: R.id.${
-                            resources.getResourceEntryName(
-                                destination
-                            )
+                        resources.getResourceEntryName(
+                            destination
+                        )
                         } due to: $t"
                     )
                 }
@@ -237,9 +236,9 @@ class MainActivity : AppCompatActivity() {
             } catch (t: Throwable) {
                 twig(
                     "WARNING: did not immediately navigate to destination: R.id.${
-                        resources.getResourceEntryName(
-                            destination
-                        )
+                    resources.getResourceEntryName(
+                        destination
+                    )
                     } due to: $t"
                 )
             }
@@ -310,7 +309,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun authenticate(description: String, title: String = getString(R.string.biometric_prompt_title), block: () -> Unit) {
-        val callback =  object : BiometricPrompt.AuthenticationCallback() {
+        val callback = object : BiometricPrompt.AuthenticationCallback() {
             override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
                 twig("Authentication success with type: ${if (result.authenticationType == AUTHENTICATION_RESULT_TYPE_DEVICE_CREDENTIAL) "DEVICE_CREDENTIAL" else if (result.authenticationType == AUTHENTICATION_RESULT_TYPE_BIOMETRIC) "BIOMETRIC" else "UNKNOWN"}  object: ${result.cryptoObject}")
                 block()
@@ -348,7 +347,7 @@ class MainActivity : AppCompatActivity() {
                     ERROR_TIMEOUT -> doNothing("Oops. It timed out.")
                     ERROR_UNABLE_TO_PROCESS -> doNothing(".")
                     ERROR_VENDOR -> doNothing("We got some weird error and you should report this.")
-                    else ->  {
+                    else -> {
                         twig("Warning: unrecognized authentication error $errorCode")
                         doNothing("Authentication failed with error code $errorCode")
                     }
@@ -417,15 +416,18 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun preventBackPress(fragment: Fragment) {
-        onFragmentBackPressed(fragment){}
+        onFragmentBackPressed(fragment) {}
     }
 
     fun onFragmentBackPressed(fragment: Fragment, block: () -> Unit) {
-        onBackPressedDispatcher.addCallback(fragment, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                block()
+        onBackPressedDispatcher.addCallback(
+            fragment,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    block()
+                }
             }
-        })
+        )
     }
 
     private fun showMessage(message: String, linger: Boolean = false) {
@@ -440,26 +442,26 @@ class MainActivity : AppCompatActivity() {
                 .make(view, "$message", Snackbar.LENGTH_INDEFINITE)
                 .setAction(action) { /*auto-close*/ }
 
-                val snackBarView = snacks.view as ViewGroup
-                val navigationBarHeight = resources.getDimensionPixelSize(
-                    resources.getIdentifier(
-                        "navigation_bar_height",
-                        "dimen",
-                        "android"
-                    )
+            val snackBarView = snacks.view as ViewGroup
+            val navigationBarHeight = resources.getDimensionPixelSize(
+                resources.getIdentifier(
+                    "navigation_bar_height",
+                    "dimen",
+                    "android"
                 )
-                val params = snackBarView.getChildAt(0).layoutParams as ViewGroup.MarginLayoutParams
-                params.setMargins(
-                    params.leftMargin,
-                    params.topMargin,
-                    params.rightMargin,
-                    navigationBarHeight
-                )
+            )
+            val params = snackBarView.getChildAt(0).layoutParams as ViewGroup.MarginLayoutParams
+            params.setMargins(
+                params.leftMargin,
+                params.topMargin,
+                params.rightMargin,
+                navigationBarHeight
+            )
 
-                snackBarView.getChildAt(0).setLayoutParams(params)
+            snackBarView.getChildAt(0).setLayoutParams(params)
             snacks
         } else {
-            snackbar!!.setText(message).setAction(action) {/*auto-close*/}
+            snackbar!!.setText(message).setAction(action) { /*auto-close*/ }
         }.also {
             if (!it.isShownOrQueued) it.show()
         }
@@ -534,7 +536,8 @@ class MainActivity : AppCompatActivity() {
                 if (dialog == null && !ignoreScanFailure) throttle("scanFailure", 20_000L) {
                     notified = true
                     runOnUiThread {
-                        dialog = showScanFailure(error,
+                        dialog = showScanFailure(
+                            error,
                             onCancel = { dialog = null },
                             onDismiss = { dialog = null }
                         )
@@ -564,7 +567,6 @@ class MainActivity : AppCompatActivity() {
         feedback.report(Reorg(errorHeight, rewindHeight))
     }
 
-
     // TODO: maybe move this quick helper code somewhere general or throttle the dialogs differently (like with a flow and stream operators, instead)
 
     private val throttles = mutableMapOf<String, () -> Any>()
@@ -579,20 +581,18 @@ class MainActivity : AppCompatActivity() {
 
         // after doing the work, check back in later and if another request came in, throttle it, otherwise exit
         throttles[key] = noWork
-        findViewById<View>(android.R.id.content).postDelayed({
-            throttles[key]?.let { pendingWork ->
-                throttles.remove(key)
-                if (pendingWork !== noWork) throttle(key, delay, pendingWork)
-            }
-        }, delay)
+        findViewById<View>(android.R.id.content).postDelayed(
+            {
+                throttles[key]?.let { pendingWork ->
+                    throttles.remove(key)
+                    if (pendingWork !== noWork) throttle(key, delay, pendingWork)
+                }
+            },
+            delay
+        )
     }
 
-
-
-
     /* Memo functions that might possibly get moved to MemoUtils */
-
-//    private val addressRegex = """zs\d\w{65,}""".toRegex()
 
     suspend fun getSender(transaction: ConfirmedTransaction?): String {
         if (transaction == null) return getString(R.string.unknown)
@@ -655,5 +655,4 @@ class MainActivity : AppCompatActivity() {
             twig("Warning: failed to open browser due to $t")
         }
     }
-
 }

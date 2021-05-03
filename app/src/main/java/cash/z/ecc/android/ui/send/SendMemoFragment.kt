@@ -12,7 +12,11 @@ import cash.z.ecc.android.ext.goneIf
 import cash.z.ecc.android.ext.onEditorActionDone
 import cash.z.ecc.android.feedback.Report
 import cash.z.ecc.android.feedback.Report.Funnel.Send
-import cash.z.ecc.android.feedback.Report.Tap.*
+import cash.z.ecc.android.feedback.Report.Tap.SEND_MEMO_CLEAR
+import cash.z.ecc.android.feedback.Report.Tap.SEND_MEMO_EXCLUDE
+import cash.z.ecc.android.feedback.Report.Tap.SEND_MEMO_INCLUDE
+import cash.z.ecc.android.feedback.Report.Tap.SEND_MEMO_NEXT
+import cash.z.ecc.android.feedback.Report.Tap.SEND_MEMO_SKIP
 import cash.z.ecc.android.ui.base.BaseFragment
 import cash.z.ecc.android.ui.util.INCLUDE_MEMO_PREFIX_STANDARD
 
@@ -41,7 +45,7 @@ class SendMemoFragment : BaseFragment<FragmentSendMemoBinding>() {
 //            onBackPressNavTo(it) { tapped(SEND_MEMO_BACK) }
 //        }
 
-        binding.checkIncludeAddress.setOnCheckedChangeListener { _, _->
+        binding.checkIncludeAddress.setOnCheckedChangeListener { _, _ ->
             onIncludeMemo(binding.checkIncludeAddress.isChecked)
         }
 
@@ -49,7 +53,7 @@ class SendMemoFragment : BaseFragment<FragmentSendMemoBinding>() {
             memo.onEditorActionDone {
                 onTopButton().also { tapped(SEND_MEMO_NEXT) }
             }
-            memo.doAfterTextChanged { 
+            memo.doAfterTextChanged {
                 binding.clearMemo.goneIf(memo.text.isEmpty())
             }
         }

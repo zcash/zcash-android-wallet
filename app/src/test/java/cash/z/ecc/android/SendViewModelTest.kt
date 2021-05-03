@@ -2,9 +2,13 @@ package cash.z.ecc.android
 
 import cash.z.ecc.android.feedback.Feedback
 import cash.z.ecc.android.sdk.db.entity.PendingTransaction
-import cash.z.ecc.android.sdk.db.entity.*
+import cash.z.ecc.android.sdk.db.entity.isCreated
+import cash.z.ecc.android.sdk.db.entity.isCreating
+import cash.z.ecc.android.sdk.db.entity.isMined
+import cash.z.ecc.android.sdk.db.entity.isSubmitSuccess
 import cash.z.ecc.android.ui.send.SendViewModel
-import com.nhaarman.mockitokotlin2.*
+import com.nhaarman.mockitokotlin2.verify
+import com.nhaarman.mockitokotlin2.whenever
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.newSingleThreadContext
 import kotlinx.coroutines.test.setMain
@@ -92,7 +96,6 @@ class SendViewModelTest {
         verify(feedback).report(sendViewModel.metrics.values.first())
     }
 
-
     @Test
     fun testUpdateMetrics_mined() {
         assertEquals(true, minedTx.isMined())
@@ -106,5 +109,4 @@ class SendViewModelTest {
 //        Thread.sleep(100)
 //        assertEquals(0, sendViewModel.metrics.size)
     }
-
 }

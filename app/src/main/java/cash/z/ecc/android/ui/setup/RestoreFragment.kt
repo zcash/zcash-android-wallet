@@ -10,7 +10,6 @@ import android.view.MotionEvent
 import android.view.MotionEvent.ACTION_DOWN
 import android.view.MotionEvent.ACTION_UP
 import android.view.View
-import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
@@ -28,14 +27,12 @@ import cash.z.ecc.android.feedback.Report.Tap.RESTORE_BACK
 import cash.z.ecc.android.feedback.Report.Tap.RESTORE_CLEAR
 import cash.z.ecc.android.feedback.Report.Tap.RESTORE_DONE
 import cash.z.ecc.android.feedback.Report.Tap.RESTORE_SUCCESS
-import cash.z.ecc.android.sdk.ext.twig
 import cash.z.ecc.android.ui.base.BaseFragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.tylersuehr.chips.Chip
 import com.tylersuehr.chips.ChipsAdapter
 import com.tylersuehr.chips.SeedWordAdapter
 import kotlinx.coroutines.launch
-
 
 class RestoreFragment : BaseFragment<FragmentRestoreBinding>(), View.OnKeyListener {
     override val screen = Report.Screen.RESTORE
@@ -56,7 +53,6 @@ class RestoreFragment : BaseFragment<FragmentRestoreBinding>(), View.OnKeyListen
             onChipsModified()
         }.also { onChipsModified() }
         seedWordRecycler.adapter = seedWordAdapter
-
 
         binding.chipsInput.apply {
             setFilterableChipList(getChips())
@@ -115,7 +111,6 @@ class RestoreFragment : BaseFragment<FragmentRestoreBinding>(), View.OnKeyListen
         // Require one less tap to enter the seed words
         touchScreenForUser()
     }
-
 
     private fun onExit() {
         mainActivity?.reportFunnel(Restore.Exit)
@@ -189,12 +184,15 @@ class RestoreFragment : BaseFragment<FragmentRestoreBinding>(), View.OnKeyListen
     // forcefully show the keyboard as a hack to fix odd behavior where the keyboard
     // sometimes closes randomly and inexplicably in between seed word entries
     private fun forceShowKeyboard() {
-        requireView().postDelayed({
-            val isDone = (seedWordAdapter?.itemCount ?: 0) > 24
-            val focusedView = if (isDone) binding.inputBirthdate else seedWordAdapter!!.editText
-            mainActivity!!.showKeyboard(focusedView)
-            focusedView.requestFocus()
-        }, 500L)
+        requireView().postDelayed(
+            {
+                val isDone = (seedWordAdapter?.itemCount ?: 0) > 24
+                val focusedView = if (isDone) binding.inputBirthdate else seedWordAdapter!!.editText
+                mainActivity!!.showKeyboard(focusedView)
+                focusedView.requestFocus()
+            },
+            500L
+        )
     }
 
     private fun reportWords(count: Int) {
@@ -220,11 +218,14 @@ class RestoreFragment : BaseFragment<FragmentRestoreBinding>(), View.OnKeyListen
 
     private fun touchScreenForUser() {
         seedWordAdapter?.editText?.apply {
-            postDelayed({
-                seedWordAdapter?.editText?.inputType = InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
-                dispatchTouchEvent(motionEvent(ACTION_DOWN))
-                dispatchTouchEvent(motionEvent(ACTION_UP))
-            }, 100L)
+            postDelayed(
+                {
+                    seedWordAdapter?.editText?.inputType = InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS or InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+                    dispatchTouchEvent(motionEvent(ACTION_DOWN))
+                    dispatchTouchEvent(motionEvent(ACTION_UP))
+                },
+                100L
+            )
         }
     }
 
@@ -235,11 +236,10 @@ class RestoreFragment : BaseFragment<FragmentRestoreBinding>(), View.OnKeyListen
     override fun onKey(v: View?, keyCode: Int, event: KeyEvent?): Boolean {
         return false
     }
-
 }
 
 class SeedWordChip(val word: String, var index: Int = -1) : Chip() {
-    override fun getSubtitle(): String? = null//"subtitle for $word"
+    override fun getSubtitle(): String? = null // "subtitle for $word"
     override fun getAvatarDrawable(): Drawable? = null
     override fun getId() = index
     override fun getTitle() = word

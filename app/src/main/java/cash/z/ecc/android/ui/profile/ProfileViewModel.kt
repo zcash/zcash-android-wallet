@@ -6,7 +6,6 @@ import cash.z.ecc.android.ZcashWalletApp
 import cash.z.ecc.android.ext.Const
 import cash.z.ecc.android.lockbox.LockBox
 import cash.z.ecc.android.sdk.Initializer
-import cash.z.ecc.android.sdk.SdkSynchronizer
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.db.entity.PendingTransaction
 import cash.z.ecc.android.sdk.ext.ZcashSdk
@@ -15,7 +14,6 @@ import cash.z.ecc.android.sdk.tool.DerivationTool
 import cash.z.ecc.android.sdk.type.WalletBalance
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 import javax.inject.Named
@@ -108,7 +106,7 @@ class ProfileViewModel @Inject constructor() : ViewModel() {
 
     fun quickScanDistance(): Int {
         val latest = synchronizer.latestHeight
-        val oneWeek = 60*60*24/75 * 7 // a week's worth of blocks
+        val oneWeek = 60 * 60 * 24 / 75 * 7 // a week's worth of blocks
         var foo = 0
         runBlocking {
             foo = synchronizer.getNearestRewindHeight(latest - oneWeek)

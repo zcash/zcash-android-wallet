@@ -10,7 +10,13 @@ import cash.z.ecc.android.R
 import cash.z.ecc.android.ZcashWalletApp
 import cash.z.ecc.android.databinding.FragmentSettingsBinding
 import cash.z.ecc.android.di.viewmodel.viewModel
-import cash.z.ecc.android.ext.*
+import cash.z.ecc.android.ext.gone
+import cash.z.ecc.android.ext.onClickNavBack
+import cash.z.ecc.android.ext.showUpdateServerCriticalError
+import cash.z.ecc.android.ext.showUpdateServerDialog
+import cash.z.ecc.android.ext.toAppColor
+import cash.z.ecc.android.ext.toAppString
+import cash.z.ecc.android.ext.visible
 import cash.z.ecc.android.sdk.exception.LightWalletException
 import cash.z.ecc.android.sdk.ext.collectWith
 import cash.z.ecc.android.sdk.ext.twig
@@ -52,7 +58,6 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>() {
         super.onResume()
         viewModel.uiModels.collectWith(resumedScope, ::onUiModelUpdated)
     }
-
 
     //
     // Event handlers
@@ -131,24 +136,22 @@ class SettingsFragment : BaseFragment<FragmentSettingsBinding>() {
             error.javaClass.simpleName
         }
         val message = "An error occured while changing servers. Please verify the info" +
-                " and try again.\n\nError: $details"
+            " and try again.\n\nError: $details"
         twig(message)
         Toast.makeText(ZcashWalletApp.instance, getString(R.string.settings_toast_change_server_failure), Toast.LENGTH_SHORT).show()
         context?.showUpdateServerCriticalError(message)
     }
-
 
     //
     // Utilities
     //
 
     private fun String?.toHelperTextColor(): ColorStateList {
-        val color =  if (this == null) {
+        val color = if (this == null) {
             R.color.text_light_dimmed
         } else {
             R.color.zcashRed
         }
-       return ColorStateList.valueOf(color.toAppColor())
+        return ColorStateList.valueOf(color.toAppColor())
     }
 }
-

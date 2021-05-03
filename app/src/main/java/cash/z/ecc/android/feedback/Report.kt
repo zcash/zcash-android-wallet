@@ -22,11 +22,13 @@ object Report {
             // Errors
             abstract class Error(stepName: String, step: Int, val errorCode: Int?, val errorMessage: String?, vararg properties: Pair<String, Any>) : Send("error.$stepName", step, "isError" to true, *properties)
             object ErrorNotFound : Error("notfound", 51, null, "Key not found")
-            class ErrorEncoding(errorCode: Int? = null, errorMessage: String? = null) : Error("encode", 71, errorCode, errorMessage,
+            class ErrorEncoding(errorCode: Int? = null, errorMessage: String? = null) : Error(
+                "encode", 71, errorCode, errorMessage,
                 "errorCode" to (errorCode ?: -1),
                 "errorMessage" to (errorMessage ?: "None")
             )
-            class ErrorSubmitting(errorCode: Int? = null, errorMessage: String? = null) : Error("submit", 81, errorCode, errorMessage,
+            class ErrorSubmitting(errorCode: Int? = null, errorMessage: String? = null) : Error(
+                "submit", 81, errorCode, errorMessage,
                 "errorCode" to (errorCode ?: -1),
                 "errorMessage" to (errorMessage ?: "None")
             )
@@ -82,7 +84,7 @@ object Report {
         *properties
     ) {
         override val key = "performance.$name"
-        override fun toString() = "$key: ${toMap().let { if(it.size > 1) "${it.entries}" else "" }}"
+        override fun toString() = "$key: ${toMap().let { if (it.size > 1) "${it.entries}" else "" }}"
 
         class ScanRate(network: String, cumulativeItems: Int, cumulativeTime: Long, cumulativeIps: Float) : Performance("scan.bps", "network" to network, "totalBlocks" to cumulativeItems, "totalTime" to cumulativeTime, "blocksPerSecond" to cumulativeIps)
     }
@@ -94,7 +96,7 @@ object Report {
         *properties
     ) {
         override val key = "issue.$name"
-        override fun toString() = "occurrence of ${key.replace('.', ' ')}${toMap().let { if(it.size > 1) " with ${it.entries}" else "" }}"
+        override fun toString() = "occurrence of ${key.replace('.', ' ')}${toMap().let { if (it.size > 1) " with ${it.entries}" else "" }}"
 
         // Issues with sending worth monitoring
         object SelfSend : Issue("self.send")
@@ -240,7 +242,6 @@ class LaunchMetric private constructor(private val metric: Feedback.TimeMetric) 
     )
     override fun toString(): String = metric.toString()
 }
-
 
 inline fun <T> Feedback.measure(type: Report.MetricType, block: () -> T): T =
     this.measure(type.key, type.description, block)

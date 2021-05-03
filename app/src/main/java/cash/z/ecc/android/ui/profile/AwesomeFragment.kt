@@ -19,7 +19,6 @@ import cash.z.ecc.android.feedback.Report
 import cash.z.ecc.android.feedback.Report.Tap.AWESOME_CLOSE
 import cash.z.ecc.android.feedback.Report.Tap.AWESOME_SHIELD
 import cash.z.ecc.android.feedback.Report.Tap.COPY_TRANSPARENT_ADDRESS
-import cash.z.ecc.android.sdk.SdkSynchronizer
 import cash.z.ecc.android.sdk.db.entity.PendingTransaction
 import cash.z.ecc.android.sdk.db.entity.isCancelled
 import cash.z.ecc.android.sdk.db.entity.isCreated
@@ -36,7 +35,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-
 
 class AwesomeFragment : BaseFragment<FragmentAwesomeBinding>() {
     override val screen = Report.Screen.AWESOME
@@ -96,7 +94,6 @@ class AwesomeFragment : BaseFragment<FragmentAwesomeBinding>() {
         viewModel.getTransparentBalance().let { balance ->
             onBalanceUpdated(balance, utxoCount)
         }
-
     }
 
     private fun onAddressLoaded(address: String) {
@@ -119,7 +116,7 @@ class AwesomeFragment : BaseFragment<FragmentAwesomeBinding>() {
             1 -> binding.textAddressPart2
             else -> throw IllegalArgumentException(
                 "Unexpected address index $index. Unable to split the t-addr into two parts." +
-                        " Ensure that the address is valid."
+                    " Ensure that the address is valid."
             )
         }
 
@@ -200,7 +197,6 @@ class AwesomeFragment : BaseFragment<FragmentAwesomeBinding>() {
         }
     }
 
-
     private fun onShieldComplete(isSuccess: Boolean) {
         binding.lottieShielding.visibility = View.GONE
 
@@ -248,9 +244,6 @@ class AwesomeFragment : BaseFragment<FragmentAwesomeBinding>() {
         }
     }
 
-
-
-
     private fun PendingTransaction.toUiModel() = UiModel().also { model ->
         when {
             isCancelled() -> {
@@ -283,7 +276,7 @@ class AwesomeFragment : BaseFragment<FragmentAwesomeBinding>() {
                     model.primaryAction = { onCancel(this) }
                 } else {
                     model.primaryButtonText = "Shielding Funds..."
-                    if(isCreated()) model.details.add("Submitting transaction...")
+                    if (isCreated()) model.details.add("Submitting transaction...")
                 }
             }
         }
@@ -301,7 +294,7 @@ class AwesomeFragment : BaseFragment<FragmentAwesomeBinding>() {
         val details: MutableSet<String> = linkedSetOf(),
         var showProgress: Boolean = false,
         var primaryButtonText: String = "Shield Transparent Funds",
-        var primaryAction: () ->  Unit = {},
+        var primaryAction: () -> Unit = {},
         var canCancel: Boolean = false,
         var updateBalance: Boolean = false,
     )

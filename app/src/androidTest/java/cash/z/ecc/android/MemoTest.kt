@@ -1,16 +1,16 @@
 package cash.z.ecc.android
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.Parameterized
 import cash.z.ecc.android.ui.util.MemoUtil
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.junit.runners.Parameterized
 
 @RunWith(AndroidJUnit4::class)
-//@RunWith(Parameterized::class)
+// @RunWith(Parameterized::class)
 class MemoTest(val input: String, val output: String) {
 
     @Test

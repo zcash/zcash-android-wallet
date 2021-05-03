@@ -6,7 +6,6 @@ import cash.z.ecc.android.lockbox.LockBox
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.ext.twig
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.cancellable
 import javax.inject.Inject
 import javax.inject.Named
 import kotlin.properties.Delegates.observable
@@ -27,7 +26,6 @@ class SettingsViewModel @Inject constructor() : ViewModel() {
 
     var pendingHost by observable("", ::onUpdateModel)
     var pendingPortText by observable("", ::onUpdateModel)
-
 
     private fun getHost(): String {
         return prefs[Const.Pref.SERVER_HOST] ?: Const.Default.Server.HOST

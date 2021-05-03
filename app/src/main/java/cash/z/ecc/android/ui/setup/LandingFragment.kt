@@ -89,7 +89,7 @@ class LandingFragment : BaseFragment<FragmentLandingBinding>() {
         super.onAttach(context)
 
         walletSetup.checkSeed().onEach {
-            when(it) {
+            when (it) {
                 SEED_WITHOUT_BACKUP, SEED_WITH_BACKUP -> {
                     mainActivity?.safeNavigate(R.id.nav_backup)
                 }
@@ -100,9 +100,12 @@ class LandingFragment : BaseFragment<FragmentLandingBinding>() {
 
     override fun onResume() {
         super.onResume()
-        view?.postDelayed({
-            mainActivity?.hideKeyboard()
-        }, 25L)
+        view?.postDelayed(
+            {
+                mainActivity?.hideKeyboard()
+            },
+            25L
+        )
     }
 
     private fun onSkip(count: Int) {
@@ -134,10 +137,10 @@ class LandingFragment : BaseFragment<FragmentLandingBinding>() {
         val birthday: Int
 
         // new testnet dev wallet
-        when(ZcashWalletApp.instance.defaultNetwork) {
+        when (ZcashWalletApp.instance.defaultNetwork) {
             ZcashNetwork.Mainnet -> {
                 seedPhrase = "still champion voice habit trend flight survey between bitter process artefact blind carbon truly provide dizzy crush flush breeze blouse charge solid fish spread"
-                birthday = 991645 //663174
+                birthday = 991645 // 663174
             }
             ZcashNetwork.Testnet -> {
                 seedPhrase = "quantum whisper lion route fury lunar pelican image job client hundred sauce chimney barely life cliff spirit admit weekend message recipe trumpet impact kitten"

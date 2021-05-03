@@ -29,7 +29,7 @@ class LockBoxTest {
 
             lockBox["longStr"] = sampleHex
             val actual: String = lockBox["longStr"]!!
-            if(sampleHex == actual) successCount++
+            if (sampleHex == actual) successCount++
             lockBox.clear()
         }
         assertEquals(iterations, successCount)
@@ -43,7 +43,7 @@ class LockBoxTest {
 
             lockBox["shortStr"] = sampleHex
             val actual: String = lockBox["shortStr"]!!
-            if(sampleHex == actual) successCount++
+            if (sampleHex == actual) successCount++
             lockBox.clear()
         }
         assertEquals(iterations, successCount)
@@ -57,7 +57,7 @@ class LockBoxTest {
 
             lockBox["giantStr"] = sampleHex
             val actual: String = lockBox["giantStr"]!!
-            if(sampleHex == actual) successCount++
+            if (sampleHex == actual) successCount++
             lockBox.clear()
         }
         assertEquals(iterations, successCount)

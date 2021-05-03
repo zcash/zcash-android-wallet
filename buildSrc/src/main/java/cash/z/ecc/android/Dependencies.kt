@@ -6,12 +6,10 @@ object Deps {
     const val kotlinVersion =       "1.4.32"
     const val navigationVersion =   "2.3.0"
 
-    const val compileSdkVersion =   29
-    const val buildToolsVersion =   "29.0.2"
+    const val compileSdkVersion =   30
+    const val buildToolsVersion =   "30.0.3"
     const val minSdkVersion =       21
-    const val targetSdkVersion =    29
-    const val versionName =         "1.0.0-alpha69"
-    const val versionCode =         1_00_00_169  // last digits are alpha(0XX) beta(2XX) rc(4XX) release(8XX). Ex: 1_08_04_401 is an release candidate build of version 1.8.4 and 1_08_04_800 would be the final release.
+    const val targetSdkVersion =    30
     const val packageName =         "cash.z.ecc.android"
 
 

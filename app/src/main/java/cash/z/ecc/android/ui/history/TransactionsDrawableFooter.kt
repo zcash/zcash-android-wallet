@@ -1,15 +1,15 @@
 package cash.z.ecc.android.ui.history
 //
-//import android.content.Context
-//import android.graphics.Canvas
-//import android.graphics.Rect
-//import android.view.LayoutInflater
-//import android.view.View
-//import androidx.recyclerview.widget.RecyclerView
-//import cash.z.ecc.android.R
+// import android.content.Context
+// import android.graphics.Canvas
+// import android.graphics.Rect
+// import android.view.LayoutInflater
+// import android.view.View
+// import androidx.recyclerview.widget.RecyclerView
+// import cash.z.ecc.android.R
 //
 //
-//class TransactionsDrawableFooter(context: Context) : RecyclerView.ItemDecoration() {
+// class TransactionsDrawableFooter(context: Context) : RecyclerView.ItemDecoration() {
 //
 //    private var footer: View =
 //        LayoutInflater.from(context).inflate(R.layout.footer_transactions, null, false)
@@ -49,4 +49,4 @@ package cash.z.ecc.android.ui.history
 //            outRect.setEmpty()
 //        }
 //    }
-//}
+// }
