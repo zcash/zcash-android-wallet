@@ -65,7 +65,6 @@
         android:maxLines="1"
         android:textSize="20dp"
         app:layout_constraintEnd_toEndOf="@+id/receive_qr_code"
-        app:layout_constraintHorizontal_bias="0.372"
         app:layout_constraintStart_toStartOf="@+id/receive_qr_code"
         app:layout_constraintTop_toBottomOf="@+id/receive_qr_code"
         tools:text=" ztestsaplin" />
@@ -84,6 +83,18 @@
         app:layout_constraintTop_toBottomOf="@+id/text_address_part_1"
         app:layout_constraintVertical_bias="0.0"
         tools:text=" jceuu9s2p6t" />
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/receive_qr_code"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/receive_qr_code"
+        app:layout_constraintTop_toBottomOf="@+id/text_address_part_2"
+        app:layout_constraintVertical_bias="0.148" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -70,12 +70,6 @@
         app:layout_constraintTop_toTopOf="@id/receive_qr_code"
         app:layout_constraintWidth_percent="0.18" />
 
-
-    <!-- Back Button -->
-
-
-    <!-- Address parts -->
-
     <!-- Someday, there will be an advanced VirtualLayout that helps us do this without nesting but for now, this seems to be the only clean way to center all the fields -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/receive_address_parts"
@@ -189,5 +183,16 @@
             app:barrierDirection="end"
             app:constraint_referenced_ids="text_address_part_1,text_address_part_3,text_address_part_5,text_address_part_7" />
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Button"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/receive_address_parts"
+        app:layout_constraintStart_toStartOf="@+id/receive_address_parts"
+        app:layout_constraintTop_toBottomOf="@+id/receive_address_parts"
+        app:layout_constraintVertical_bias="0.110000014" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
