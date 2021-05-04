@@ -1,8 +1,12 @@
 package cash.z.ecc.android.ui.tab_layout
 
+import android.annotation.SuppressLint
+import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import androidx.core.content.ContextCompat
 import androidx.viewpager.widget.ViewPager
 import cash.z.ecc.android.R
 import cash.z.ecc.android.databinding.FragmentTabLayoutBinding
@@ -33,7 +37,32 @@ class TabLayoutFragment: BaseFragment<FragmentTabLayoutBinding>() {
 
         viewPager.adapter = adapter
 
-        tabLayout.setupWithViewPager(viewPager)
 
+        viewPager.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tabLayout))
+        tabLayout.setupWithViewPager(viewPager);
+        tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab) {
+                viewPager.currentItem = tab.position
+
+                if(tab.position == 0){
+                    tabLayout.setSelectedTabIndicatorColor(ContextCompat.getColor(requireContext(), R.color.zcashYellow))
+                    tabLayout.setTabTextColors(ContextCompat.getColor(requireContext(), R.color.unselected_tab_grey), ContextCompat.getColor(requireContext(), R.color.zcashYellow))
+                }
+
+                if(tab.position == 1){
+                    tabLayout.setSelectedTabIndicatorColor(ContextCompat.getColor(requireContext(), R.color.zcashBlueDark))
+                    tabLayout.setTabTextColors(ContextCompat.getColor(requireContext(), R.color.unselected_tab_grey), ContextCompat.getColor(requireContext(), R.color.zcashBlueDark))
+                }
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab) {
+
+            }
+            override fun onTabReselected(tab: TabLayout.Tab) {
+                Log.d("",""+tab)
+            }
+        })
     }
+
+
 }

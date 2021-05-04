@@ -1,168 +1,89 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/background_home">
 
+    <TextView
+        android:id="@+id/textView"
+        style="@style/TextAppearance.MaterialComponents.Headline6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Your Transparent Address"
+        app:layout_constraintBottom_toTopOf="@+id/guideline_hit_area_top"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline_hit_area_top"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.04" />
+        app:layout_constraintGuide_percent="0.10" />
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline_content_top"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.14" />
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline_content_start"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.15" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline_content_end"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.85" />
-
-    <View
-        android:id="@+id/hit_area_exit"
-        android:layout_width="68dp"
-        android:layout_height="68dp"
-        android:layout_marginEnd="24dp"
-        android:layout_marginStart="24dp"
-        android:alpha="0.3"
-        android:background="@android:color/transparent"
-        android:elevation="6dp"
-        app:layout_constraintStart_toEndOf="parent"
+    <!-- QR code placeholder -->
+    <ImageView
+        android:id="@+id/receive_qr_code"
+        android:layout_width="257dp"
+        android:layout_height="257dp"
+        android:contentDescription="@string/content_description_receive_qr_code"
+        android:onClick="copyAddress"
+        android:scaleType="fitCenter"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/guideline_hit_area_top" />
+        app:layout_constraintTop_toTopOf="@+id/guideline_hit_area_top"
+        app:layout_constraintWidth_percent="0.625"
+        tools:background="@color/zcashWhite"
+        tools:visibility="visible" />
 
     <ImageView
-        android:id="@+id/icon_exit"
+        android:id="@+id/icon_qr_logo"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:contentDescription="@string/content_description_profile_back"
-        android:elevation="6dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:contentDescription="@string/content_description_receive_qr_logo"
+        android:onClick="copyAddress"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_shield_address"
+        app:layout_constraintBottom_toBottomOf="@id/receive_qr_code"
         app:layout_constraintDimensionRatio="H,1:1"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.088"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.065"
-        app:layout_constraintWidth_percent="0.08"
-        app:srcCompat="@drawable/ic_cancel"
-        app:tint="@color/text_light_dimmed" />
+        app:layout_constraintEnd_toEndOf="@id/receive_qr_code"
+        app:layout_constraintStart_toStartOf="@id/receive_qr_code"
+        app:layout_constraintTop_toTopOf="@id/receive_qr_code"
+        app:layout_constraintWidth_percent="0.18" />
 
-    <com.airbnb.lottie.LottieAnimationView
-        android:id="@+id/lottie_shielding"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:contentDescription="@string/content_description_profile_zebra"
-        android:elevation="6dp"
-        app:layout_constraintDimensionRatio="H,1:1"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/text_address_part_2"
-        app:layout_constraintVertical_bias="0.212"
-        app:layout_constraintWidth_percent="0.46"
-        app:lottie_autoPlay="true"
-        app:lottie_loop="true"
-        app:lottie_rawRes="@raw/lottie_shielding" />
-
-    <TextView
-        android:id="@+id/label_address"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        style="@style/TextAppearance.AppCompat.Body1"
-        android:drawableEnd="@drawable/ic_content_copy"
-        android:drawablePadding="16dp"
-        android:text="Your Transparent Address"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/guideline_content_top"
-        app:layout_constraintVertical_bias="0.01" />
 
     <TextView
         android:id="@+id/text_address_part_1"
+        style="@style/Zcash.TextAppearance.AddressPart"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        style="@style/Zcash.TextAppearance.AddressPart"
-        android:textSize="20dp"
-        android:maxLines="1"
         android:layout_marginTop="16dp"
-        app:layout_constraintBottom_toTopOf="@id/text_address_part_2"
-        app:layout_constraintEnd_toEndOf="@id/guideline_content_end"
-        app:layout_constraintStart_toStartOf="@id/guideline_content_start"
-        app:layout_constraintTop_toBottomOf="@id/label_address"
-        app:layout_constraintVertical_bias="0.2"
-        app:layout_constraintVertical_chainStyle="packed"
+        android:maxLines="1"
+        android:textSize="20dp"
+        app:layout_constraintEnd_toEndOf="@+id/receive_qr_code"
+        app:layout_constraintHorizontal_bias="0.372"
+        app:layout_constraintStart_toStartOf="@+id/receive_qr_code"
+        app:layout_constraintTop_toBottomOf="@+id/receive_qr_code"
         tools:text=" ztestsaplin" />
 
     <TextView
         android:id="@+id/text_address_part_2"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
         style="@style/Zcash.TextAppearance.AddressPart"
-        android:textSize="20dp"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
         android:maxLines="1"
-        app:layout_constraintStart_toStartOf="@id/text_address_part_1"
-        app:layout_constraintEnd_toEndOf="@id/text_address_part_1"
-        app:layout_constraintTop_toBottomOf="@id/text_address_part_1"
+        android:textSize="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/text_address_part_1"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@+id/text_address_part_1"
+        app:layout_constraintTop_toBottomOf="@+id/text_address_part_1"
+        app:layout_constraintVertical_bias="0.0"
         tools:text=" jceuu9s2p6t" />
 
-    <View
-        android:id="@+id/hit_area_address"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="@id/text_address_part_2"
-        app:layout_constraintEnd_toEndOf="@id/guideline_content_end"
-        app:layout_constraintStart_toStartOf="@id/guideline_content_start"
-        app:layout_constraintTop_toTopOf="@id/label_address"
-        tools:background="@color/spacer" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/button_action"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        style="@style/Zcash.Button"
-        android:backgroundTint="@color/selector_primary_button_activatable"
-        android:gravity="center"
-        android:padding="12dp"
-        android:text="Shield Transparent Funds"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
-        android:textColor="#000000"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@id/guideline_content_end"
-        app:layout_constraintStart_toStartOf="@id/guideline_content_start"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.9" />
-
-    <TextView
-        android:id="@+id/text_status"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        style="@style/TextAppearance.AppCompat.Body1"
-        android:text="Balance: 0.00000000"
-        android:gravity="center"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toTopOf="@id/button_action"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/text_address_part_2"
-        app:layout_constraintVertical_bias="0.65"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

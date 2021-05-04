@@ -52,16 +52,16 @@ class AwesomeFragment : BaseFragment<FragmentAwesomeBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.hitAreaExit.onClickNavBack() { tapped(AWESOME_CLOSE) }
+     /*   binding.hitAreaExit.onClickNavBack() { tapped(AWESOME_CLOSE) }
         binding.hitAreaAddress.setOnClickListener {
             tapped(COPY_TRANSPARENT_ADDRESS)
             onCopyTransparentAddress()
-        }
-        binding.buttonAction.setOnClickListener {
+        }*/
+      /*  binding.buttonAction.setOnClickListener {
             onShieldFundsAction()
         }
         binding.lottieShielding.visibility = View.GONE
-        setStatus("Checking balance...")
+        setStatus("Checking balance...")*/
     }
 
     private fun onCopyTransparentAddress() {
@@ -81,20 +81,20 @@ class AwesomeFragment : BaseFragment<FragmentAwesomeBinding>() {
         }
     }
 
-    private fun setStatus(status: String) {
+   /* private fun setStatus(status: String) {
         binding.textStatus.text = status
     }
 
     @SuppressLint("SetTextI18n")
     private fun appendStatus(status: String) {
         binding.textStatus.text = "${binding.textStatus.text}$status"
-    }
+    }*/
 
     private suspend fun updateBalance() {
         val utxoCount = viewModel.fetchUtxos()
 
         viewModel.getTransparentBalance().let { balance ->
-            onBalanceUpdated(balance, utxoCount)
+           // onBalanceUpdated(balance, utxoCount)
         }
 
     }
@@ -131,7 +131,7 @@ class AwesomeFragment : BaseFragment<FragmentAwesomeBinding>() {
         address.text = textSpan
     }
 
-    private fun onShieldFundsAction() {
+   /* private fun onShieldFundsAction() {
         if (binding.buttonAction.isActivated) {
             tapped(AWESOME_SHIELD)
             mainActivity?.let { main ->
@@ -145,7 +145,7 @@ class AwesomeFragment : BaseFragment<FragmentAwesomeBinding>() {
         } else {
             Toast.makeText(requireContext(), "No balance to shield!", Toast.LENGTH_SHORT).show()
         }
-    }
+    }*/
 
 //    private fun onDoneAction() {
 //        mainActivity?.popBackTo(R.id.nav_home)
@@ -162,12 +162,12 @@ class AwesomeFragment : BaseFragment<FragmentAwesomeBinding>() {
         lifecycleScope.launchWhenResumed {
             twig("launching shield funds job")
             viewModel.shieldFunds().onEach {
-                onPendingTxUpdated(it)
+              //  onPendingTxUpdated(it)
             }.launchIn(lifecycleScope)
         }
     }
 
-    private fun onPendingTxUpdated(tx: PendingTransaction) {
+   /* private fun onPendingTxUpdated(tx: PendingTransaction) {
         twig("shielding transaction updated: $tx")
         if (tx == null) return // TODO: maybe log this
 
@@ -198,10 +198,10 @@ class AwesomeFragment : BaseFragment<FragmentAwesomeBinding>() {
             mainActivity?.feedback?.report(Report.Error.NonFatal.TxUpdateFailed(t))
             mainActivity?.feedback?.report(t)
         }
-    }
+    }*/
 
 
-    private fun onShieldComplete(isSuccess: Boolean) {
+   /* private fun onShieldComplete(isSuccess: Boolean) {
         binding.lottieShielding.visibility = View.GONE
 
         if (isSuccess) {
@@ -221,8 +221,8 @@ class AwesomeFragment : BaseFragment<FragmentAwesomeBinding>() {
             binding.buttonAction.visibility = View.GONE
         }
     }
-
-    private fun onBalanceUpdated(
+*/
+   /* private fun onBalanceUpdated(
         balance: WalletBalance = WalletBalance(0, 0),
         utxoCount: Int = 0
     ) {
@@ -246,12 +246,12 @@ class AwesomeFragment : BaseFragment<FragmentAwesomeBinding>() {
         balance.pending.takeIf { it > 0 }?.let {
             appendStatus("\n\n(ᙇ${it.convertZatoshiToZecString()} pending confirmation)")
         }
-    }
+    }*/
 
 
 
 
-    private fun PendingTransaction.toUiModel() = UiModel().also { model ->
+  /*  private fun PendingTransaction.toUiModel() = UiModel().also { model ->
         when {
             isCancelled() -> {
                 model.status = "Shielding Cancelled!"
@@ -293,7 +293,7 @@ class AwesomeFragment : BaseFragment<FragmentAwesomeBinding>() {
         resumedScope.launch {
             viewModel.cancel(tx.id)
         }
-    }
+    }*/
 
     // fields are ordered, as they appear, top-to-bottom in the UI because that makes it easier to reason about each screen state
     data class UiModel(

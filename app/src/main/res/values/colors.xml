@@ -50,6 +50,9 @@
     <color name="zcashYellow">#FFB900</color>
     <color name="zcashYellow_dark">#FFAA17</color>
 
+    <!-- tab layout grey -->
+    <color name="unselected_tab_grey">#727272</color>
+
 
     <!--                  -->
     <!-- named colors     -->
