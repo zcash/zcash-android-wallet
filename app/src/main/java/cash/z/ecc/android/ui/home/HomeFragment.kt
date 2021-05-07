@@ -29,6 +29,7 @@ import cash.z.ecc.android.feedback.Report.Tap.HOME_FUND_NOW
 import cash.z.ecc.android.feedback.Report.Tap.HOME_HISTORY
 import cash.z.ecc.android.feedback.Report.Tap.HOME_PROFILE
 import cash.z.ecc.android.feedback.Report.Tap.HOME_RECEIVE
+import cash.z.ecc.android.feedback.Report.Tap.HOME_BALANCE_DETAIL
 import cash.z.ecc.android.feedback.Report.Tap.HOME_SEND
 import cash.z.ecc.android.sdk.Synchronizer.Status.DISCONNECTED
 import cash.z.ecc.android.sdk.Synchronizer.Status.STOPPED
@@ -121,6 +122,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
             hitAreaProfile.onClickNavTo(R.id.action_nav_home_to_nav_profile) { tapped(HOME_PROFILE) }
             textHistory.onClickNavTo(R.id.action_nav_home_to_nav_history) { tapped(HOME_HISTORY) }
             hitAreaReceive.onClickNavTo(R.id.action_nav_home_to_nav_receive) { tapped(HOME_RECEIVE) }
+            textSendAmount.onClickNavTo(R.id.action_nav_home_to_nav_balance_detail) {tapped(HOME_BALANCE_DETAIL)}
 
             textBannerAction.setOnClickListener {
                 onBannerAction(BannerAction.from((it as? TextView)?.text?.toString()))

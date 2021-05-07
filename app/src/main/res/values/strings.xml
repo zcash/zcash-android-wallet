@@ -56,6 +56,11 @@
     <string name="home_no_balance">@string/translated_balance_nofunds</string>
     <string name="home_title">@string/translated_balance_amounttosend</string>
 
+    <!-- Screen: Balance Detail -->
+    <string name="balance_detail_button_send_transparent_funds" tools:ignore="MissingTranslation">Shield Transparent Funds</string>
+    <string name="balance_detail_text_total_title" tools:ignore="MissingTranslation">= TOTAL</string>
+
+
     <!-- Screen: Landing -->
     <string name="landing_backup_skipped_message_1">@string/missing_landing_backup_skipped_message_1</string>
     <string name="landing_backup_skipped_message_2">@string/missing_landing_backup_skipped_message_2</string>

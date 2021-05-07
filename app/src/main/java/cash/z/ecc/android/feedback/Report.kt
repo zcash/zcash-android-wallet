@@ -146,6 +146,7 @@ object Report {
         HOME_PROFILE("home.profile"),
         HOME_HISTORY("home.history"),
         HOME_RECEIVE("home.receive"),
+        HOME_BALANCE_DETAIL("home.balance.detail"),
         HOME_SCAN("home.scan"),
         HOME_SEND("home.send"),
         HOME_FUND_NOW("home.fund.now"),
