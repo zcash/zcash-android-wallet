@@ -10,6 +10,8 @@ import androidx.core.content.ContextCompat
 import androidx.viewpager.widget.ViewPager
 import cash.z.ecc.android.R
 import cash.z.ecc.android.databinding.FragmentTabLayoutBinding
+import cash.z.ecc.android.ext.onClickNavBack
+import cash.z.ecc.android.feedback.Report
 import cash.z.ecc.android.ui.base.BaseFragment
 import cash.z.ecc.android.ui.profile.AwesomeFragment
 import cash.z.ecc.android.ui.receive.ReceiveFragment
@@ -62,6 +64,8 @@ class TabLayoutFragment: BaseFragment<FragmentTabLayoutBinding>() {
                 Log.d("",""+tab)
             }
         })
+
+        binding.backButtonHitArea.onClickNavBack() { tapped(Report.Tap.HOME_SCAN) }
     }
 
 

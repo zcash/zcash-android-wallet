@@ -12,6 +12,29 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.05" />
 
+    <!-- Back Button -->
+    <ImageView
+        android:id="@+id/back_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:tint="@color/text_light"
+        app:layout_constraintBottom_toBottomOf="@+id/back_button_hit_area"
+        app:layout_constraintEnd_toEndOf="@+id/back_button_hit_area"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/guideline_hit_area_head"
+        app:srcCompat="@drawable/ic_arrow_back_black_24dp" />
+
+    <View
+        android:id="@+id/back_button_hit_area"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:clickable="true"
+        app:layout_constraintBottom_toBottomOf="@+id/text_title"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/text_title" />
+
 
     <TextView
         android:id="@+id/text_title"
@@ -38,7 +61,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/guideline_hit_area_top"/>
+        app:layout_constraintTop_toTopOf="@+id/guideline_hit_area_top" />
 
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/viewPager"

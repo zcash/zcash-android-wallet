@@ -184,15 +184,16 @@
             app:constraint_referenced_ids="text_address_part_1,text_address_part_3,text_address_part_5,text_address_part_7" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <Button
-        android:id="@+id/button"
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_share_address"
+        style="@style/Zcash.Button.OutlinedButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Button"
+        android:text="Share Address"
+        android:textColor="@color/text_light"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/receive_address_parts"
-        app:layout_constraintStart_toStartOf="@+id/receive_address_parts"
-        app:layout_constraintTop_toBottomOf="@+id/receive_address_parts"
-        app:layout_constraintVertical_bias="0.110000014" />
+        app:layout_constraintEnd_toEndOf="@+id/receive_qr_code"
+        app:layout_constraintStart_toStartOf="@+id/receive_qr_code"
+        app:layout_constraintTop_toBottomOf="@+id/receive_address_parts" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

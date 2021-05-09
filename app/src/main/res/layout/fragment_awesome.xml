@@ -84,17 +84,42 @@
         app:layout_constraintVertical_bias="0.0"
         tools:text=" jceuu9s2p6t" />
 
-    <Button
-        android:id="@+id/button2"
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_share_button"
+        style="@style/Zcash.Button.OutlinedButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Button"
+        android:text="Share Address"
+        android:textColor="@color/text_light"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/receive_qr_code"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/receive_qr_code"
+        app:layout_constraintTop_toBottomOf="@+id/text_address_part_2" />
+
+    <ImageView
+        android:id="@+id/sad_icon"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:elevation="6dp"
+        app:layout_constraintBottom_toTopOf="@+id/btn_share_button"
+        app:layout_constraintEnd_toStartOf="@+id/textView2"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@+id/btn_share_button"
         app:layout_constraintTop_toBottomOf="@+id/text_address_part_2"
-        app:layout_constraintVertical_bias="0.148" />
+        app:layout_constraintVertical_bias="0.9"
+        app:srcCompat="@drawable/ic_info_24dp" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Heads-up! All transaction data is available when using this address."
+        app:layout_constraintBottom_toBottomOf="@+id/sad_icon"
+        app:layout_constraintEnd_toEndOf="@+id/btn_share_button"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/sad_icon"
+        app:layout_constraintTop_toTopOf="@+id/sad_icon" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
