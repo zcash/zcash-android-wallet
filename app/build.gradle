@@ -148,6 +148,7 @@ dependencies {
     implementation Deps.AndroidX.Navigation.UI_KTX
     implementation Deps.AndroidX.Room.ROOM_KTX
     kapt Deps.AndroidX.Room.ROOM_COMPILER
+    implementation Deps.AndroidX.ENCRYPTED_SHARED_PREF
 
     // Google
     implementation Deps.Google.GUAVA

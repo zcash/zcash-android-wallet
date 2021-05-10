@@ -11,6 +11,8 @@ object Deps {
     const val minSdkVersion =       21
     const val targetSdkVersion =    30
     const val packageName =         "cash.z.ecc.android"
+    const val versionName =         "1.0.0-alpha69"
+    const val versionCode =         1_00_00_169
 
 
     object AndroidX {
@@ -24,9 +26,10 @@ object Deps {
         const val MULTIDEX =                "androidx.multidex:multidex:2.0.1"
         const val PAGING =                  "androidx.paging:paging-runtime-ktx:2.1.2"
         const val RECYCLER =                "androidx.recyclerview:recyclerview:1.2.0-alpha05"
+        const val ENCRYPTED_SHARED_PREF =     "androidx.security:security-crypto:1.0.0-rc01"
         object CameraX :         Version("1.0.0-rc02") {
             val CAMERA2 =                   "androidx.camera:camera-camera2:1.0.0-rc02"
-            val CORE =                      "androidx.camera:camera-core:1.0.0-rc02"
+            val CORE =                      "androidx.camera:camera-core:1.0.0"
             val LIFECYCLE =                 "androidx.camera:camera-lifecycle:1.0.0-rc02"
             object View :       Version("1.0.0-alpha21") {
                 val EXT =                   "androidx.camera:camera-extensions:$version"

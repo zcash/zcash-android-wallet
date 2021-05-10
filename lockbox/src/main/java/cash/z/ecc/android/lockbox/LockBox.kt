@@ -41,6 +41,10 @@ class LockBox @Inject constructor(private val appContext: Context) : LockBoxPlug
         return getChunkedString(key)?.toCharArray()
     }
 
+    fun containsKey(key: String): Boolean {
+        return SecurePreferences.contains(appContext, key)
+    }
+
     fun delete(key: String) {
         return SecurePreferences.removeValue(appContext, key)
     }

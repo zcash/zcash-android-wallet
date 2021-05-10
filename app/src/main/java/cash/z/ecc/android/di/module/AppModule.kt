@@ -3,6 +3,7 @@ package cash.z.ecc.android.di.module
 import android.content.ClipboardManager
 import android.content.Context
 import cash.z.ecc.android.ZcashWalletApp
+import cash.z.ecc.android.db.SharedPreferencesManagerImpl
 import cash.z.ecc.android.di.component.MainActivitySubcomponent
 import cash.z.ecc.android.ext.Const
 import cash.z.ecc.android.feedback.Feedback
@@ -37,6 +38,11 @@ class AppModule {
     @Named(Const.Name.APP_PREFS)
     fun provideLockbox(appContext: Context): LockBox {
         return LockBox(appContext)
+    }
+
+    @Provides
+    fun provideSharedPref(appContext: Context): SharedPreferencesManagerImpl {
+        return SharedPreferencesManagerImpl(appContext)
     }
 
     //

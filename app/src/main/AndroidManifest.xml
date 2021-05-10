@@ -1,9 +1,10 @@
-<manifest
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="cash.z.ecc.android">
 
     <uses-permission android:name="android.permission.VIBRATE"/>
     <uses-permission android:name="android.permission.CAMERA" />
+    <uses-sdk tools:overrideLibrary="androidx.security"/>
 
     <application
         android:name="cash.z.ecc.android.ZcashWalletApp"

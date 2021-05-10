@@ -22,6 +22,7 @@ object Const {
         const val FEEDBACK_ENABLED = "const.pref.feedback_enabled"
         const val SERVER_HOST = "const.pref.server_host"
         const val SERVER_PORT = "const.pref.server_port"
+        const val IS_LOCK_BOX_MIGRATED_TO_SHARED_PREF = "const.pref.is_lock_box_migrated_to_encrypted_shared_pref"
     }
 
     /**

@@ -147,6 +147,7 @@ class MainActivity : AppCompatActivity() {
         )
         setWindowFlag(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, false)
         setWindowFlag(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION, false)
+        mainViewModel.checkLockBoxMigration()
     }
 
     override fun onResume() {

@@ -9,7 +9,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.LinearLayoutManager
 import cash.z.ecc.android.R
 import cash.z.ecc.android.databinding.DialogSolicitFeedbackRatingBinding
 import cash.z.ecc.android.databinding.FragmentHomeBinding
