@@ -133,6 +133,7 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             feedback.start()
         }
+        mainViewModel.checkLockBoxMigration()
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.main_activity)
@@ -147,7 +148,6 @@ class MainActivity : AppCompatActivity() {
         )
         setWindowFlag(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, false)
         setWindowFlag(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION, false)
-        mainViewModel.checkLockBoxMigration()
     }
 
     override fun onResume() {
@@ -613,7 +613,7 @@ class MainActivity : AppCompatActivity() {
         @StringRes negativeResId: Int = android.R.string.cancel,
         action: MainActivity.() -> Unit = {}
     ) {
-        historyViewModel.prefs.getBoolean(prefKey).let { doNotWarnAgain ->
+        historyViewModel.sharedPref.getBoolean(prefKey, false).let { doNotWarnAgain ->
             if (doNotWarnAgain) {
                 action()
                 return@showFirstUseWarning
@@ -624,7 +624,7 @@ class MainActivity : AppCompatActivity() {
 
         fun savePref() {
             dialogViewBinding.dialogFirstUseCheckbox.isChecked.let { wasChecked ->
-                historyViewModel.prefs.setBoolean(prefKey, wasChecked)
+                historyViewModel.sharedPref.setBoolean(prefKey, wasChecked)
             }
         }
 

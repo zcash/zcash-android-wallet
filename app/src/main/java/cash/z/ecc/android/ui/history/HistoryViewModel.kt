@@ -5,6 +5,7 @@ import androidx.annotation.StringRes
 import androidx.lifecycle.ViewModel
 import cash.z.ecc.android.R
 import cash.z.ecc.android.ZcashWalletApp
+import cash.z.ecc.android.db.SharedPreferencesManagerImpl
 import cash.z.ecc.android.ext.Const
 import cash.z.ecc.android.ext.WalletZecFormmatter
 import cash.z.ecc.android.ext.toAppString
@@ -30,6 +31,9 @@ class HistoryViewModel @Inject constructor() : ViewModel() {
     @Inject
     @Named(Const.Name.APP_PREFS)
     lateinit var prefs: LockBox
+
+    @Inject
+    lateinit var sharedPref: SharedPreferencesManagerImpl
 
     val selectedTransaction = MutableStateFlow<ConfirmedTransaction?>(null)
     val uiModels = selectedTransaction.map { it.toUiModel() }

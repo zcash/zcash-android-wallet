@@ -13,6 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import cash.z.ecc.android.R
 import cash.z.ecc.android.ZcashWalletApp
 import cash.z.ecc.android.databinding.FragmentBackupBinding
+import cash.z.ecc.android.db.SharedPreferencesManagerImpl
 import cash.z.ecc.android.di.viewmodel.activityViewModel
 import cash.z.ecc.android.ext.Const
 import cash.z.ecc.android.feedback.Report
@@ -20,7 +21,6 @@ import cash.z.ecc.android.feedback.Report.MetricType.SEED_PHRASE_LOADED
 import cash.z.ecc.android.feedback.Report.Tap.BACKUP_DONE
 import cash.z.ecc.android.feedback.Report.Tap.BACKUP_VERIFY
 import cash.z.ecc.android.feedback.measure
-import cash.z.ecc.android.lockbox.LockBox
 import cash.z.ecc.android.sdk.ext.ZcashSdk
 import cash.z.ecc.android.sdk.ext.twig
 import cash.z.ecc.android.ui.base.BaseFragment
@@ -132,9 +132,9 @@ class BackupFragment : BaseFragment<FragmentBackupBinding>() {
 
     private suspend fun loadSeedWords(): List<CharArray> = withContext(Dispatchers.IO) {
         mainActivity!!.feedback.measure(SEED_PHRASE_LOADED) {
-            val lockBox = LockBox(ZcashWalletApp.instance)
+            val sharedPref = SharedPreferencesManagerImpl(ZcashWalletApp.instance)
             val mnemonics = Mnemonics()
-            val seedPhrase = lockBox.getCharsUtf8(Const.Backup.SEED_PHRASE) ?: throw RuntimeException("Seed Phrase expected but not found in storage!!")
+            val seedPhrase = sharedPref.getCharsUtf8(Const.Backup.SEED_PHRASE) ?: throw RuntimeException("Seed Phrase expected but not found in storage!!")
             val result = mnemonics.toWordList(seedPhrase)
             result
         }

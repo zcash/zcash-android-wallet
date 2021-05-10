@@ -57,10 +57,10 @@ class AppModule {
     @Singleton
     fun provideFeedbackCoordinator(
         feedback: Feedback,
-        @Named(Const.Name.APP_PREFS) prefs: LockBox,
+        sharedPref: SharedPreferencesManagerImpl,
         defaultObservers: Set<@JvmSuppressWildcards FeedbackCoordinator.FeedbackObserver>
     ): FeedbackCoordinator {
-        return prefs.getBoolean(Const.Pref.FEEDBACK_ENABLED).let { isEnabled ->
+        return sharedPref.getBoolean(Const.Pref.FEEDBACK_ENABLED, false).let { isEnabled ->
             // observe nothing unless feedback is enabled
             Twig.plant(if (isEnabled) DebugFileTwig() else SilentTwig())
             FeedbackCoordinator(feedback, if (isEnabled) defaultObservers else setOf())

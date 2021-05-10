@@ -9,6 +9,7 @@ import java.nio.charset.StandardCharsets
 import java.util.*
 import javax.inject.Inject
 
+@Deprecated(message = "LockBox is planned to remove, We don't recommend to use this. This is replaced with Encrypted Shared Preferences", replaceWith = ReplaceWith("SharedPreferencesManagerImpl", "cash.z.ecc.android.db.SharedPreferencesManagerImpl"), level = DeprecationLevel.WARNING)
 class LockBox @Inject constructor(private val appContext: Context) : LockBoxPlugin {
 
     private val maxLength: Int = 50

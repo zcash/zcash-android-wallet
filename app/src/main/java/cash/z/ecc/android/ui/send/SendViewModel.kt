@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.android.R
+import cash.z.ecc.android.db.SharedPreferencesManagerImpl
 import cash.z.ecc.android.ext.Const
 import cash.z.ecc.android.ext.WalletZecFormmatter
 import cash.z.ecc.android.feedback.Feedback
@@ -51,6 +52,9 @@ class SendViewModel @Inject constructor() : ViewModel() {
     lateinit var lockBox: LockBox
 
     @Inject
+    lateinit var sharedpref: SharedPreferencesManagerImpl
+
+    @Inject
     lateinit var synchronizer: Synchronizer
 
     @Inject
@@ -74,7 +78,7 @@ class SendViewModel @Inject constructor() : ViewModel() {
         funnel(SendSelected)
         val memoToSend = createMemoToSend()
         val keys = DerivationTool.deriveSpendingKeys(
-            lockBox.getBytes(Const.Backup.SEED)!!,
+            sharedpref.getBytes(Const.Backup.SEED)!!,
             synchronizer.network
         )
         funnel(SpendingKeyFound)
