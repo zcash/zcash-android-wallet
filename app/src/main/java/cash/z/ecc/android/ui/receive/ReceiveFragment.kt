@@ -11,9 +11,7 @@ import cash.z.android.qrecycler.QRecycler
 import cash.z.ecc.android.databinding.FragmentReceiveNewBinding
 import cash.z.ecc.android.di.viewmodel.viewModel
 import cash.z.ecc.android.ext.distribute
-import cash.z.ecc.android.ext.onClickNavBack
 import cash.z.ecc.android.feedback.Report
-import cash.z.ecc.android.feedback.Report.Tap.RECEIVE_BACK
 import cash.z.ecc.android.sdk.ext.twig
 import cash.z.ecc.android.ui.base.BaseFragment
 import cash.z.ecc.android.ui.util.AddressPartNumberSpan
@@ -44,7 +42,7 @@ class ReceiveFragment : BaseFragment<FragmentReceiveNewBinding>() {
             binding.textAddressPart8
         )
 
-      /*  binding.backButtonHitArea.onClickNavBack() { tapped(RECEIVE_BACK) }*/
+        /*  binding.backButtonHitArea.onClickNavBack() { tapped(RECEIVE_BACK) }*/
     }
 
     override fun onAttach(context: Context) {

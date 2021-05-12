@@ -94,7 +94,6 @@ class AwesomeFragment : BaseFragment<FragmentAwesomeBinding>() {
         viewModel.getTransparentBalance().let { balance ->
             onBalanceUpdated(balance, utxoCount)
         }
-
     }
 
     private fun onAddressLoaded(address: String) {
@@ -117,7 +116,7 @@ class AwesomeFragment : BaseFragment<FragmentAwesomeBinding>() {
             1 -> binding.textAddressPart2
             else -> throw IllegalArgumentException(
                 "Unexpected address index $index. Unable to split the t-addr into two parts." +
-                        " Ensure that the address is valid."
+                    " Ensure that the address is valid."
             )
         }
 
@@ -198,7 +197,6 @@ class AwesomeFragment : BaseFragment<FragmentAwesomeBinding>() {
         }
     }
 
-
     private fun onShieldComplete(isSuccess: Boolean) {
         binding.lottieShielding.visibility = View.GONE
 
@@ -245,9 +243,6 @@ class AwesomeFragment : BaseFragment<FragmentAwesomeBinding>() {
             appendStatus("\n\n(ᙇ${it.convertZatoshiToZecString()} pending confirmation)")
         }
     }
-
-
-
 
     private fun PendingTransaction.toUiModel() = UiModel().also { model ->
         when {

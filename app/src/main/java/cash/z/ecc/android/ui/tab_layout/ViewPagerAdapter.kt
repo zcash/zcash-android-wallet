@@ -3,7 +3,7 @@ package cash.z.ecc.android.ui.tab_layout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
-import java.util.*
+import java.util.ArrayList
 
 @Suppress("DEPRECATION")
 class ViewPagerAdapter(manager: FragmentManager?) : FragmentPagerAdapter(manager!!) {
@@ -26,4 +26,3 @@ class ViewPagerAdapter(manager: FragmentManager?) : FragmentPagerAdapter(manager
         return mFragmentTitleList[position]
     }
 }
-

@@ -1,7 +1,5 @@
 package cash.z.ecc.android.ui.tab_layout
 
-import android.annotation.SuppressLint
-import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -15,7 +13,7 @@ import cash.z.ecc.android.ui.profile.AwesomeFragment
 import cash.z.ecc.android.ui.receive.ReceiveFragment
 import com.google.android.material.tabs.TabLayout
 
-class TabLayoutFragment: BaseFragment<FragmentTabLayoutBinding>() {
+class TabLayoutFragment : BaseFragment<FragmentTabLayoutBinding>() {
 
     lateinit var tabLayout: TabLayout
     lateinit var viewPager: ViewPager
@@ -37,32 +35,28 @@ class TabLayoutFragment: BaseFragment<FragmentTabLayoutBinding>() {
 
         viewPager.adapter = adapter
 
-
         viewPager.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tabLayout))
-        tabLayout.setupWithViewPager(viewPager);
+        tabLayout.setupWithViewPager(viewPager)
         tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
                 viewPager.currentItem = tab.position
 
-                if(tab.position == 0){
+                if (tab.position == 0) {
                     tabLayout.setSelectedTabIndicatorColor(ContextCompat.getColor(requireContext(), R.color.zcashYellow))
                     tabLayout.setTabTextColors(ContextCompat.getColor(requireContext(), R.color.unselected_tab_grey), ContextCompat.getColor(requireContext(), R.color.zcashYellow))
                 }
 
-                if(tab.position == 1){
+                if (tab.position == 1) {
                     tabLayout.setSelectedTabIndicatorColor(ContextCompat.getColor(requireContext(), R.color.zcashBlueDark))
                     tabLayout.setTabTextColors(ContextCompat.getColor(requireContext(), R.color.unselected_tab_grey), ContextCompat.getColor(requireContext(), R.color.zcashBlueDark))
                 }
             }
 
             override fun onTabUnselected(tab: TabLayout.Tab) {
-
             }
             override fun onTabReselected(tab: TabLayout.Tab) {
-                Log.d("",""+tab)
+                Log.d("", "" + tab)
             }
         })
     }
-
-
 }
