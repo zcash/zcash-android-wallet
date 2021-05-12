@@ -360,7 +360,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
     private fun onBannerAction(action: BannerAction) {
         when (action) {
             FUND_NOW -> {
-                MaterialAlertDialogBuilder(activity)
+                MaterialAlertDialogBuilder(requireContext())
                     .setMessage(R.string.home_dialog_no_balance_message)
                     .setTitle(R.string.home_dialog_no_balance_title)
                     .setCancelable(true)
@@ -484,7 +484,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
                 it.setOnClickListener(::onRatingClicked)
             }
         }
-        dialog = MaterialAlertDialogBuilder(context)
+        dialog = MaterialAlertDialogBuilder(requireContext())
             .setView(promptViewBinding.root)
             .setCancelable(true)
             .create()
@@ -493,7 +493,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
 
     private fun onFeedbackProvided(rating: Int) {
         hasInterrupted = true
-        MaterialAlertDialogBuilder(context)
+        MaterialAlertDialogBuilder(requireContext())
             .setTitle("Want to share details?")
             .setNegativeButton("Yes!") { dialog, which ->
                 val action = HomeFragmentDirections.actionNavHomeToNavFeedback(rating, true)
