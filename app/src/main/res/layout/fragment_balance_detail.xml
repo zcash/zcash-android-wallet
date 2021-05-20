@@ -43,6 +43,48 @@
         app:layout_constraintGuide_percent="0.95" />
 
 
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline_hit_area_topp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.04" />
+
+    <View
+        android:id="@+id/hit_area_exit"
+        android:layout_width="68dp"
+        android:layout_height="68dp"
+        android:layout_marginStart="24dp"
+        android:alpha="0.3"
+        android:background="@android:color/transparent"
+        android:elevation="6dp"
+        app:layout_constraintStart_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@id/guideline_hit_area_topp" />
+
+    <ImageView
+        android:id="@+id/icon_exit"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:contentDescription="@string/content_description_settings_back"
+        android:elevation="6dp"
+        android:tint="@color/text_light_dimmed"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintDimensionRatio="H,1:1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.088"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.065"
+        app:layout_constraintWidth_percent="0.08"
+        app:srcCompat="@drawable/ic_cancel" />
+
+
+
+
+
+
     <ImageView
         android:id="@+id/icon_receive_funds"
         android:layout_width="25dp"
@@ -202,15 +244,21 @@
         android:id="@+id/button_shield_transaparent_funds"
         style="@style/Zcash.Button"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:gravity="center"
-        android:padding="12dp"
         android:text="@string/balance_detail_button_send_transparent_funds"
+        android:textColor="@color/selector_button_text_dark"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
-        android:textColor="#000000"
-        app:layout_constraintBottom_toTopOf="@+id/guideline_hit_area_bottom"
-        app:layout_constraintEnd_toStartOf="@+id/guideline_content_end"
-        app:layout_constraintStart_toStartOf="@+id/guideline_content_start"
-        app:layout_constraintVertical_bias="1.0" />
+        android:textSize="16sp"
+        android:translationY="-6dp"
+        app:layout_constraintHeight_percent="0.088"
+        app:layout_constraintWidth_percent="0.7475728155"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintVertical_bias="0.838"
+
+                />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
