@@ -8,6 +8,8 @@ import androidx.core.content.ContextCompat
 import androidx.viewpager.widget.ViewPager
 import cash.z.ecc.android.R
 import cash.z.ecc.android.databinding.FragmentTabLayoutBinding
+import cash.z.ecc.android.ext.onClickNavBack
+import cash.z.ecc.android.feedback.Report
 import cash.z.ecc.android.ui.base.BaseFragment
 import cash.z.ecc.android.ui.profile.AwesomeFragment
 import cash.z.ecc.android.ui.receive.ReceiveFragment
@@ -23,7 +25,7 @@ class TabLayoutFragment : BaseFragment<FragmentTabLayoutBinding>() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        binding.hitAreaExit.onClickNavBack { tapped(Report.Tap.RECEIVE_BACK) }
         tabLayout = view.findViewById(R.id.tabLayout)
         tabLayout.tabGravity = TabLayout.GRAVITY_FILL
 
