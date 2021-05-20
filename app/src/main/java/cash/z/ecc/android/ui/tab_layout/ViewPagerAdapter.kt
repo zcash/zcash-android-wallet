@@ -1,28 +1,13 @@
 package cash.z.ecc.android.ui.tab_layout
 
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentPagerAdapter
-import java.util.ArrayList
+import androidx.viewpager2.adapter.FragmentStateAdapter
 
-@Suppress("DEPRECATION")
-class ViewPagerAdapter(manager: FragmentManager?) : FragmentPagerAdapter(manager!!) {
-    private val mFragmentList: MutableList<Fragment> = ArrayList()
-    private val mFragmentTitleList: MutableList<String> = ArrayList()
-    override fun getItem(position: Int): Fragment {
-        return mFragmentList[position]
-    }
+class ViewPagerAdapter(parent: Fragment, creator: FragmentCreator) :
+    FragmentStateAdapter(parent),
+    FragmentCreator by creator
 
-    override fun getCount(): Int {
-        return mFragmentList.size
-    }
-
-    fun addFrag(fragment: Fragment, title: String) {
-        mFragmentList.add(fragment)
-        mFragmentTitleList.add(title)
-    }
-
-    override fun getPageTitle(position: Int): CharSequence {
-        return mFragmentTitleList[position]
-    }
+interface FragmentCreator {
+    fun createFragment(position: Int): Fragment
+    fun getItemCount(): Int
 }
