@@ -26,6 +26,8 @@ interface SharedPreferencesManager {
 
     fun contains(key: String): Boolean
 
+    fun getAllKeys(): MutableMap<String, *>?
+
     fun remove(key: String)
 
     fun clear()

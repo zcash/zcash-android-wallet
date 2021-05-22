@@ -97,6 +97,10 @@ class SharedPreferencesManagerImpl @Inject constructor(private val context: Cont
         return value
     }
 
+    override fun getAllKeys(): MutableMap<String, *>? {
+        return prefs.all
+    }
+
     override fun contains(key: String): Boolean {
         return prefs.contains(key)
     }

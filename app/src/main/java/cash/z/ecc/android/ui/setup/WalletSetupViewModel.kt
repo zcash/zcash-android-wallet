@@ -1,6 +1,5 @@
 package cash.z.ecc.android.ui.setup
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import cash.z.ecc.android.ZcashWalletApp
 import cash.z.ecc.android.db.SharedPreferencesManagerImpl
@@ -133,42 +132,43 @@ class WalletSetupViewModel @Inject constructor() : ViewModel() {
     private suspend fun onMissingViewingKey(network: ZcashNetwork): UnifiedViewingKey {
         twig("Recover VK: Viewing key was missing")
         // add some temporary logic to help us troubleshoot this problem.
-        ZcashWalletApp.instance.getSharedPreferences("SecurePreferences", Context.MODE_PRIVATE) // TODO: What action need to taken for this?
-            .all.map { it.key }.joinToString().let { keyNames ->
-                "${Const.Backup.VIEWING_KEY}, ${Const.Backup.PUBLIC_KEY}".let { missingKeys ->
-                    // is there a typo or change in how the value is labelled?
-                    Bugsnag.leaveBreadcrumb("One of $missingKeys not found in keySet: $keyNames")
-                    // for troubleshooting purposes, let's see if we CAN derive the vk from the seed in these situations
-                    var recoveryViewingKey: UnifiedViewingKey? = null
-                    var ableToLoadSeed = false
-                    try {
-                        val seed = sharedPref.getBytes(Const.Backup.SEED)!!
-                        ableToLoadSeed = true
-                        twig("Recover UVK: Seed found")
-                        recoveryViewingKey = DerivationTool.deriveUnifiedViewingKeys(seed, network)[0]
-                        twig("Recover UVK: successfully derived UVK from seed")
-                    } catch (t: Throwable) {
-                        Bugsnag.leaveBreadcrumb("Failed while trying to recover UVK due to: $t")
-                    }
-
-                    // this will happen during rare upgrade scenarios when the user migrates from a seed-only wallet to this vk-based version
-                    // or during more common scenarios where the user migrates from a vk only wallet to a unified vk wallet
-                    if (recoveryViewingKey != null) {
-                        storeUnifiedViewingKey(recoveryViewingKey)
-                        return recoveryViewingKey
-                    } else {
-                        feedback.report(
-                            Report.Issue.MissingViewkey(
-                                ableToLoadSeed,
-                                missingKeys,
-                                keyNames,
-                                sharedPref.getCharsUtf8(Const.Backup.VIEWING_KEY) != null
-                            )
-                        )
-                    }
-                    throw InitializerException.MissingViewingKeyException
+        // TODO: What action need to taken for this?
+        sharedPref.getAllKeys()?.map { it.key }?.joinToString()?.let { keyNames ->
+            "${Const.Backup.VIEWING_KEY}, ${Const.Backup.PUBLIC_KEY}".let { missingKeys ->
+                // is there a typo or change in how the value is labelled?
+                Bugsnag.leaveBreadcrumb("One of $missingKeys not found in keySet: $keyNames")
+                // for troubleshooting purposes, let's see if we CAN derive the vk from the seed in these situations
+                var recoveryViewingKey: UnifiedViewingKey? = null
+                var ableToLoadSeed = false
+                try {
+                    val seed = sharedPref.getBytes(Const.Backup.SEED)!!
+                    ableToLoadSeed = true
+                    twig("Recover UVK: Seed found")
+                    recoveryViewingKey = DerivationTool.deriveUnifiedViewingKeys(seed, network)[0]
+                    twig("Recover UVK: successfully derived UVK from seed")
+                } catch (t: Throwable) {
+                    Bugsnag.leaveBreadcrumb("Failed while trying to recover UVK due to: $t")
                 }
+
+                // this will happen during rare upgrade scenarios when the user migrates from a seed-only wallet to this vk-based version
+                // or during more common scenarios where the user migrates from a vk only wallet to a unified vk wallet
+                if (recoveryViewingKey != null) {
+                    storeUnifiedViewingKey(recoveryViewingKey)
+                    return recoveryViewingKey
+                } else {
+                    feedback.report(
+                        Report.Issue.MissingViewkey(
+                            ableToLoadSeed,
+                            missingKeys,
+                            keyNames,
+                            sharedPref.getCharsUtf8(Const.Backup.VIEWING_KEY) != null
+                        )
+                    )
+                }
+                throw InitializerException.MissingViewingKeyException
             }
+        }
+        return UnifiedViewingKey()
     }
 
     private fun onMissingBirthday(network: ZcashNetwork): Int = failWith(InitializerException.MissingBirthdayException) {

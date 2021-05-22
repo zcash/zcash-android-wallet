@@ -133,7 +133,6 @@ class MainActivity : AppCompatActivity() {
         lifecycleScope.launch {
             feedback.start()
         }
-        mainViewModel.checkLockBoxMigration()
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.main_activity)
