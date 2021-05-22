@@ -3,6 +3,7 @@ package cash.z.ecc.android.di.module
 import android.content.ClipboardManager
 import android.content.Context
 import cash.z.ecc.android.ZcashWalletApp
+import cash.z.ecc.android.db.SharedPreferencesManagerImpl
 import cash.z.ecc.android.di.component.MainActivitySubcomponent
 import cash.z.ecc.android.ext.Const
 import cash.z.ecc.android.feedback.Feedback
@@ -39,6 +40,11 @@ class AppModule {
         return LockBox(appContext)
     }
 
+    @Provides
+    fun provideSharedPref(appContext: Context): SharedPreferencesManagerImpl {
+        return SharedPreferencesManagerImpl(appContext)
+    }
+
     //
     // Feedback
     //
@@ -51,10 +57,10 @@ class AppModule {
     @Singleton
     fun provideFeedbackCoordinator(
         feedback: Feedback,
-        @Named(Const.Name.APP_PREFS) prefs: LockBox,
+        sharedPref: SharedPreferencesManagerImpl,
         defaultObservers: Set<@JvmSuppressWildcards FeedbackCoordinator.FeedbackObserver>
     ): FeedbackCoordinator {
-        return prefs.getBoolean(Const.Pref.FEEDBACK_ENABLED).let { isEnabled ->
+        return sharedPref.getBoolean(Const.Pref.FEEDBACK_ENABLED, false).let { isEnabled ->
             // observe nothing unless feedback is enabled
             Twig.plant(if (isEnabled) DebugFileTwig() else SilentTwig())
             FeedbackCoordinator(feedback, if (isEnabled) defaultObservers else setOf())

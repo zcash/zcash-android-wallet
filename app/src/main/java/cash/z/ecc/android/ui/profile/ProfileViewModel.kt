@@ -3,6 +3,7 @@ package cash.z.ecc.android.ui.profile
 import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import cash.z.ecc.android.ZcashWalletApp
+import cash.z.ecc.android.db.SharedPreferencesManagerImpl
 import cash.z.ecc.android.ext.Const
 import cash.z.ecc.android.lockbox.LockBox
 import cash.z.ecc.android.sdk.Initializer
@@ -32,6 +33,9 @@ class ProfileViewModel @Inject constructor() : ViewModel() {
     @Named(Const.Name.APP_PREFS)
     lateinit var prefs: LockBox
 
+    @Inject
+    lateinit var sharedPref: SharedPreferencesManagerImpl
+
     // TODO: track this in the app and then fetch. For now, just estimate the blocks per second.
     val bps = 40
 
@@ -48,7 +52,7 @@ class ProfileViewModel @Inject constructor() : ViewModel() {
 
     suspend fun fetchUtxos(): Int {
         val address = getTransparentAddress()
-        val height: Int = lockBox[Const.Backup.BIRTHDAY_HEIGHT] ?: synchronizer.network.saplingActivationHeight
+        val height: Int = sharedPref.getInt(Const.Backup.BIRTHDAY_HEIGHT, synchronizer.network.saplingActivationHeight)
         return synchronizer.refreshUtxos(address, height)
     }
 
@@ -58,7 +62,7 @@ class ProfileViewModel @Inject constructor() : ViewModel() {
     }
 
     fun shieldFunds(): Flow<PendingTransaction> {
-        return lockBox.getBytes(Const.Backup.SEED)?.let {
+        return sharedPref.getBytes(Const.Backup.SEED)?.let {
             val sk = DerivationTool.deriveSpendingKeys(it, synchronizer.network)[0]
             val tsk = DerivationTool.deriveTransparentSecretKey(it, synchronizer.network)
             val addr = DerivationTool.deriveTransparentAddressFromPrivateKey(tsk, synchronizer.network)
@@ -71,11 +75,11 @@ class ProfileViewModel @Inject constructor() : ViewModel() {
     }
 
     fun setEasterEggTriggered() {
-        lockBox.setBoolean(Const.Pref.EASTER_EGG_TRIGGERED_SHIELDING, true)
+        sharedPref.setBoolean(Const.Pref.EASTER_EGG_TRIGGERED_SHIELDING, true)
     }
 
     fun isEasterEggTriggered(): Boolean {
-        return lockBox.getBoolean(Const.Pref.EASTER_EGG_TRIGGERED_SHIELDING)
+        return sharedPref.getBoolean(Const.Pref.EASTER_EGG_TRIGGERED_SHIELDING, false)
     }
 
     suspend fun cancel(id: Long) {

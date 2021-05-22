@@ -1,6 +1,7 @@
 package cash.z.ecc.android.ui.settings
 
 import androidx.lifecycle.ViewModel
+import cash.z.ecc.android.db.SharedPreferencesManagerImpl
 import cash.z.ecc.android.ext.Const
 import cash.z.ecc.android.lockbox.LockBox
 import cash.z.ecc.android.sdk.Synchronizer
@@ -20,6 +21,9 @@ class SettingsViewModel @Inject constructor() : ViewModel() {
     @Named(Const.Name.APP_PREFS)
     lateinit var prefs: LockBox
 
+    @Inject
+    lateinit var sharedPref: SharedPreferencesManagerImpl
+
     lateinit var uiModels: MutableStateFlow<UiModel>
 
     private lateinit var initialServer: UiModel
@@ -28,11 +32,11 @@ class SettingsViewModel @Inject constructor() : ViewModel() {
     var pendingPortText by observable("", ::onUpdateModel)
 
     private fun getHost(): String {
-        return prefs[Const.Pref.SERVER_HOST] ?: Const.Default.Server.HOST
+        return sharedPref.getString(Const.Pref.SERVER_HOST, Const.Default.Server.HOST) ?: Const.Default.Server.HOST
     }
 
     private fun getPort(): Int {
-        return prefs[Const.Pref.SERVER_PORT] ?: Const.Default.Server.PORT
+        return sharedPref.getInt(Const.Pref.SERVER_PORT, Const.Default.Server.PORT)
     }
 
     fun init() {
@@ -58,8 +62,8 @@ class SettingsViewModel @Inject constructor() : ViewModel() {
             error = it
         }
         if (error == null) {
-            prefs[Const.Pref.SERVER_HOST] = host
-            prefs[Const.Pref.SERVER_PORT] = port
+            sharedPref.set(Const.Pref.SERVER_HOST, host)
+            sharedPref.set(Const.Pref.SERVER_PORT, port)
         }
         uiModels.value = uiModels.value.copy(changeError = error, complete = true)
     }

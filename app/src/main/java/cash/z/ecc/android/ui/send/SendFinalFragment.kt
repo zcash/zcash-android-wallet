@@ -5,7 +5,6 @@ import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import androidx.lifecycle.lifecycleScope
 import cash.z.ecc.android.R
 import cash.z.ecc.android.databinding.FragmentSendFinalBinding
 import cash.z.ecc.android.di.viewmodel.activityViewModel
@@ -29,6 +28,7 @@ class SendFinalFragment : BaseFragment<FragmentSendFinalBinding>() {
     override val screen = Report.Screen.SEND_FINAL
 
     private val sendViewModel: SendViewModel by activityViewModel()
+    private var firstTime = true
 
     override fun inflate(inflater: LayoutInflater): FragmentSendFinalBinding =
         FragmentSendFinalBinding.inflate(inflater)
@@ -47,13 +47,25 @@ class SendFinalFragment : BaseFragment<FragmentSendFinalBinding>() {
         mainActivity?.preventBackPress(this)
     }
 
+    override fun onResume() {
+        super.onResume()
+        if (firstTime) { // TODO: HACK:: remove this
+            mainActivity?.apply {
+                sendViewModel.send().onEach {
+                    onPendingTxUpdated(it)
+                }.launchIn(resumedScope)
+            }
+            firstTime = false
+        }
+    }
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        mainActivity?.apply {
+        /*mainActivity?.apply {
             sendViewModel.send().onEach {
                 onPendingTxUpdated(it)
             }.launchIn(resumedScope)
-        }
+        }*/
     }
 
     private fun onPendingTxUpdated(tx: PendingTransaction?) {

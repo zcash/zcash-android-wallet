@@ -1,8 +1,8 @@
 package cash.z.ecc.android.ui.setup
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import cash.z.ecc.android.ZcashWalletApp
+import cash.z.ecc.android.db.SharedPreferencesManagerImpl
 import cash.z.ecc.android.ext.Const
 import cash.z.ecc.android.ext.failWith
 import cash.z.ecc.android.feedback.Feedback
@@ -41,6 +41,9 @@ class WalletSetupViewModel @Inject constructor() : ViewModel() {
     lateinit var prefs: LockBox
 
     @Inject
+    lateinit var sharedPref: SharedPreferencesManagerImpl
+
+    @Inject
     lateinit var feedback: Feedback
 
     enum class WalletSetupState {
@@ -49,8 +52,8 @@ class WalletSetupViewModel @Inject constructor() : ViewModel() {
 
     fun checkSeed(): Flow<WalletSetupState> = flow {
         when {
-            lockBox.getBoolean(Const.Backup.HAS_BACKUP) -> emit(SEED_WITH_BACKUP)
-            lockBox.getBoolean(Const.Backup.HAS_SEED) -> emit(SEED_WITHOUT_BACKUP)
+            sharedPref.getBoolean(Const.Backup.HAS_BACKUP, false) -> emit(SEED_WITH_BACKUP)
+            sharedPref.getBoolean(Const.Backup.HAS_SEED, false) -> emit(SEED_WITHOUT_BACKUP)
             else -> emit(NO_SEED)
         }
     }
@@ -63,7 +66,7 @@ class WalletSetupViewModel @Inject constructor() : ViewModel() {
     }
 
     fun loadBirthdayHeight(): Int? {
-        val h: Int? = lockBox[Const.Backup.BIRTHDAY_HEIGHT]
+        val h: Int? = sharedPref.getInt(Const.Backup.BIRTHDAY_HEIGHT, -1)
         twig("Loaded birthday with key ${Const.Backup.BIRTHDAY_HEIGHT} and found $h")
         return h
     }
@@ -99,8 +102,8 @@ class WalletSetupViewModel @Inject constructor() : ViewModel() {
         val network = ZcashWalletApp.instance.defaultNetwork
         val vk = loadUnifiedViewingKey() ?: onMissingViewingKey(network).also { overwriteVks = true }
         val birthdayHeight = loadBirthdayHeight() ?: onMissingBirthday(network)
-        val host = prefs[Const.Pref.SERVER_HOST] ?: Const.Default.Server.HOST
-        val port = prefs[Const.Pref.SERVER_PORT] ?: Const.Default.Server.PORT
+        val host = sharedPref.getString(Const.Pref.SERVER_HOST, Const.Default.Server.HOST) ?: Const.Default.Server.HOST
+        val port = sharedPref.getInt(Const.Pref.SERVER_PORT, Const.Default.Server.PORT)
 
         twig("Done loading config variables")
         return Initializer.Config {
@@ -110,8 +113,8 @@ class WalletSetupViewModel @Inject constructor() : ViewModel() {
     }
 
     private fun loadUnifiedViewingKey(): UnifiedViewingKey? {
-        val extfvk = lockBox.getCharsUtf8(Const.Backup.VIEWING_KEY)
-        val extpub = lockBox.getCharsUtf8(Const.Backup.PUBLIC_KEY)
+        val extfvk = sharedPref.getCharsUtf8(Const.Backup.VIEWING_KEY)
+        val extpub = sharedPref.getCharsUtf8(Const.Backup.PUBLIC_KEY)
         return when {
             extfvk == null || extpub == null -> {
                 if (extfvk == null) {
@@ -129,42 +132,43 @@ class WalletSetupViewModel @Inject constructor() : ViewModel() {
     private suspend fun onMissingViewingKey(network: ZcashNetwork): UnifiedViewingKey {
         twig("Recover VK: Viewing key was missing")
         // add some temporary logic to help us troubleshoot this problem.
-        ZcashWalletApp.instance.getSharedPreferences("SecurePreferences", Context.MODE_PRIVATE)
-            .all.map { it.key }.joinToString().let { keyNames ->
-                "${Const.Backup.VIEWING_KEY}, ${Const.Backup.PUBLIC_KEY}".let { missingKeys ->
-                    // is there a typo or change in how the value is labelled?
-                    Bugsnag.leaveBreadcrumb("One of $missingKeys not found in keySet: $keyNames")
-                    // for troubleshooting purposes, let's see if we CAN derive the vk from the seed in these situations
-                    var recoveryViewingKey: UnifiedViewingKey? = null
-                    var ableToLoadSeed = false
-                    try {
-                        val seed = lockBox.getBytes(Const.Backup.SEED)!!
-                        ableToLoadSeed = true
-                        twig("Recover UVK: Seed found")
-                        recoveryViewingKey = DerivationTool.deriveUnifiedViewingKeys(seed, network)[0]
-                        twig("Recover UVK: successfully derived UVK from seed")
-                    } catch (t: Throwable) {
-                        Bugsnag.leaveBreadcrumb("Failed while trying to recover UVK due to: $t")
-                    }
-
-                    // this will happen during rare upgrade scenarios when the user migrates from a seed-only wallet to this vk-based version
-                    // or during more common scenarios where the user migrates from a vk only wallet to a unified vk wallet
-                    if (recoveryViewingKey != null) {
-                        storeUnifiedViewingKey(recoveryViewingKey)
-                        return recoveryViewingKey
-                    } else {
-                        feedback.report(
-                            Report.Issue.MissingViewkey(
-                                ableToLoadSeed,
-                                missingKeys,
-                                keyNames,
-                                lockBox.getCharsUtf8(Const.Backup.VIEWING_KEY) != null
-                            )
-                        )
-                    }
-                    throw InitializerException.MissingViewingKeyException
+        // TODO: What action need to taken for this?
+        sharedPref.getAllKeys()?.map { it.key }?.joinToString()?.let { keyNames ->
+            "${Const.Backup.VIEWING_KEY}, ${Const.Backup.PUBLIC_KEY}".let { missingKeys ->
+                // is there a typo or change in how the value is labelled?
+                Bugsnag.leaveBreadcrumb("One of $missingKeys not found in keySet: $keyNames")
+                // for troubleshooting purposes, let's see if we CAN derive the vk from the seed in these situations
+                var recoveryViewingKey: UnifiedViewingKey? = null
+                var ableToLoadSeed = false
+                try {
+                    val seed = sharedPref.getBytes(Const.Backup.SEED)!!
+                    ableToLoadSeed = true
+                    twig("Recover UVK: Seed found")
+                    recoveryViewingKey = DerivationTool.deriveUnifiedViewingKeys(seed, network)[0]
+                    twig("Recover UVK: successfully derived UVK from seed")
+                } catch (t: Throwable) {
+                    Bugsnag.leaveBreadcrumb("Failed while trying to recover UVK due to: $t")
                 }
+
+                // this will happen during rare upgrade scenarios when the user migrates from a seed-only wallet to this vk-based version
+                // or during more common scenarios where the user migrates from a vk only wallet to a unified vk wallet
+                if (recoveryViewingKey != null) {
+                    storeUnifiedViewingKey(recoveryViewingKey)
+                    return recoveryViewingKey
+                } else {
+                    feedback.report(
+                        Report.Issue.MissingViewkey(
+                            ableToLoadSeed,
+                            missingKeys,
+                            keyNames,
+                            sharedPref.getCharsUtf8(Const.Backup.VIEWING_KEY) != null
+                        )
+                    )
+                }
+                throw InitializerException.MissingViewingKeyException
             }
+        }
+        return UnifiedViewingKey()
     }
 
     private fun onMissingBirthday(network: ZcashNetwork): Int = failWith(InitializerException.MissingBirthdayException) {
@@ -190,7 +194,7 @@ class WalletSetupViewModel @Inject constructor() : ViewModel() {
         network: ZcashNetwork,
         birthday: WalletBirthday
     ) {
-        check(!lockBox.getBoolean(Const.Backup.HAS_SEED)) {
+        check(!sharedPref.getBoolean(Const.Backup.HAS_SEED, true)) {
             "Error! Cannot store a seed when one already exists! This would overwrite the" +
                 " existing seed and could lead to a loss of funds if the user has no backup!"
         }
@@ -208,24 +212,24 @@ class WalletSetupViewModel @Inject constructor() : ViewModel() {
 
     private suspend fun storeBirthday(birthday: WalletBirthday) = withContext(IO) {
         twig("Storing birthday ${birthday.height} with and key ${Const.Backup.BIRTHDAY_HEIGHT}")
-        lockBox[Const.Backup.BIRTHDAY_HEIGHT] = birthday.height
+        sharedPref.set(Const.Backup.BIRTHDAY_HEIGHT, birthday.height)
     }
 
     private suspend fun storeSeedPhrase(seedPhrase: CharArray) = withContext(IO) {
         twig("Storing seedphrase: ${seedPhrase.size}")
-        lockBox[Const.Backup.SEED_PHRASE] = seedPhrase
-        lockBox[Const.Backup.HAS_SEED_PHRASE] = true
+        sharedPref.setCharsUtf8(Const.Backup.SEED_PHRASE, seedPhrase)
+        sharedPref.set(Const.Backup.HAS_SEED_PHRASE, true)
     }
 
     private suspend fun storeSeed(bip39Seed: ByteArray) = withContext(IO) {
         twig("Storing seed: ${bip39Seed.size}")
-        lockBox.setBytes(Const.Backup.SEED, bip39Seed)
-        lockBox[Const.Backup.HAS_SEED] = true
+        sharedPref.setBytes(Const.Backup.SEED, bip39Seed)
+        sharedPref.set(Const.Backup.HAS_SEED, true)
     }
 
     private suspend fun storeUnifiedViewingKey(vk: UnifiedViewingKey) = withContext(IO) {
         twig("storeViewingKey vk: ${vk.extfvk.length}")
-        lockBox[Const.Backup.VIEWING_KEY] = vk.extfvk
-        lockBox[Const.Backup.PUBLIC_KEY] = vk.extpub
+        sharedPref.set(Const.Backup.VIEWING_KEY, vk.extfvk)
+        sharedPref.set(Const.Backup.PUBLIC_KEY, vk.extpub)
     }
 }
