@@ -38,7 +38,7 @@
         android:layout_height="0dp"
         android:contentDescription="@string/content_description_settings_back"
         android:elevation="6dp"
-        android:tint="@color/text_light_dimmed"
+        app:tint="@color/text_light_dimmed"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintDimensionRatio="H,1:1"
         app:layout_constraintEnd_toEndOf="parent"
@@ -55,7 +55,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
-        android:text="Receive ZEC"
+        tools:text="Receive ZEC"
         app:layout_constraintBottom_toTopOf="@+id/guideline_hit_area_top"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -74,7 +74,7 @@
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/guideline_hit_area_top"/>
+        app:layout_constraintTop_toBottomOf="@+id/icon_exit"/>
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewPager"
@@ -82,8 +82,27 @@
         android:layout_height="0dp"
         android:layout_below="@id/tabLayout"
         android:layout_centerInParent="true"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/button_share_address"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tabLayout" />
+
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/button_share_address"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        style="@style/Zcash.Button.OutlinedButton"
+        android:gravity="center"
+        android:text="Share Address"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
+        android:textColor="@color/selector_button_text_light"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent="0.088"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.95"
+        app:layout_constraintWidth_percent="0.7475728155" />
 </androidx.constraintlayout.widget.ConstraintLayout>
