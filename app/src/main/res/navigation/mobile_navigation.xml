@@ -17,9 +17,6 @@
             android:id="@+id/action_nav_home_to_nav_history"
             app:destination="@id/nav_history" />
         <action
-            android:id="@+id/action_nav_home_to_nav_tab_layout"
-            app:destination="@id/nav_tabLayout" />
-        <action
             android:id="@+id/action_nav_home_to_create_wallet"
             app:destination="@id/nav_landing" />
         <action
@@ -46,11 +43,6 @@
         tools:layout="@layout/fragment_balance_detail" />
     <fragment
         android:id="@+id/nav_receive"
-        android:name="cash.z.ecc.android.ui.receive.ReceiveFragment"
-        tools:layout="@layout/fragment_receive_new" >
-    </fragment>
-    <fragment
-        android:id="@+id/nav_tabLayout"
         android:name="cash.z.ecc.android.ui.tab_layout.TabLayoutFragment"
         tools:layout="@layout/fragment_tab_layout" >
     </fragment>
