@@ -78,7 +78,7 @@
     <string name="missing_send_validation_error_amount_minimum">Please go back and enter at least 1 Zatoshi.</string>
     <string name="missing_send_validation_error_dust">Insufficient funds to cover miner\'s fee.</string>
     <string name="missing_send_validation_error_memo_length">Memo must be less than %1$d in length.</string>
-    <string name="missing_send_validation_error_too_much">Please go back and enter no more than %1$s ZEC.</string>
+    <string name="missing_send_validation_error_too_much">Please go back and enter no more than %1$s %2$s.</string>
     <string name="missing_send_validation_error_unknown_funds">Available funds not found. Please try again in a moment.</string>
 
     <!-- Screen: Settings-->

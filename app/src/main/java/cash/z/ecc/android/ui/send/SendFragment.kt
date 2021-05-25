@@ -203,7 +203,8 @@ class SendFragment :
         sendViewModel.toAddress = binding.inputZcashAddress.text.toString()
         sendViewModel.validate(requireContext(), availableZatoshi, maxZatoshi).onFirstWith(resumedScope) { errorMessage ->
             if (errorMessage == null) {
-                mainActivity?.authenticate("${getString(R.string.send_confirmation_prompt)}\n${WalletZecFormmatter.toZecStringFull(sendViewModel.zatoshiAmount)} ZEC ${getString(R.string.send_final_to)}\n${sendViewModel.toAddress.toAbbreviatedAddress()}") {
+                val symbol = getString(R.string.symbol)
+                mainActivity?.authenticate("${getString(R.string.send_confirmation_prompt)}\n${WalletZecFormmatter.toZecStringFull(sendViewModel.zatoshiAmount)} $symbol ${getString(R.string.send_final_to)}\n${sendViewModel.toAddress.toAbbreviatedAddress()}") {
 //                    sendViewModel.funnel(Send.AddressPageComplete)
                     mainActivity?.safeNavigate(R.id.action_nav_send_to_nav_send_final)
                 }

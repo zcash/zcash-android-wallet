@@ -115,9 +115,7 @@
         app:layout_constraintEnd_toStartOf="@+id/guideline_content_end"
         app:layout_constraintStart_toEndOf="@+id/icon_receive_funds"
         app:layout_constraintTop_toTopOf="@+id/icon_receive_funds"
-        android:textAllCaps="true"
-        android:text="shielded zec"
-        />
+        tools:text="Shielded ZEC" />
 
 
     <TextView

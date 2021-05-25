@@ -64,7 +64,8 @@ class HistoryFragment : BaseFragment<FragmentHistoryBinding>() {
             goneIf(change <= 0L)
             val changeString = WalletZecFormmatter.toZecStringFull(change)
             val expecting = R.string.home_banner_expecting.toAppString(true)
-            text = "($expecting +$changeString ZEC)".toColoredSpan(R.color.text_light, "+$changeString")
+            val symbol = getString(R.string.symbol)
+            text = "($expecting +$changeString $symbol)".toColoredSpan(R.color.text_light, "+$changeString")
         }
     }
 

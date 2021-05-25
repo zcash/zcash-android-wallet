@@ -1,4 +1,5 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Currently, blockchair does not support testnet so we use our explorer.z.cash for now -->
-    <string name="api_block_explorer">https://explorer.testnet.z.cash/tx/%1$s</string>
+    <string name="api_block_explorer" translatable="false">https://explorer.testnet.z.cash/tx/%1$s</string>
+    <string name="symbol" translatable="false">TAZ</string>
 </resources>

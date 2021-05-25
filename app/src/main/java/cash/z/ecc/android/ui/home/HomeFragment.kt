@@ -273,9 +273,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
             goneIf(missingBalance)
             text = if (availableBalance != -1L && (availableBalance < totalBalance)) {
                 val change = WalletZecFormmatter.toZecStringFull(totalBalance - availableBalance)
-                "(${getString(R.string.home_banner_expecting)} +$change ZEC)".toColoredSpan(R.color.text_light, "+$change")
-            } else {
-                getString(R.string.home_instruction_enter_amount)
+                    val symbol = getString(R.string.symbol)
+                    "(${getString(R.string.home_banner_expecting)} +$change $symbol)".toColoredSpan(R.color.text_light, "+$change")
+                }
+                else -> getString(R.string.home_instruction_enter_amount)
             }
         }
     }

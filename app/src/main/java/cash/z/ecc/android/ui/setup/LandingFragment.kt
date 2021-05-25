@@ -57,7 +57,7 @@ class LandingFragment : BaseFragment<FragmentLandingBinding>() {
             tapped(DEVELOPER_WALLET_PROMPT)
             if (binding.buttonNegative.text.toString().toLowerCase(locale()) == "restore") {
                 MaterialAlertDialogBuilder(requireContext())
-                    .setMessage("Would you like to import the dev wallet?\n\nIf so, please only send 0.00001 ZEC at a time and return some later so that the account remains funded.")
+                    .setMessage("Would you like to import the dev wallet?\n\nIf so, please only send 1000 zatoshis at a time and return some later so that the account remains funded.")
                     .setTitle("Import Dev Wallet?")
                     .setCancelable(true)
                     .setPositiveButton("Import") { dialog, _ ->

@@ -43,7 +43,7 @@ class SendFinalFragment : BaseFragment<FragmentSendFinalBinding>() {
             onExit().also { tapped(SEND_FINAL_CLOSE) }
         }
         binding.textConfirmation.text =
-            "${getString(R.string.send_final_sending)} ${WalletZecFormmatter.toZecStringFull(sendViewModel.zatoshiAmount)} ZEC\n${getString(R.string.send_final_to)}\n${sendViewModel.toAddress.toAbbreviatedAddress()}"
+            "${getString(R.string.send_final_sending)} ${WalletZecFormmatter.toZecStringFull(sendViewModel.zatoshiAmount)} ${getString(R.string.symbol)}\n${getString(R.string.send_final_to)}\n${sendViewModel.toAddress.toAbbreviatedAddress()}"
         mainActivity?.preventBackPress(this)
     }
 
@@ -140,7 +140,7 @@ class SendFinalFragment : BaseFragment<FragmentSendFinalBinding>() {
                 model.primaryAction = { onReturnToSend() }
             }
             else -> {
-                model.title = "${getString(R.string.send_final_sending)} ${WalletZecFormmatter.toZecStringFull(value)} ZEC ${getString(R.string.send_final_to)}\n${toAddress.toAbbreviatedAddress()}"
+                model.title = "${getString(R.string.send_final_sending)} ${WalletZecFormmatter.toZecStringFull(value)} ${getString(R.string.symbol)} ${getString(R.string.send_final_to)}\n${toAddress.toAbbreviatedAddress()}"
                 model.showProgress = true
                 if (isCreating()) {
                     model.showCloseIcon = false
