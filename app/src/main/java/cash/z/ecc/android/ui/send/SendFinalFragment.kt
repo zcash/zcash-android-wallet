@@ -5,7 +5,6 @@ import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import androidx.lifecycle.lifecycleScope
 import cash.z.ecc.android.R
 import cash.z.ecc.android.databinding.FragmentSendFinalBinding
 import cash.z.ecc.android.di.viewmodel.activityViewModel
@@ -13,6 +12,7 @@ import cash.z.ecc.android.ext.WalletZecFormmatter
 import cash.z.ecc.android.ext.goneIf
 import cash.z.ecc.android.feedback.Report
 import cash.z.ecc.android.feedback.Report.Tap.SEND_FINAL_CLOSE
+import cash.z.ecc.android.sdk.SdkSynchronizer
 import cash.z.ecc.android.sdk.db.entity.PendingTransaction
 import cash.z.ecc.android.sdk.db.entity.isCancelled
 import cash.z.ecc.android.sdk.db.entity.isCreating
@@ -52,12 +52,12 @@ class SendFinalFragment : BaseFragment<FragmentSendFinalBinding>() {
         mainActivity?.apply {
             sendViewModel.send().onEach {
                 onPendingTxUpdated(it)
-            }.launchIn(resumedScope)
+            }.launchIn((sendViewModel.synchronizer as SdkSynchronizer).coroutineScope)
         }
     }
 
     private fun onPendingTxUpdated(tx: PendingTransaction?) {
-        if (tx == null) return // TODO: maybe log this
+        if (tx == null || !isResumed) return // TODO: maybe log this
 
         try {
             tx.toUiModel().let { model ->
