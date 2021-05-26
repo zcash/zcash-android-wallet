@@ -91,6 +91,8 @@ class SendFinalFragment : BaseFragment<FragmentSendFinalBinding>() {
             // only hold onto the view model if the transaction failed so that the user can retry
             if (tx.isSubmitSuccess()) {
                 sendViewModel.reset()
+                // celebrate
+                mainActivity?.vibrate(0, 100, 100, 200, 200, 400)
             }
         } catch (t: Throwable) {
             val message = "ERROR: error while handling pending transaction update! $t"
