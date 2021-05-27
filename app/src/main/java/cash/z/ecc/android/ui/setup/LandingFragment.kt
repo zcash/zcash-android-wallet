@@ -173,11 +173,11 @@ class LandingFragment : BaseFragment<FragmentLandingBinding>() {
 
             try {
                 val initializer = walletSetup.newWallet()
-                if (!initializer.accountsCreated) {
-                    binding.buttonPositive.isEnabled = true
-                    binding.buttonPositive.setText(R.string.landing_button_primary)
-                    throw IllegalStateException("New wallet should result in accounts table being created")
-                }
+//                if (!initializer.overwriteVks .accountsCreated) {
+//                    binding.buttonPositive.isEnabled = true
+//                    binding.buttonPositive.setText(R.string.landing_button_primary)
+//                    throw IllegalStateException("New wallet should result in accounts table being created")
+//                }
                 mainActivity?.startSync(initializer)
 
                 binding.buttonPositive.isEnabled = true
