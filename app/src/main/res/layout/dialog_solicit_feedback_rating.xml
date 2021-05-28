@@ -30,7 +30,6 @@
         android:text="1"
         android:textColor="@color/text_dark"
         android:textSize="30dp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/feedback_exp_2"
         app:layout_constraintHorizontal_chainStyle="spread_inside"
         app:layout_constraintStart_toStartOf="parent"
@@ -117,4 +116,17 @@
         app:layout_constraintEnd_toEndOf="@id/feedback_exp_5"
         app:layout_constraintStart_toStartOf="@id/feedback_exp_5"
         app:layout_constraintTop_toBottomOf="@id/feedback_exp_5" />
+
+    <TextView
+        android:id="@+id/button_ask_later"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Ask Me Later"
+        android:paddingTop="32dp"
+        android:paddingStart="20dp"
+        android:textAllCaps="true"
+        android:textColor="@color/colorPrimary"
+        android:textSize="12sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/label_rating_1" />
 </androidx.constraintlayout.widget.ConstraintLayout>

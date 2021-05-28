@@ -477,6 +477,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
                 onFeedbackProvided(ratings.indexOfFirst { it.isActivated })
             }
         }
+        fun onAskLaterClicked(view: View) {
+            dialog.dismiss()
+        }
 
         val promptViewBinding = DialogSolicitFeedbackRatingBinding.inflate(layoutInflater)
         with(promptViewBinding) {
@@ -484,6 +487,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
             ratings.forEach {
                 it.setOnClickListener(::onRatingClicked)
             }
+            buttonAskLater.setOnClickListener(::onAskLaterClicked)
         }
         dialog = MaterialAlertDialogBuilder(requireContext())
             .setView(promptViewBinding.root)
