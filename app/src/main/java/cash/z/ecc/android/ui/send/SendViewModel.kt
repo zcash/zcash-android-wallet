@@ -40,6 +40,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.lang.IllegalArgumentException
 import javax.inject.Inject
 
 class SendViewModel @Inject constructor() : ViewModel() {
@@ -185,7 +186,12 @@ class SendViewModel @Inject constructor() : ViewModel() {
         }
     }
 
-    fun updateMetrics(tx: PendingTransaction) {
+    fun updateMetrics(tx: PendingTransaction?) {
+        if (tx == null) {
+            // put a stack trace in the logs
+            twig(IllegalArgumentException("Warning: Could not update metrics because tx was null"))
+            return
+        }
         try {
             when {
                 tx.isMined() -> TRANSACTION_SUBMITTED to TRANSACTION_MINED by tx.id
