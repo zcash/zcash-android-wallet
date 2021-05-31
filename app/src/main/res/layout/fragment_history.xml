@@ -159,7 +159,6 @@
             android:layout_height="0dp"
             android:src="@drawable/ic_content_copy"
             app:layout_constraintBottom_toBottomOf="@id/label_address"
-            app:layout_constraintDimensionRatio="W,1:1"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.15"
             app:layout_constraintStart_toEndOf="@id/text_address"
