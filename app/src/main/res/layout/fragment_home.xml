@@ -442,6 +442,15 @@
         app:layout_constraintBaseline_toBaselineOf="@id/text_banner_message"
         app:layout_constraintEnd_toEndOf="@id/text_banner_message" />
 
+    <View
+        android:id="@+id/hit_area_balance"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintStart_toEndOf="@id/hit_area_receive"
+        app:layout_constraintEnd_toStartOf="@id/hit_area_profile"
+        app:layout_constraintTop_toTopOf="@id/text_title"
+        app:layout_constraintBottom_toBottomOf="@id/text_balance_description" />
+
     <androidx.constraintlayout.widget.Group
         android:id="@+id/group_balance"
         android:layout_width="wrap_content"
