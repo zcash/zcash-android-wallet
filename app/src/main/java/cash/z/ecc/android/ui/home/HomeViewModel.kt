@@ -11,6 +11,8 @@ import cash.z.ecc.android.sdk.Synchronizer.Status.SCANNING
 import cash.z.ecc.android.sdk.Synchronizer.Status.SYNCED
 import cash.z.ecc.android.sdk.Synchronizer.Status.VALIDATING
 import cash.z.ecc.android.sdk.block.CompactBlockProcessor
+import cash.z.ecc.android.sdk.db.entity.isMined
+import cash.z.ecc.android.sdk.db.entity.isSubmitSuccess
 import cash.z.ecc.android.sdk.exception.RustLayerException
 import cash.z.ecc.android.sdk.ext.ZcashSdk.MINERS_FEE_ZATOSHI
 import cash.z.ecc.android.sdk.ext.ZcashSdk.ZATOSHI_PER_ZEC
@@ -20,6 +22,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.conflate
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.scan
 import javax.inject.Inject
@@ -77,8 +80,9 @@ class HomeViewModel @Inject constructor() : ViewModel() {
         }
         twig("initializing view models stream")
         uiModels = synchronizer.run {
-            combine(status, processorInfo, balances, zec) { s, p, b, z ->
-                UiModel(s, p, b.availableZatoshi, b.totalZatoshi, z)
+            combine(status, processorInfo, balances, zec, pendingTransactions.distinctUntilChanged()) { s, i, b, z, p ->
+                val unminedCount = p.count { it.isSubmitSuccess() && !it.isMined() }
+                UiModel(s, i, b.availableZatoshi, b.totalZatoshi, z, unminedCount)
             }.onStart { emit(UiModel()) }
         }.conflate()
     }
@@ -100,12 +104,13 @@ class HomeViewModel @Inject constructor() : ViewModel() {
         }
     }
 
-    data class UiModel( // <- THIS ERROR IS AN IDE BUG WITH PARCELIZE
+    data class UiModel(
         val status: Synchronizer.Status = DISCONNECTED,
         val processorInfo: CompactBlockProcessor.ProcessorInfo = CompactBlockProcessor.ProcessorInfo(),
         val availableBalance: Long = -1L,
         val totalBalance: Long = -1L,
-        val pendingSend: String = "0"
+        val pendingSend: String = "0",
+        val unminedCount: Int = 0
     ) {
         // Note: the wallet is effectively empty if it cannot cover the miner's fee
         val hasFunds: Boolean get() = availableBalance > (MINERS_FEE_ZATOSHI.toDouble() / ZATOSHI_PER_ZEC) // 0.00001

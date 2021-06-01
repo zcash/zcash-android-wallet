@@ -263,7 +263,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
         binding.buttonSendAmount.disabledIf(amount == "0")
     }
 
-    fun setAvailable(availableBalance: Long = -1L, totalBalance: Long = -1L) {
+    fun setAvailable(availableBalance: Long = -1L, totalBalance: Long = -1L, unminedCount: Int = 0) {
         val missingBalance = availableBalance < 0
         val availableString = if (missingBalance) getString(R.string.home_button_send_updating) else WalletZecFormmatter.toZecStringFull(availableBalance)
         binding.textBalanceAvailable.text = availableString
@@ -271,8 +271,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
         binding.labelBalance.transparentIf(missingBalance)
         binding.textBalanceDescription.apply {
             goneIf(missingBalance)
-            text = if (availableBalance != -1L && (availableBalance < totalBalance)) {
-                val change = WalletZecFormmatter.toZecStringFull(totalBalance - availableBalance)
+            text = when {
+                unminedCount > 0 -> "(excludes $unminedCount unmined ${if (unminedCount > 1) "transactions" else "transaction"})"
+                availableBalance != -1L && (availableBalance < totalBalance) -> {
+                    val change = WalletZecFormmatter.toZecStringFull(totalBalance - availableBalance)
                     val symbol = getString(R.string.symbol)
                     "(${getString(R.string.home_banner_expecting)} +$change $symbol)".toColoredSpan(R.color.text_light, "+$change")
                 }
@@ -350,7 +352,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
             onNoFunds()
         } else {
             setBanner("")
-            setAvailable(uiModel.availableBalance, uiModel.totalBalance)
+            setAvailable(uiModel.availableBalance, uiModel.totalBalance, uiModel.unminedCount)
         }
     }
 
