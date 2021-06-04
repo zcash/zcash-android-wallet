@@ -187,7 +187,27 @@
             app:popUpToInclusive="false"/>
     </fragment>
 
-
+    <fragment
+        android:id="@+id/nav_shield_final"
+        android:name="cash.z.ecc.android.ui.send.AutoShieldFragment"
+        tools:layout="@layout/fragment_auto_shield" >
+        <action
+            android:id="@+id/action_nav_shield_final_to_nav_home"
+            app:destination="@id/nav_home"
+            app:popUpTo="@id/nav_home"
+            app:popUpToInclusive="false"/>
+        <action
+            android:id="@+id/action_nav_shield_final_to_nav_history"
+            app:destination="@id/nav_history"
+            app:popUpTo="@id/nav_home"
+            app:popUpToInclusive="false"/>
+        <action
+            android:id="@+id/action_nav_shield_final_to_balance_detail"
+            app:destination="@id/nav_balance_detail"
+            app:popUpTo="@id/nav_balance_detail"
+            app:popUpToInclusive="false"/>
+    </fragment>
+    
     <!--                         -->
     <!-- Wallet Setup Navigation -->
     <!--                         -->
