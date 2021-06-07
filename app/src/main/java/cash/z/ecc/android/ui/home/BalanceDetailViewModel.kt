@@ -15,11 +15,18 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class BalanceDetailViewModel @Inject constructor() : ViewModel() {
+
     @Inject
     lateinit var synchronizer: Synchronizer
 
     @Inject
     lateinit var lockBox: LockBox
+
+    var showAvailable: Boolean = true
+        set(value) {
+            field = value
+            latestBalance?.showAvailable = value
+        }
 
     var latestBalance: BalanceModel? = null
 
@@ -29,7 +36,8 @@ class BalanceDetailViewModel @Inject constructor() : ViewModel() {
             val transparentBalance = synchronizer.getTransparentBalance(taddr)
             BalanceModel(
                 balance,
-                transparentBalance
+                transparentBalance,
+                showAvailable
             ).also {
                 latestBalance = it
             }
@@ -47,16 +55,34 @@ class BalanceDetailViewModel @Inject constructor() : ViewModel() {
     data class BalanceModel(
         val shieldedBalance: WalletBalance = WalletBalance(),
         val transparentBalance: WalletBalance = WalletBalance(),
+        var showAvailable: Boolean = false
     ) {
-        val balanceShielded: String = shieldedBalance.availableZatoshi.toDisplay()
-        val balanceTransparent: String = transparentBalance.availableZatoshi.toDisplay()
-        val balanceTotal: String = (shieldedBalance.availableZatoshi + transparentBalance.availableZatoshi).toDisplay()
+        /** Whether to make calculations based on total or available zatoshi */
+
         val canAutoShield: Boolean = transparentBalance.availableZatoshi > 0L
 
-        val maxLength = maxOf(balanceShielded.length, balanceTransparent.length, balanceTotal.length)
-        val paddedShielded = pad(balanceShielded)
-        val paddedTransparent = pad(balanceTransparent)
-        val paddedTotal = pad(balanceTotal)
+        val balanceShielded: String
+            get() {
+                return if (showAvailable) shieldedBalance.availableZatoshi.toDisplay()
+                else shieldedBalance.totalZatoshi.toDisplay()
+            }
+
+        val balanceTransparent: String
+            get() {
+                return if (showAvailable) transparentBalance.availableZatoshi.toDisplay()
+                else transparentBalance.totalZatoshi.toDisplay()
+            }
+
+        val balanceTotal: String
+            get() {
+                return if (showAvailable) (shieldedBalance.availableZatoshi + transparentBalance.availableZatoshi).toDisplay()
+                else (shieldedBalance.totalZatoshi + transparentBalance.totalZatoshi).toDisplay()
+            }
+
+        val paddedShielded get() = pad(balanceShielded)
+        val paddedTransparent get() = pad(balanceTransparent)
+        val paddedTotal get() = pad(balanceTotal)
+        val maxLength get() = maxOf(balanceShielded.length, balanceTransparent.length, balanceTotal.length)
 
         private fun Long.toDisplay(): String {
             return convertZatoshiToZecString(8, 8)

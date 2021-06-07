@@ -9,6 +9,7 @@ import cash.z.ecc.android.ZcashWalletApp
 import cash.z.ecc.android.databinding.FragmentBalanceDetailBinding
 import cash.z.ecc.android.di.viewmodel.viewModel
 import cash.z.ecc.android.ext.onClickNavBack
+import cash.z.ecc.android.ext.toAppColor
 import cash.z.ecc.android.ext.toSplitColorSpan
 import cash.z.ecc.android.feedback.Report.Tap.RECEIVE_BACK
 import cash.z.ecc.android.sdk.ext.collectWith
@@ -29,6 +30,30 @@ class BalanceDetailFragment : BaseFragment<FragmentBalanceDetailBinding>() {
         binding.textShieldedZecTitle.text = "SHIELDED ${getString(R.string.symbol)}"
         binding.buttonShieldTransaparentFunds.setOnClickListener {
             onAutoShield()
+        }
+
+        binding.switchFunds.isChecked = viewModel.showAvailable
+        setFundSource(viewModel.showAvailable)
+        binding.switchFunds.setOnCheckedChangeListener { buttonView, isChecked ->
+            viewModel.showAvailable = isChecked
+            setFundSource(isChecked)
+        }
+        binding.textSwitchAvailable.setOnClickListener {
+            binding.switchFunds.isChecked = true
+        }
+        binding.textSwitchTotal.setOnClickListener {
+            binding.switchFunds.isChecked = false
+        }
+    }
+
+    private fun setFundSource(isAvailable: Boolean) {
+        val selected = R.color.colorPrimary.toAppColor()
+        val unselected = R.color.text_light_dimmed.toAppColor()
+        binding.textSwitchTotal.setTextColor(if (!isAvailable) selected else unselected)
+        binding.textSwitchAvailable.setTextColor(if (isAvailable) selected else unselected)
+
+        viewModel.latestBalance?.let { balance ->
+            onBalanceUpdated(balance)
         }
     }
 
