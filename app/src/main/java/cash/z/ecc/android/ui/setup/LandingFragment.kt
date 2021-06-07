@@ -56,8 +56,8 @@ class LandingFragment : BaseFragment<FragmentLandingBinding>() {
         binding.buttonNegative.setOnLongClickListener {
             tapped(DEVELOPER_WALLET_PROMPT)
             if (binding.buttonNegative.text.toString().toLowerCase(locale()) == "restore") {
-                MaterialAlertDialogBuilder(activity)
-                    .setMessage("Would you like to import the dev wallet?\n\nIf so, please only send 0.00001 ZEC at a time and return some later so that the account remains funded.")
+                MaterialAlertDialogBuilder(requireContext())
+                    .setMessage("Would you like to import the dev wallet?\n\nIf so, please only send 1000 zatoshis at a time and return some later so that the account remains funded.")
                     .setTitle("Import Dev Wallet?")
                     .setCancelable(true)
                     .setPositiveButton("Import") { dialog, _ ->
@@ -173,11 +173,11 @@ class LandingFragment : BaseFragment<FragmentLandingBinding>() {
 
             try {
                 val initializer = walletSetup.newWallet()
-                if (!initializer.accountsCreated) {
-                    binding.buttonPositive.isEnabled = true
-                    binding.buttonPositive.setText(R.string.landing_button_primary)
-                    throw IllegalStateException("New wallet should result in accounts table being created")
-                }
+//                if (!initializer.overwriteVks .accountsCreated) {
+//                    binding.buttonPositive.isEnabled = true
+//                    binding.buttonPositive.setText(R.string.landing_button_primary)
+//                    throw IllegalStateException("New wallet should result in accounts table being created")
+//                }
                 mainActivity?.startSync(initializer)
 
                 binding.buttonPositive.isEnabled = true

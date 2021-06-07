@@ -31,14 +31,24 @@
             android:id="@+id/action_nav_home_to_nav_profile"
             app:destination="@id/nav_profile" />
         <action
+            android:id="@+id/action_nav_home_to_nav_balance_detail"
+            app:destination="@id/nav_balance_detail" />
+        <action
             android:id="@+id/action_nav_home_to_nav_feedback"
             app:destination="@id/nav_feedback" />
     </fragment>
-
+    <fragment
+        android:id="@+id/nav_balance_detail"
+        android:name="cash.z.ecc.android.ui.home.BalanceDetailFragment"
+        tools:layout="@layout/fragment_balance_detail">
+        <action
+            android:id="@+id/action_nav_balance_detail_to_shield_final"
+            app:destination="@id/nav_shield_final" />
+    </fragment>
     <fragment
         android:id="@+id/nav_receive"
-        android:name="cash.z.ecc.android.ui.receive.ReceiveFragment"
-        tools:layout="@layout/fragment_receive_new" >
+        android:name="cash.z.ecc.android.ui.tab_layout.TabLayoutFragment"
+        tools:layout="@layout/fragment_tab_layout" >
     </fragment>
     <fragment
         android:id="@+id/nav_scan"
@@ -177,7 +187,27 @@
             app:popUpToInclusive="false"/>
     </fragment>
 
-
+    <fragment
+        android:id="@+id/nav_shield_final"
+        android:name="cash.z.ecc.android.ui.send.AutoShieldFragment"
+        tools:layout="@layout/fragment_auto_shield" >
+        <action
+            android:id="@+id/action_nav_shield_final_to_nav_home"
+            app:destination="@id/nav_home"
+            app:popUpTo="@id/nav_home"
+            app:popUpToInclusive="false"/>
+        <action
+            android:id="@+id/action_nav_shield_final_to_nav_history"
+            app:destination="@id/nav_history"
+            app:popUpTo="@id/nav_home"
+            app:popUpToInclusive="false"/>
+        <action
+            android:id="@+id/action_nav_shield_final_to_balance_detail"
+            app:destination="@id/nav_balance_detail"
+            app:popUpTo="@id/nav_balance_detail"
+            app:popUpToInclusive="false"/>
+    </fragment>
+    
     <!--                         -->
     <!-- Wallet Setup Navigation -->
     <!--                         -->

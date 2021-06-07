@@ -58,7 +58,7 @@
     <style name="Zcash.TextAppearance.AddressPart" parent="TextAppearance.AppCompat">
         <item name="android:fontFamily">@font/inconsolata</item>
         <item name="fontFamily">@font/inconsolata</item>
-        <item name="android:textSize">22sp</item>
+        <item name="android:textSize">20dp</item>
         <item name="android:textColor">@color/text_light</item>
     </style>
 

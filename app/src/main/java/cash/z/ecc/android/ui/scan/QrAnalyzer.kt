@@ -44,6 +44,7 @@ class QrAnalyzer(val scanCallback: (qrContent: String, image: ImageProxy) -> Uni
             null
         } catch (e: Throwable) {
             twig("Error while scanning QR: $e")
+            twig(e)
             null
         }
     }

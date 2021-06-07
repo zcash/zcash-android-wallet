@@ -69,6 +69,7 @@ import cash.z.ecc.android.feedback.Report.Error.NonFatal.Reorg
 import cash.z.ecc.android.feedback.Report.NonUserAction.FEEDBACK_STOPPED
 import cash.z.ecc.android.feedback.Report.NonUserAction.SYNC_START
 import cash.z.ecc.android.feedback.Report.Tap.COPY_ADDRESS
+import cash.z.ecc.android.feedback.Report.Tap.COPY_TRANSPARENT_ADDRESS
 import cash.z.ecc.android.sdk.Initializer
 import cash.z.ecc.android.sdk.SdkSynchronizer
 import cash.z.ecc.android.sdk.db.entity.ConfirmedTransaction
@@ -400,12 +401,30 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    fun copyTransparentAddress(view: View? = null) {
+        reportTap(COPY_TRANSPARENT_ADDRESS)
+        lifecycleScope.launch {
+            copyText(synchronizerComponent.synchronizer().getTransparentAddress(), "T-Address")
+        }
+    }
+
     fun copyText(textToCopy: String, label: String = "ECC Wallet Text") {
         clipboard.setPrimaryClip(
             ClipData.newPlainText(label, textToCopy)
         )
         showMessage("$label copied!")
         vibrate(0, 50)
+    }
+
+    fun shareText(textToShare: String) {
+        val sendIntent: Intent = Intent().apply {
+            action = Intent.ACTION_SEND
+            type = "text/plain"
+            putExtra(Intent.EXTRA_TEXT, textToShare)
+        }
+
+        val shareIntent = Intent.createChooser(sendIntent, null)
+        startActivity(shareIntent)
     }
 
     suspend fun isValidAddress(address: String): Boolean {

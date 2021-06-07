@@ -5,7 +5,6 @@ import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import androidx.lifecycle.lifecycleScope
 import cash.z.ecc.android.R
 import cash.z.ecc.android.databinding.FragmentSendFinalBinding
 import cash.z.ecc.android.di.viewmodel.activityViewModel
@@ -13,6 +12,7 @@ import cash.z.ecc.android.ext.WalletZecFormmatter
 import cash.z.ecc.android.ext.goneIf
 import cash.z.ecc.android.feedback.Report
 import cash.z.ecc.android.feedback.Report.Tap.SEND_FINAL_CLOSE
+import cash.z.ecc.android.sdk.SdkSynchronizer
 import cash.z.ecc.android.sdk.db.entity.PendingTransaction
 import cash.z.ecc.android.sdk.db.entity.isCancelled
 import cash.z.ecc.android.sdk.db.entity.isCreating
@@ -43,7 +43,7 @@ class SendFinalFragment : BaseFragment<FragmentSendFinalBinding>() {
             onExit().also { tapped(SEND_FINAL_CLOSE) }
         }
         binding.textConfirmation.text =
-            "${getString(R.string.send_final_sending)} ${WalletZecFormmatter.toZecStringFull(sendViewModel.zatoshiAmount)} ZEC\n${getString(R.string.send_final_to)}\n${sendViewModel.toAddress.toAbbreviatedAddress()}"
+            "${getString(R.string.send_final_sending)} ${WalletZecFormmatter.toZecStringFull(sendViewModel.zatoshiAmount)} ${getString(R.string.symbol)}\n${getString(R.string.send_final_to)}\n${sendViewModel.toAddress.toAbbreviatedAddress()}"
         mainActivity?.preventBackPress(this)
     }
 
@@ -52,12 +52,12 @@ class SendFinalFragment : BaseFragment<FragmentSendFinalBinding>() {
         mainActivity?.apply {
             sendViewModel.send().onEach {
                 onPendingTxUpdated(it)
-            }.launchIn(resumedScope)
+            }.launchIn((sendViewModel.synchronizer as SdkSynchronizer).coroutineScope)
         }
     }
 
     private fun onPendingTxUpdated(tx: PendingTransaction?) {
-        if (tx == null) return // TODO: maybe log this
+        if (tx == null || !isResumed) return // TODO: maybe log this
 
         try {
             tx.toUiModel().let { model ->
@@ -91,6 +91,8 @@ class SendFinalFragment : BaseFragment<FragmentSendFinalBinding>() {
             // only hold onto the view model if the transaction failed so that the user can retry
             if (tx.isSubmitSuccess()) {
                 sendViewModel.reset()
+                // celebrate
+                mainActivity?.vibrate(0, 100, 100, 200, 200, 400)
             }
         } catch (t: Throwable) {
             val message = "ERROR: error while handling pending transaction update! $t"
@@ -140,7 +142,7 @@ class SendFinalFragment : BaseFragment<FragmentSendFinalBinding>() {
                 model.primaryAction = { onReturnToSend() }
             }
             else -> {
-                model.title = "${getString(R.string.send_final_sending)} ${WalletZecFormmatter.toZecStringFull(value)} ZEC ${getString(R.string.send_final_to)}\n${toAddress.toAbbreviatedAddress()}"
+                model.title = "${getString(R.string.send_final_sending)} ${WalletZecFormmatter.toZecStringFull(value)} ${getString(R.string.symbol)} ${getString(R.string.send_final_to)}\n${toAddress.toAbbreviatedAddress()}"
                 model.showProgress = true
                 if (isCreating()) {
                     model.showCloseIcon = false

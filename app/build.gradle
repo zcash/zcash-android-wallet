@@ -59,14 +59,12 @@ android {
         release {
             minifyEnabled false
             shrinkResources false
-            useProguard false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.placeholder
         }
         debug {
             minifyEnabled false
             shrinkResources false
-            useProguard false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         // builds for testing only in the wallet team, typically unfinished features
@@ -80,6 +78,8 @@ android {
         }
     }
     compileOptions {
+        // emable support for new langauge APIs but also fix the issue with zxing on API < 24
+        coreLibraryDesugaringEnabled true
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
@@ -148,6 +148,8 @@ dependencies {
     implementation Deps.AndroidX.Navigation.UI_KTX
     implementation Deps.AndroidX.Room.ROOM_KTX
     kapt Deps.AndroidX.Room.ROOM_COMPILER
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
+
 
     // Google
     implementation Deps.Google.GUAVA

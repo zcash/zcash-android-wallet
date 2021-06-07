@@ -78,7 +78,7 @@ class HistoryViewModel @Inject constructor() : ViewModel() {
             }
             isMined = tx?.minedHeight != null && tx.minedHeight > synchronizer.network.saplingActivationHeight
             topValue = if (tx == null) "" else "\$${WalletZecFormmatter.toZecStringFull(tx.value)}"
-            minedHeight = (tx?.minedHeight ?: 0).toString()
+            minedHeight = String.format("%,d", tx?.minedHeight ?: 0)
             val flags =
                 DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_SHOW_YEAR or DateUtils.FORMAT_ABBREV_MONTH
             timestamp = if (tx == null) getString(R.string.transaction_timestamp_unavailable) else DateUtils.getRelativeDateTimeString(

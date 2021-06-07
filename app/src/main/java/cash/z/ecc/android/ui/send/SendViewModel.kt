@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cash.z.ecc.android.R
+import cash.z.ecc.android.ZcashWalletApp
 import cash.z.ecc.android.ext.Const
 import cash.z.ecc.android.ext.WalletZecFormmatter
 import cash.z.ecc.android.feedback.Feedback
@@ -40,6 +41,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.lang.IllegalArgumentException
 import javax.inject.Inject
 
 class SendViewModel @Inject constructor() : ViewModel() {
@@ -126,7 +128,7 @@ class SendViewModel @Inject constructor() : ViewModel() {
                 emit(context.getString(R.string.send_validation_error_dust))
             }
             maxZatoshi != null && zatoshiAmount > maxZatoshi -> {
-                emit(context.getString(R.string.send_validation_error_too_much, WalletZecFormmatter.toZecStringFull(maxZatoshi)))
+                emit(context.getString(R.string.send_validation_error_too_much, WalletZecFormmatter.toZecStringFull(maxZatoshi), ZcashWalletApp.instance.getString(R.string.symbol)))
             }
             createMemoToSend().length > ZcashSdk.MAX_MEMO_SIZE -> {
                 emit(context.getString(R.string.send_validation_error_memo_length, ZcashSdk.MAX_MEMO_SIZE))
@@ -154,7 +156,12 @@ class SendViewModel @Inject constructor() : ViewModel() {
     // Analytics
     //
 
-    private fun reportFailures(tx: PendingTransaction) {
+    private fun reportFailures(tx: PendingTransaction?) {
+        if (tx == null) {
+            // put a stack trace in the logs
+            twig(IllegalArgumentException("Warning: Could not report failures because tx was null"))
+            return
+        }
         when {
             tx.isCancelled() -> funnel(Send.Cancelled)
             tx.isFailedEncoding() -> {
@@ -185,7 +192,12 @@ class SendViewModel @Inject constructor() : ViewModel() {
         }
     }
 
-    fun updateMetrics(tx: PendingTransaction) {
+    fun updateMetrics(tx: PendingTransaction?) {
+        if (tx == null) {
+            // put a stack trace in the logs
+            twig(IllegalArgumentException("Warning: Could not update metrics because tx was null"))
+            return
+        }
         try {
             when {
                 tx.isMined() -> TRANSACTION_SUBMITTED to TRANSACTION_MINED by tx.id

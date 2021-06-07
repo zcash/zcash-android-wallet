@@ -9,7 +9,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.LinearLayoutManager
 import cash.z.ecc.android.R
 import cash.z.ecc.android.databinding.DialogSolicitFeedbackRatingBinding
 import cash.z.ecc.android.databinding.FragmentHomeBinding
@@ -24,6 +23,7 @@ import cash.z.ecc.android.ext.showSharedLibraryCriticalError
 import cash.z.ecc.android.ext.toColoredSpan
 import cash.z.ecc.android.ext.transparentIf
 import cash.z.ecc.android.feedback.Report
+import cash.z.ecc.android.feedback.Report.Tap.HOME_BALANCE_DETAIL
 import cash.z.ecc.android.feedback.Report.Tap.HOME_CLEAR_AMOUNT
 import cash.z.ecc.android.feedback.Report.Tap.HOME_FUND_NOW
 import cash.z.ecc.android.feedback.Report.Tap.HOME_HISTORY
@@ -120,6 +120,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
             )
             hitAreaProfile.onClickNavTo(R.id.action_nav_home_to_nav_profile) { tapped(HOME_PROFILE) }
             textHistory.onClickNavTo(R.id.action_nav_home_to_nav_history) { tapped(HOME_HISTORY) }
+            textSendAmount.onClickNavTo(R.id.action_nav_home_to_nav_balance_detail) { tapped(HOME_BALANCE_DETAIL) }
             hitAreaReceive.onClickNavTo(R.id.action_nav_home_to_nav_receive) { tapped(HOME_RECEIVE) }
 
             textBannerAction.setOnClickListener {
@@ -262,7 +263,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
         binding.buttonSendAmount.disabledIf(amount == "0")
     }
 
-    fun setAvailable(availableBalance: Long = -1L, totalBalance: Long = -1L) {
+    fun setAvailable(availableBalance: Long = -1L, totalBalance: Long = -1L, unminedCount: Int = 0) {
         val missingBalance = availableBalance < 0
         val availableString = if (missingBalance) getString(R.string.home_button_send_updating) else WalletZecFormmatter.toZecStringFull(availableBalance)
         binding.textBalanceAvailable.text = availableString
@@ -270,11 +271,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
         binding.labelBalance.transparentIf(missingBalance)
         binding.textBalanceDescription.apply {
             goneIf(missingBalance)
-            text = if (availableBalance != -1L && (availableBalance < totalBalance)) {
-                val change = WalletZecFormmatter.toZecStringFull(totalBalance - availableBalance)
-                "(${getString(R.string.home_banner_expecting)} +$change ZEC)".toColoredSpan(R.color.text_light, "+$change")
-            } else {
-                getString(R.string.home_instruction_enter_amount)
+            text = when {
+                unminedCount > 0 -> "(excludes $unminedCount unmined ${if (unminedCount > 1) "transactions" else "transaction"})"
+                availableBalance != -1L && (availableBalance < totalBalance) -> {
+                    val change = WalletZecFormmatter.toZecStringFull(totalBalance - availableBalance)
+                    val symbol = getString(R.string.symbol)
+                    "(${getString(R.string.home_banner_expecting)} +$change $symbol)".toColoredSpan(R.color.text_light, "+$change")
+                }
+                else -> getString(R.string.home_instruction_enter_amount)
             }
         }
     }
@@ -348,7 +352,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
             onNoFunds()
         } else {
             setBanner("")
-            setAvailable(uiModel.availableBalance, uiModel.totalBalance)
+            setAvailable(uiModel.availableBalance, uiModel.totalBalance, uiModel.unminedCount)
         }
     }
 
@@ -359,7 +363,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
     private fun onBannerAction(action: BannerAction) {
         when (action) {
             FUND_NOW -> {
-                MaterialAlertDialogBuilder(activity)
+                MaterialAlertDialogBuilder(requireContext())
                     .setMessage(R.string.home_dialog_no_balance_message)
                     .setTitle(R.string.home_dialog_no_balance_title)
                     .setCancelable(true)
@@ -475,6 +479,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
                 onFeedbackProvided(ratings.indexOfFirst { it.isActivated })
             }
         }
+        fun onAskLaterClicked(view: View) {
+            dialog.dismiss()
+        }
 
         val promptViewBinding = DialogSolicitFeedbackRatingBinding.inflate(layoutInflater)
         with(promptViewBinding) {
@@ -482,8 +489,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
             ratings.forEach {
                 it.setOnClickListener(::onRatingClicked)
             }
+            buttonAskLater.setOnClickListener(::onAskLaterClicked)
         }
-        dialog = MaterialAlertDialogBuilder(context)
+        dialog = MaterialAlertDialogBuilder(requireContext())
             .setView(promptViewBinding.root)
             .setCancelable(true)
             .create()
@@ -492,7 +500,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
 
     private fun onFeedbackProvided(rating: Int) {
         hasInterrupted = true
-        MaterialAlertDialogBuilder(context)
+        MaterialAlertDialogBuilder(requireContext())
             .setTitle("Want to share details?")
             .setNegativeButton("Yes!") { dialog, which ->
                 val action = HomeFragmentDirections.actionNavHomeToNavFeedback(rating, true)

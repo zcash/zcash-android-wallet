@@ -1,6 +1,5 @@
 package cash.z.ecc.android.di.module
 
-import android.content.Context
 import cash.z.ecc.android.di.annotation.SynchronizerScope
 import cash.z.ecc.android.sdk.Initializer
 import cash.z.ecc.android.sdk.Synchronizer
@@ -14,9 +13,11 @@ import dagger.Provides
 @Module(includes = [ViewModelsSynchronizerModule::class])
 class SynchronizerModule {
 
+    private var synchronizer: Synchronizer? = null
+
     @Provides
     @SynchronizerScope
-    fun provideSynchronizer(appContext: Context, initializer: Initializer): Synchronizer {
-        return Synchronizer(initializer)
+    fun provideSynchronizer(initializer: Initializer): Synchronizer {
+        return synchronizer ?: Synchronizer(initializer).also { synchronizer = it }
     }
 }
