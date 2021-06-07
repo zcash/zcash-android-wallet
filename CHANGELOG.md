@@ -1,6 +1,21 @@
 Change Log
 ==========
 
+Version 1.0.0-alpha72 *(2021-06-07)*
+------------------------------------
+New: Address tabs with t-address support [Credit @herou].
+New: Ktlint support [Credit @nighthawk24]
+New: Balance details screen [Credit @herou].
+New: Better balance information around unmined transactions.
+New: Auto-shielding via balance details screen.
+New: 'Ask Later' on feedback popup.
+Fix: Repaired QR scanning on older devices (below API 24).
+Fix: Several of the most frequent crashes reported in bugsnag.
+Fix: Ovesized icon in history.
+Fix: History no longer displays negative balance during initial sync.
+Fix: Errors that prevented sync from working in some situations.
+Fix: Improved support for smaller screens and older devices.
+
 Version 1.0.0-alpha67 *(2021-04-22)*
 ------------------------------------
 - Fix: Crash after entering 24th seed word on certain devices
