@@ -139,12 +139,13 @@ class BalanceDetailFragment : BaseFragment<FragmentBalanceDetailBinding>() {
         }
 
         pendingUnconfirmed.count().takeUnless { it == 0 }?.let { count ->
-            status += " and $count outbound ${"transaction".plural(count)}"
+            if (status.contains("Awaiting")) status += " and "
+            status += "$count outbound ${"transaction".plural(count)}"
             remainingConfirmations().firstOrNull()?.let { remaining ->
                 status += " with $remaining ${"confirmation".plural(remaining)} remaining"
             }
         }
 
-        return status
+        return if (status.isEmpty()) "All funds are available!" else status
     }
 }
