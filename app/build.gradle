@@ -165,6 +165,7 @@ dependencies {
     implementation Deps.Grpc.OKHTTP
     implementation Deps.Grpc.PROTOBUG
     implementation Deps.Grpc.STUB
+    implementation 'com.squareup.okio:okio:1.17.5'
     implementation Deps.JavaX.JAVA_ANNOTATION
 
     // Analytics (for dogfooding/crash-reporting/feedback only on internal team builds)

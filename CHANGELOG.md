@@ -7,6 +7,7 @@ New: Address tabs with t-address support [Credit @herou].
 New: Ktlint support [Credit @nighthawk24]
 New: Balance details screen [Credit @herou].
 New: Better balance information around unmined transactions.
+New: Add toggle to show available v. total funds.
 New: Auto-shielding via balance details screen.
 New: 'Ask Later' on feedback popup.
 Fix: Repaired QR scanning on older devices (below API 24).
