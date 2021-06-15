@@ -20,6 +20,7 @@ import cash.z.ecc.android.ext.goneIf
 import cash.z.ecc.android.ext.invisibleIf
 import cash.z.ecc.android.ext.onClickNavTo
 import cash.z.ecc.android.ext.showSharedLibraryCriticalError
+import cash.z.ecc.android.ext.toAppColor
 import cash.z.ecc.android.ext.toColoredSpan
 import cash.z.ecc.android.ext.transparentIf
 import cash.z.ecc.android.feedback.Report
@@ -132,6 +133,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
             setSendAmount("0", false)
 
             snake = MagicSnakeLoader(binding.lottieButtonLoading)
+
+            // fix: don't start up with just a black screen
+            buttonSendAmount.text = getString(R.string.home_button_send_disconnected)
+            buttonSendAmount.setTextColor(R.color.text_light.toAppColor())
         }
 
         binding.buttonNumberPadBack.setOnLongClickListener {
