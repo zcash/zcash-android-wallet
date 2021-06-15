@@ -8,6 +8,7 @@ import cash.z.ecc.android.R
 import cash.z.ecc.android.ZcashWalletApp
 import cash.z.ecc.android.databinding.FragmentBalanceDetailBinding
 import cash.z.ecc.android.di.viewmodel.viewModel
+import cash.z.ecc.android.ext.goneIf
 import cash.z.ecc.android.ext.onClickNavBack
 import cash.z.ecc.android.ext.toAppColor
 import cash.z.ecc.android.ext.toSplitColorSpan
@@ -120,7 +121,14 @@ class BalanceDetailFragment : BaseFragment<FragmentBalanceDetailBinding>() {
             }
             binding.textBlockHeight.text = height
         }
+
+        status.balances.hasPending.let { hasPending ->
+            binding.switchFunds.goneIf(!hasPending)
+            binding.textSwitchTotal.goneIf(!hasPending)
+            binding.textSwitchAvailable.goneIf(!hasPending)
+        }
     }
+
 
     fun setBalances(shielded: String, transparent: String, total: String) {
         binding.textShieldAmount.text = shielded.colorize()

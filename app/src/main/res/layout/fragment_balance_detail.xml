@@ -67,8 +67,8 @@
         android:text="as of block "
         android:textColor="@color/tx_text_light_dimmed"
         android:textSize="18sp"
-        app:layout_constraintTop_toBottomOf="@id/icon_exit"
-        app:layout_constraintEnd_toStartOf="@id/text_block_height" />
+        app:layout_constraintEnd_toStartOf="@id/text_block_height"
+        app:layout_constraintTop_toBottomOf="@id/icon_exit" />
 
     <TextView
         android:id="@+id/text_block_height"
@@ -97,24 +97,25 @@
         android:id="@+id/switch_funds"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingTop="12dp"
         android:paddingBottom="16dp"
-        app:layout_constraintTop_toBottomOf="@id/background_group_outter"
-        app:layout_constraintStart_toStartOf="parent"
+        android:paddingTop="12dp"
+        android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
-        />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/background_group_outter" />
 
     <TextView
         android:id="@+id/text_switch_total"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="4dp"
+        android:fontFamily="@font/inconsolata"
         android:paddingBottom="16dp"
         android:paddingStart="16dp"
         android:paddingTop="8dp"
         android:text="Total"
         android:textSize="14dp"
-        android:fontFamily="@font/inconsolata"
+        android:visibility="invisible"
         app:layout_constraintBaseline_toBaselineOf="@id/text_switch_available"
         app:layout_constraintEnd_toStartOf="@id/switch_funds" />
 
@@ -123,15 +124,16 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="4dp"
+        android:fontFamily="@font/inconsolata"
         android:paddingBottom="16dp"
         android:paddingEnd="16dp"
         android:paddingStart="4dp"
         android:paddingTop="8dp"
         android:text="Available"
         android:textSize="14dp"
-        android:fontFamily="@font/inconsolata"
+        android:visibility="invisible"
         app:layout_constraintBaseline_toBaselineOf="@id/switch_funds"
-        app:layout_constraintStart_toEndOf="@id/switch_funds"/>
+        app:layout_constraintStart_toEndOf="@id/switch_funds" />
 
     <View
         android:id="@+id/background_group_inner"
