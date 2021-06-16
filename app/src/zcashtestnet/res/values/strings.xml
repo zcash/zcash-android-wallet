@@ -2,4 +2,5 @@
     <!-- Currently, blockchair does not support testnet so we use our explorer.z.cash for now -->
     <string name="api_block_explorer" translatable="false">https://explorer.testnet.z.cash/tx/%1$s</string>
     <string name="symbol" translatable="false">TAZ</string>
+    <string name="play_store_url" translatable="false">https://play.google.com/apps/internaltest/4699113723491212355</string>
 </resources>
