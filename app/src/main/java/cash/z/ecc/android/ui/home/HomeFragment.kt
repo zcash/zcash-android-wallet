@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.lifecycle.lifecycleScope
 import cash.z.ecc.android.R
+import cash.z.ecc.android.ZcashWalletApp
 import cash.z.ecc.android.databinding.DialogSolicitFeedbackRatingBinding
 import cash.z.ecc.android.databinding.FragmentHomeBinding
 import cash.z.ecc.android.di.viewmodel.activityViewModel
@@ -34,6 +35,7 @@ import cash.z.ecc.android.feedback.Report.Tap.HOME_SEND
 import cash.z.ecc.android.sdk.Synchronizer.Status.DISCONNECTED
 import cash.z.ecc.android.sdk.Synchronizer.Status.STOPPED
 import cash.z.ecc.android.sdk.Synchronizer.Status.SYNCED
+import cash.z.ecc.android.sdk.ext.convertZatoshiToZecString
 import cash.z.ecc.android.sdk.ext.convertZecToZatoshi
 import cash.z.ecc.android.sdk.ext.onFirstWith
 import cash.z.ecc.android.sdk.ext.safelyConvertToBigDecimal
@@ -353,11 +355,29 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
 
     private fun onSynced(uiModel: HomeViewModel.UiModel) {
         snake.isSynced = true
-        if (!uiModel.hasBalance) {
+        if (!uiModel.hasSaplingBalance) {
             onNoFunds()
         } else {
             setBanner("")
             setAvailable(uiModel.saplingBalance.availableZatoshi, uiModel.saplingBalance.totalZatoshi, uiModel.unminedCount)
+        }
+        autoShield(uiModel)
+    }
+
+    private fun autoShield(uiModel: HomeViewModel.UiModel) {
+        if (uiModel.hasAutoshieldFunds && canAutoshield()) {
+            twig("Autoshielding is available! Let's do this!!!")
+            mainActivity?.lastAutoShieldTime = System.currentTimeMillis()
+            mainActivity?.safeNavigate(R.id.action_nav_home_to_shield_final)
+        } else {
+            // troubleshooting logs
+            if (uiModel.transparentBalance.availableZatoshi > 0) {
+                twig("Transparent funds are available but not enough to autoshield. Available: ${uiModel.transparentBalance.availableZatoshi.convertZatoshiToZecString(10)}  Required: ${ZcashWalletApp.instance.autoshieldThreshold.convertZatoshiToZecString(8)}")
+            } else if (uiModel.transparentBalance.totalZatoshi > 0) {
+                twig("Transparent funds have been received but they require 10 confirmations for autoshielding.")
+            } else if (!canAutoshield()) {
+                twig("Could not autoshield probably because the last one occurred ${System.currentTimeMillis() - (mainActivity?.lastAutoShieldTime ?: 0)}ms ago which is less than the required cool off time of ${mainActivity?.maxAutoshieldFrequency}ms")
+            }
         }
     }
 
@@ -451,6 +471,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
     //
     // User Interruptions
     //
+
     // TODO: Expand this placeholder logic around when to interrupt the user.
     // For now, we just need to get this in the app so that we can BEGIN capturing ECC feedback.
     var hasInterrupted = false
@@ -469,6 +490,15 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
                 it.show()
             }
         }
+    }
+
+    private fun canAutoshield(): Boolean {
+        return mainActivity?.let { main ->
+            System.currentTimeMillis().let { now ->
+                val delta = now - main.lastAutoShieldTime
+                return delta > main.maxAutoshieldFrequency
+            }
+        } ?: false
     }
 
     private fun feedbackPrompt(): Dialog {

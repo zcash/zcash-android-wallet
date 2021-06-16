@@ -2,6 +2,7 @@ package cash.z.ecc.android.ui.home
 
 import androidx.lifecycle.ViewModel
 import cash.z.ecc.android.R
+import cash.z.ecc.android.ZcashWalletApp
 import cash.z.ecc.android.ext.toAppString
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.Synchronizer.Status.DISCONNECTED
@@ -126,7 +127,8 @@ class HomeViewModel @Inject constructor() : ViewModel() {
     ) {
         // Note: the wallet is effectively empty if it cannot cover the miner's fee
         val hasFunds: Boolean get() = saplingBalance.availableZatoshi > (MINERS_FEE_ZATOSHI.toDouble() / ZATOSHI_PER_ZEC) // 0.00001
-        val hasBalance: Boolean get() = saplingBalance.totalZatoshi > 0
+        val hasSaplingBalance: Boolean get() = saplingBalance.totalZatoshi > 0
+        val hasAutoshieldFunds: Boolean get() = transparentBalance.availableZatoshi > ZcashWalletApp.instance.autoshieldThreshold
         val isSynced: Boolean get() = status == SYNCED
         val isSendEnabled: Boolean get() = isSynced && hasFunds
 
