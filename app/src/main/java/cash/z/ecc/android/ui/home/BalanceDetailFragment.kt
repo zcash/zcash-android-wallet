@@ -4,6 +4,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Toast
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import cash.z.ecc.android.R
 import cash.z.ecc.android.ZcashWalletApp
 import cash.z.ecc.android.databinding.FragmentBalanceDetailBinding
@@ -13,10 +16,12 @@ import cash.z.ecc.android.ext.onClickNavBack
 import cash.z.ecc.android.ext.toAppColor
 import cash.z.ecc.android.ext.toSplitColorSpan
 import cash.z.ecc.android.feedback.Report.Tap.RECEIVE_BACK
-import cash.z.ecc.android.sdk.ext.collectWith
 import cash.z.ecc.android.sdk.ext.convertZatoshiToZecString
 import cash.z.ecc.android.ui.base.BaseFragment
 import cash.z.ecc.android.ui.home.BalanceDetailViewModel.StatusModel
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 
 class BalanceDetailFragment : BaseFragment<FragmentBalanceDetailBinding>() {
 
@@ -24,6 +29,16 @@ class BalanceDetailFragment : BaseFragment<FragmentBalanceDetailBinding>() {
 
     override fun inflate(inflater: LayoutInflater): FragmentBalanceDetailBinding =
         FragmentBalanceDetailBinding.inflate(inflater)
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.balances.onEach { onBalanceUpdated(it) }.launchIn(this)
+                viewModel.statuses.onEach { onStatusUpdated(it) }.launchIn(this)
+            }
+        }
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -83,12 +98,6 @@ class BalanceDetailFragment : BaseFragment<FragmentBalanceDetailBinding>() {
             }
             Toast.makeText(mainActivity, toast, Toast.LENGTH_SHORT).show()
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        viewModel.balances.collectWith(resumedScope, ::onBalanceUpdated)
-        viewModel.statuses.collectWith(resumedScope, ::onStatusUpdated)
     }
 
     private fun onBalanceUpdated(balanceModel: BalanceDetailViewModel.BalanceModel) {
