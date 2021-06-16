@@ -26,6 +26,7 @@ import kotlinx.coroutines.launch
 class BalanceDetailFragment : BaseFragment<FragmentBalanceDetailBinding>() {
 
     private val viewModel: BalanceDetailViewModel by viewModel()
+    private var lastSignal = -1
 
     override fun inflate(inflater: LayoutInflater): FragmentBalanceDetailBinding =
         FragmentBalanceDetailBinding.inflate(inflater)
@@ -121,14 +122,20 @@ class BalanceDetailFragment : BaseFragment<FragmentBalanceDetailBinding>() {
 
     private fun onStatusUpdated(status: StatusModel) {
         binding.textStatus.text = status.toStatus()
-        val height = String.format("%,d", status.latestHeight)
-        binding.textBlockHeight.apply {
-            // if we got a new block
-            if (text.isNotEmpty() && text.toString() != height && isResumed) {
-                mainActivity?.vibrate(0, 100, 100, 300)
-                Toast.makeText(mainActivity, "New block!", Toast.LENGTH_SHORT).show()
+        if (status.missingBlocks > 100) {
+            binding.textBlockHeightPrefix.text = "Processing "
+            binding.textBlockHeight.text = String.format("%,d", status.info.lastScannedHeight) + " of " + String.format("%,d", status.info.networkBlockHeight)
+        } else {
+            status.info.lastScannedHeight.let { height ->
+                if (height < 1) {
+                    binding.textBlockHeightPrefix.text = "Processing..."
+                    binding.textBlockHeight.text = ""
+                } else {
+                    binding.textBlockHeightPrefix.text = "Balances as of block "
+                    binding.textBlockHeight.text = String.format("%,d", status.info.lastScannedHeight)
+                    sendNewBlockSignal(status.info.lastScannedHeight)
+                }
             }
-            binding.textBlockHeight.text = height
         }
 
         status.balances.hasPending.let { hasPending ->
@@ -138,6 +145,14 @@ class BalanceDetailFragment : BaseFragment<FragmentBalanceDetailBinding>() {
         }
     }
 
+    private fun sendNewBlockSignal(currentHeight: Int) {
+        // prevent a flood of signals while scanning blocks
+        if (lastSignal != -1 && currentHeight > lastSignal) {
+            mainActivity?.vibrate(0, 100, 100, 300)
+            Toast.makeText(mainActivity, "New block!", Toast.LENGTH_SHORT).show()
+        }
+        lastSignal = currentHeight
+    }
 
     fun setBalances(shielded: String, transparent: String, total: String) {
         binding.textShieldAmount.text = shielded.colorize()
