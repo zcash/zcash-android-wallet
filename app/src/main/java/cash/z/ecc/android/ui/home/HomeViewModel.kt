@@ -3,7 +3,6 @@ package cash.z.ecc.android.ui.home
 import androidx.lifecycle.ViewModel
 import cash.z.ecc.android.R
 import cash.z.ecc.android.ext.toAppString
-import cash.z.ecc.android.sdk.SdkSynchronizer
 import cash.z.ecc.android.sdk.Synchronizer
 import cash.z.ecc.android.sdk.Synchronizer.Status.DISCONNECTED
 import cash.z.ecc.android.sdk.Synchronizer.Status.DOWNLOADING
@@ -11,12 +10,13 @@ import cash.z.ecc.android.sdk.Synchronizer.Status.SCANNING
 import cash.z.ecc.android.sdk.Synchronizer.Status.SYNCED
 import cash.z.ecc.android.sdk.Synchronizer.Status.VALIDATING
 import cash.z.ecc.android.sdk.block.CompactBlockProcessor
+import cash.z.ecc.android.sdk.db.entity.PendingTransaction
 import cash.z.ecc.android.sdk.db.entity.isMined
 import cash.z.ecc.android.sdk.db.entity.isSubmitSuccess
-import cash.z.ecc.android.sdk.exception.RustLayerException
 import cash.z.ecc.android.sdk.ext.ZcashSdk.MINERS_FEE_ZATOSHI
 import cash.z.ecc.android.sdk.ext.ZcashSdk.ZATOSHI_PER_ZEC
 import cash.z.ecc.android.sdk.ext.twig
+import cash.z.ecc.android.sdk.type.WalletBalance
 import kotlinx.coroutines.channels.ConflatedBroadcastChannel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
@@ -80,9 +80,28 @@ class HomeViewModel @Inject constructor() : ViewModel() {
         }
         twig("initializing view models stream")
         uiModels = synchronizer.run {
-            combine(status, processorInfo, balances, zec, pendingTransactions.distinctUntilChanged()) { s, i, b, z, p ->
-                val unminedCount = p.count { it.isSubmitSuccess() && !it.isMined() }
-                UiModel(s, i, b.availableZatoshi, b.totalZatoshi, z, unminedCount)
+            combine(
+                status,
+                processorInfo,
+                orchardBalances,
+                saplingBalances,
+                transparentBalances,
+                zec,
+                pendingTransactions.distinctUntilChanged()
+                // unfortunately we have to use an untyped array here rather than typed parameters because combine only supports up to 5 typed params
+            ) { flows ->
+                val unminedCount = (flows[6] as List<PendingTransaction>).count {
+                    it.isSubmitSuccess() && !it.isMined()
+                }
+                UiModel(
+                    status = flows[0] as Synchronizer.Status,
+                    processorInfo = flows[1] as CompactBlockProcessor.ProcessorInfo,
+                    orchardBalance = flows[2] as WalletBalance,
+                    saplingBalance = flows[3] as WalletBalance,
+                    transparentBalance = flows[4] as WalletBalance,
+                    pendingSend = flows[5] as String,
+                    unminedCount = unminedCount
+                )
             }.onStart { emit(UiModel()) }
         }.conflate()
     }
@@ -96,25 +115,18 @@ class HomeViewModel @Inject constructor() : ViewModel() {
         _typedChars.send(c)
     }
 
-    suspend fun refreshBalance() {
-        try {
-            (synchronizer as SdkSynchronizer).refreshBalance()
-        } catch (e: RustLayerException.BalanceException) {
-            twig("Balance refresh failed. This is probably caused by a critical error but we'll give the app a chance to try to recover.")
-        }
-    }
-
     data class UiModel(
         val status: Synchronizer.Status = DISCONNECTED,
         val processorInfo: CompactBlockProcessor.ProcessorInfo = CompactBlockProcessor.ProcessorInfo(),
-        val availableBalance: Long = -1L,
-        val totalBalance: Long = -1L,
+        val orchardBalance: WalletBalance = WalletBalance(),
+        val saplingBalance: WalletBalance = WalletBalance(),
+        val transparentBalance: WalletBalance = WalletBalance(),
         val pendingSend: String = "0",
         val unminedCount: Int = 0
     ) {
         // Note: the wallet is effectively empty if it cannot cover the miner's fee
-        val hasFunds: Boolean get() = availableBalance > (MINERS_FEE_ZATOSHI.toDouble() / ZATOSHI_PER_ZEC) // 0.00001
-        val hasBalance: Boolean get() = totalBalance > 0
+        val hasFunds: Boolean get() = saplingBalance.availableZatoshi > (MINERS_FEE_ZATOSHI.toDouble() / ZATOSHI_PER_ZEC) // 0.00001
+        val hasBalance: Boolean get() = saplingBalance.totalZatoshi > 0
         val isSynced: Boolean get() = status == SYNCED
         val isSendEnabled: Boolean get() = isSynced && hasFunds
 

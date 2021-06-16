@@ -31,15 +31,13 @@ class BalanceDetailViewModel @Inject constructor() : ViewModel() {
     var latestBalance: BalanceModel? = null
 
     val balances: Flow<BalanceModel>
-        get() = synchronizer.balances.map { balance ->
-            val taddr = synchronizer.getTransparentAddress()
-            val transparentBalance = synchronizer.getTransparentBalance(taddr)
-            BalanceModel(
-                balance,
-                transparentBalance,
-                showAvailable
-            ).also {
+        get() = combineTransform(
+            synchronizer.saplingBalances,
+            synchronizer.transparentBalances
+        ) { saplingBalance, transparentBalance ->
+            BalanceModel(saplingBalance, transparentBalance, showAvailable).let {
                 latestBalance = it
+                emit(it)
             }
         }
 

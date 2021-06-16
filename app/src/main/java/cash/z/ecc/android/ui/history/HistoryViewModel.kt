@@ -35,7 +35,7 @@ class HistoryViewModel @Inject constructor() : ViewModel() {
     val uiModels = selectedTransaction.map { it.toUiModel() }
 
     val transactions get() = synchronizer.clearedTransactions
-    val balance get() = synchronizer.balances
+    val balance get() = synchronizer.saplingBalances
     val latestHeight get() = synchronizer.latestHeight
 
     suspend fun getAddress() = synchronizer.getAddress()

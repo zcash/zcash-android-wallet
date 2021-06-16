@@ -337,8 +337,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
                         if (old.processorInfo.lastScanRange != new.processorInfo.lastScanRange) append("${innerComma()}lastScanRange=${new.processorInfo.lastScanRange}")
                         append(")")
                     }
-                    if (old.availableBalance != new.availableBalance) append("${maybeComma()}availableBalance=${new.availableBalance}")
-                    if (old.totalBalance != new.totalBalance) append("${maybeComma()}totalBalance=${new.totalBalance}")
+                    if (old.saplingBalance.availableZatoshi != new.saplingBalance.availableZatoshi) append("${maybeComma()}availableBalance=${new.saplingBalance.availableZatoshi}")
+                    if (old.saplingBalance.totalZatoshi != new.saplingBalance.totalZatoshi) append("${maybeComma()}totalBalance=${new.saplingBalance.totalZatoshi}")
                     if (old.pendingSend != new.pendingSend) append("${maybeComma()}pendingSend=${new.pendingSend}")
                     append(")")
                 }
@@ -357,7 +357,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
             onNoFunds()
         } else {
             setBanner("")
-            setAvailable(uiModel.availableBalance, uiModel.totalBalance, uiModel.unminedCount)
+            setAvailable(uiModel.saplingBalance.availableZatoshi, uiModel.saplingBalance.totalZatoshi, uiModel.unminedCount)
         }
     }
 
