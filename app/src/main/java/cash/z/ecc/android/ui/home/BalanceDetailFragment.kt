@@ -179,7 +179,7 @@ class BalanceDetailFragment : BaseFragment<FragmentBalanceDetailBinding>() {
         var status = ""
         if (hasUnmined) {
             val count = pendingUnmined.count()
-            status += "Balance excludes $count unmined ${"transaction".plural(count)}. "
+            status += "Balance excludes $count unconfirmed ${"transaction".plural(count)}. "
         }
 
         status += when {

@@ -279,7 +279,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
         binding.textBalanceDescription.apply {
             goneIf(missingBalance)
             text = when {
-                unminedCount > 0 -> "(excludes $unminedCount unmined ${if (unminedCount > 1) "transactions" else "transaction"})"
+                unminedCount > 0 -> "(excludes $unminedCount unconfirmed ${if (unminedCount > 1) "transactions" else "transaction"})"
                 availableBalance != -1L && (availableBalance < totalBalance) -> {
                     val change = WalletZecFormmatter.toZecStringFull(totalBalance - availableBalance)
                     val symbol = getString(R.string.symbol)
