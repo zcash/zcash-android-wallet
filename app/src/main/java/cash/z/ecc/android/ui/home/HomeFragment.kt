@@ -368,7 +368,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
         if (uiModel.hasAutoshieldFunds && canAutoshield()) {
             twig("Autoshielding is available! Let's do this!!!")
             mainActivity?.lastAutoShieldTime = System.currentTimeMillis()
-            mainActivity?.safeNavigate(R.id.action_nav_home_to_shield_final)
+            mainActivity?.safeNavigate(R.id.action_nav_home_to_nav_funds_available)
         } else {
             // troubleshooting logs
             if (uiModel.transparentBalance.availableZatoshi > 0) {
