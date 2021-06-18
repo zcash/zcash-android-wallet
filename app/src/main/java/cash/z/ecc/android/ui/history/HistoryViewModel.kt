@@ -81,7 +81,7 @@ class HistoryViewModel @Inject constructor() : ViewModel() {
             minedHeight = String.format("%,d", tx?.minedHeight ?: 0)
             val flags =
                 DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_SHOW_YEAR or DateUtils.FORMAT_ABBREV_MONTH
-            timestamp = if (tx == null) getString(R.string.transaction_timestamp_unavailable) else DateUtils.getRelativeDateTimeString(
+            timestamp = if (tx == null || tx.blockTimeInSeconds <= 0) getString(R.string.transaction_timestamp_unavailable) else DateUtils.getRelativeDateTimeString(
                 ZcashWalletApp.instance,
                 tx.blockTimeInSeconds * 1000,
                 DateUtils.SECOND_IN_MILLIS,
