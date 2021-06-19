@@ -271,7 +271,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
         binding.buttonSendAmount.disabledIf(amount == "0")
     }
 
-    fun setAvailable(availableBalance: Long = -1L, totalBalance: Long = -1L, unminedCount: Int = 0) {
+    fun setAvailable(availableBalance: Long = -1L, totalBalance: Long = -1L, availableTransparentBalance: Long = -1L, unminedCount: Int = 0) {
         val missingBalance = availableBalance < 0
         val availableString = if (missingBalance) getString(R.string.home_button_send_updating) else WalletZecFormmatter.toZecStringFull(availableBalance)
         binding.textBalanceAvailable.text = availableString
@@ -289,6 +289,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
                 else -> getString(R.string.home_instruction_enter_amount)
             }
         }
+        binding.imageTransparentAvailable.goneIf(availableTransparentBalance <= 0)
     }
 
     fun setBanner(message: String = "", action: BannerAction = CLEAR) {
@@ -360,7 +361,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
             onNoFunds()
         } else {
             setBanner("")
-            setAvailable(uiModel.saplingBalance.availableZatoshi, uiModel.saplingBalance.totalZatoshi, uiModel.unminedCount)
+            setAvailable(uiModel.saplingBalance.availableZatoshi, uiModel.saplingBalance.totalZatoshi, uiModel.transparentBalance.availableZatoshi, uiModel.unminedCount)
         }
         autoShield(uiModel)
     }

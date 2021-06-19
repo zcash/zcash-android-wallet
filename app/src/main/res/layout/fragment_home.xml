@@ -68,6 +68,19 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/text_balance_available" />
 
+    <ImageView
+        android:id="@+id/image_transparent_available"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:src="@drawable/ic_shield"
+        android:padding="1dp"
+        app:layout_constraintBottom_toBottomOf="@id/label_balance"
+        app:layout_constraintDimensionRatio="W,1:1"
+        app:layout_constraintStart_toEndOf="@id/label_balance"
+        app:layout_constraintTop_toTopOf="@id/label_balance"
+        app:tint="@color/zcashBlueDark" />
+
     <TextView
         android:id="@+id/text_balance_description"
         android:layout_width="wrap_content"
@@ -446,6 +459,7 @@
         android:id="@+id/hit_area_balance"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        app:elevation="8dp"
         app:layout_constraintStart_toEndOf="@id/hit_area_receive"
         app:layout_constraintEnd_toStartOf="@id/hit_area_profile"
         app:layout_constraintTop_toTopOf="@id/text_title"
