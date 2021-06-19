@@ -19,7 +19,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:contentDescription="@string/content_description_send_back"
-        android:tint="@color/text_light"
+        app:tint="@color/text_light"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.05"
@@ -109,7 +109,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:contentDescription="@string/content_description_send_arrow"
-        android:tint="@color/colorPrimary"
+        app:tint="@color/colorPrimary"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@id/text_banner_message_end"
         app:layout_constraintStart_toEndOf="@id/text_banner_message_end"
@@ -253,7 +253,7 @@
             <!--                android:layout_marginTop="6dp"-->
             <!--                android:elevation="6dp"-->
             <!--                android:src="@drawable/ic_close_black_24dp"-->
-            <!--                android:tint="@color/text_light"-->
+            <!--                app:tint="@color/text_light"-->
             <!--                app:layout_constraintEnd_toEndOf="@id/text_layout_memo"-->
             <!--                app:layout_constraintTop_toTopOf="@id/text_layout_memo" />-->
 
@@ -348,7 +348,7 @@
                     android:layout_height="16dp"
                     android:contentDescription="@string/content_description_send_shield"
                     android:src="@drawable/ic_shielded"
-                    android:tint="@color/colorPrimary"
+                    app:tint="@color/colorPrimary"
                     app:layout_constraintBottom_toBottomOf="@id/clipboard_address_label"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.06"
@@ -383,7 +383,7 @@
                     android:layout_height="22dp"
                     android:contentDescription="@string/content_description_send_selected"
                     android:src="@drawable/ic_check_shielded"
-                    android:tint="@color/colorPrimary"
+                    app:tint="@color/colorPrimary"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias=".95"
@@ -433,7 +433,7 @@
                     android:layout_height="16dp"
                     android:contentDescription="@string/content_description_send_shield"
                     android:src="@drawable/ic_shielded"
-                    android:tint="@color/colorPrimary"
+                    app:tint="@color/colorPrimary"
                     app:layout_constraintBottom_toBottomOf="@id/last_used_address_label"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.06"
@@ -469,7 +469,7 @@
                     android:layout_height="22dp"
                     android:contentDescription="@string/content_description_send_selected"
                     android:src="@drawable/ic_check_shielded"
-                    android:tint="@color/colorPrimary"
+                    app:tint="@color/colorPrimary"
                     android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -502,7 +502,7 @@
                 android:paddingEnd="1dp"
                 android:paddingStart="6dp"
                 android:paddingTop="10dp"
-                android:tint="@color/zcashWhite"
+                app:tint="@color/zcashWhite"
                 android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="@id/text_layout_address"
                 app:layout_constraintEnd_toEndOf="@id/text_layout_address"

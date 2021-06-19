@@ -383,7 +383,7 @@
         android:text="@string/home_history_button_text"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
         android:textColor="@color/colorAccent"
-        android:tint="@color/colorAccent"
+        app:tint="@color/colorAccent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

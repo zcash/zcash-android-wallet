@@ -143,7 +143,7 @@
 <!--        android:id="@+id/icon_success"-->
 <!--        android:layout_width="0dp"-->
 <!--        android:layout_height="0dp"-->
-<!--        android:tint="#00FF00"-->
+<!--        app:tint="#00FF00"-->
 <!--        app:layout_constraintBottom_toBottomOf="parent"-->
 <!--        app:layout_constraintDimensionRatio="W,1:1"-->
 <!--        app:layout_constraintEnd_toEndOf="parent"-->
