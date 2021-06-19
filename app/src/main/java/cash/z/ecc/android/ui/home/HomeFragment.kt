@@ -124,6 +124,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
             hitAreaProfile.onClickNavTo(R.id.action_nav_home_to_nav_profile) { tapped(HOME_PROFILE) }
             textHistory.onClickNavTo(R.id.action_nav_home_to_nav_history) { tapped(HOME_HISTORY) }
             textSendAmount.onClickNavTo(R.id.action_nav_home_to_nav_balance_detail) { tapped(HOME_BALANCE_DETAIL) }
+            hitAreaBalance.onClickNavTo(R.id.action_nav_home_to_nav_balance_detail) { tapped(HOME_BALANCE_DETAIL) }
             hitAreaReceive.onClickNavTo(R.id.action_nav_home_to_nav_receive) { tapped(HOME_RECEIVE) }
 
             textBannerAction.setOnClickListener {

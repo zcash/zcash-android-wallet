@@ -123,12 +123,12 @@ class BalanceDetailViewModel @Inject constructor() : ViewModel() {
         val missingBlocks = (info.networkBlockHeight - info.lastScannedHeight).coerceAtLeast(0)
 
         private fun PendingTransaction.isConfirmed(networkBlockHeight: Int): Boolean {
-            return isMined() && (networkBlockHeight - minedHeight) > 10
+            return isMined() && (networkBlockHeight - minedHeight + 1) > 10 // fix: plus 1 because the mined block counts as the FIRST confirmation
         }
 
         fun remainingConfirmations(confirmationsRequired: Int = 10) =
             pendingUnconfirmed
-                .map { confirmationsRequired - (info.lastScannedHeight - it.minedHeight) }
+                .map { confirmationsRequired - (info.lastScannedHeight - it.minedHeight + 1) } // fix: plus 1 because the mined block counts as the FIRST confirmation
                 .filter { it > 0 }
                 .sortedDescending()
     }
