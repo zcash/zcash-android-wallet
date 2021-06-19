@@ -82,7 +82,7 @@ class BalanceDetailViewModel @Inject constructor() : ViewModel() {
         val paddedTransparent get() = pad(balanceTransparent)
         val paddedTotal get() = pad(balanceTotal)
         val maxLength get() = maxOf(balanceShielded.length, balanceTransparent.length, balanceTotal.length)
-        val hasPending = shieldedBalance.availableZatoshi != shieldedBalance.totalZatoshi &&
+        val hasPending = shieldedBalance.availableZatoshi != shieldedBalance.totalZatoshi ||
             transparentBalance.availableZatoshi != transparentBalance.totalZatoshi
         private fun Long.toDisplay(): String {
             return convertZatoshiToZecString(8, 8)
