@@ -3,7 +3,7 @@ package cash.z.ecc.android
 object Deps {
     // For use in the top-level build.gradle which gives an error when provided
     // `Deps.Kotlin.version` directly
-    const val kotlinVersion =       "1.4.32"
+    const val kotlinVersion =       "1.5.10"
     const val navigationVersion =   "2.3.5"
 
     const val compileSdkVersion =   30
@@ -17,25 +17,25 @@ object Deps {
 
     object AndroidX {
         const val ANNOTATION =              "androidx.annotation:annotation:1.3.0-alpha01"
-        const val APPCOMPAT =               "androidx.appcompat:appcompat:1.3.0-rc01"
+        const val APPCOMPAT =               "androidx.appcompat:appcompat:1.4.0-alpha02"
         const val BIOMETRICS =              "androidx.biometric:biometric:1.2.0-alpha03"
         const val CONSTRAINT_LAYOUT =       "androidx.constraintlayout:constraintlayout:2.1.0-beta02"
-        const val CORE_KTX =                "androidx.core:core-ktx:1.6.0-alpha03"
+        const val CORE_KTX =                "androidx.core:core-ktx:1.6.0-rc01"
         const val FRAGMENT_KTX =            "androidx.fragment:fragment-ktx:1.3.3"
         const val LEGACY =                  "androidx.legacy:legacy-support-v4:1.0.0"
         const val MULTIDEX =                "androidx.multidex:multidex:2.0.1"
         const val PAGING =                  "androidx.paging:paging-runtime-ktx:2.1.2"
-        const val RECYCLER =                "androidx.recyclerview:recyclerview:1.2.0"
-        object CameraX :         Version("1.1.0-alpha04") {
+        const val RECYCLER =                "androidx.recyclerview:recyclerview:1.2.1"
+        object CameraX :         Version("1.1.0-alpha05") {
             val CAMERA2 =                   "androidx.camera:camera-camera2:$version"
             val CORE =                      "androidx.camera:camera-core:$version"
             val LIFECYCLE =                 "androidx.camera:camera-lifecycle:$version"
-            object View :       Version("1.0.0-alpha24") {
+            object View :       Version("1.0.0-alpha25") {
                 val EXT =                   "androidx.camera:camera-extensions:$version"
                 val VIEW =                  "androidx.camera:camera-view:$version"
             }
         }
-        object Lifecycle :       Version("2.4.0-alpha01") {
+        object Lifecycle :       Version("2.4.0-alpha02") {
             val LIFECYCLE_RUNTIME_KTX =     "androidx.lifecycle:lifecycle-runtime-ktx:$version"
         }
         object Navigation :     Version(navigationVersion) {
@@ -56,7 +56,7 @@ object Deps {
         // solves error: Duplicate class com.google.common.util.concurrent.ListenableFuture found in modules jetified-guava-26.0-android.jar (com.google.guava:guava:26.0-android) and listenablefuture-1.0.jar (com.google.guava:listenablefuture:1.0)
         // per this recommendation from Chris Povirk, given guava's decision to split ListenableFuture away from Guava: https://groups.google.com/d/msg/guava-discuss/GghaKwusjcY/bCIAKfzOEwAJ
         const val GUAVA =                   "com.google.guava:guava:27.0.1-android"
-        const val MATERIAL =                "com.google.android.material:material:1.4.0-beta01"
+        const val MATERIAL =                "com.google.android.material:material:1.4.0-rc01"
     }
     object Grpc :               Version("1.37.0") {
         val ANDROID =                       "io.grpc:grpc-android:$version"
@@ -65,7 +65,7 @@ object Deps {
         val STUB =                          "io.grpc:grpc-stub:$version"
     }
     object Analytics { // for dogfooding/crash-reporting/feedback only on internal team builds
-        val BUGSNAG =                       "com.bugsnag:bugsnag-android:5.9.2"
+        val BUGSNAG =                       "com.bugsnag:bugsnag-android:5.9.4"
         val MIXPANEL =                      "com.mixpanel.android:mixpanel-android:5.6.3"
     }
     object JavaX {
@@ -96,11 +96,10 @@ object Deps {
 
     object Test {
         const val JUNIT =                    "junit:junit:4.13.2"
-        const val MOKITO =                   "org.mockito:mockito-android:3.10.0"
+        const val MOKITO =                   "org.mockito:mockito-android:3.11.1"
         const val MOKITO_KOTLIN =            "com.nhaarman.mockitokotlin2:mockito-kotlin:2.2.0"
         object Android {
             const val JUNIT =                "androidx.test.ext:junit:1.1.3-alpha06"
-            const val ESPRESSO =             "androidx.test.espresso:espresso-core:3.4.0-alpha06"
         }
     }
 }
