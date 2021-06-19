@@ -49,7 +49,7 @@ class AutoShieldViewModel @Inject constructor() : ViewModel() {
     }
 
     private fun PendingTransaction.isConfirmed(networkBlockHeight: Int): Boolean {
-        return isMined() && (networkBlockHeight - minedHeight) > 10
+        return isMined() && (networkBlockHeight - minedHeight + 1) > 10
     }
 
     fun cancel(id: Long) {
@@ -113,7 +113,7 @@ class AutoShieldViewModel @Inject constructor() : ViewModel() {
 
         fun remainingConfirmations(latestHeight: Int, confirmationsRequired: Int = 10) =
             pendingUnconfirmed
-                .map { confirmationsRequired - (latestHeight - it.minedHeight) }
+                .map { confirmationsRequired - (latestHeight - it.minedHeight + 1) }
                 .filter { it > 0 }
                 .sortedDescending()
     }
