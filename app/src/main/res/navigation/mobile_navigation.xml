@@ -36,6 +36,12 @@
         <action
             android:id="@+id/action_nav_home_to_nav_feedback"
             app:destination="@id/nav_feedback" />
+        <action
+            android:id="@+id/action_nav_home_to_nav_funds_available"
+            app:destination="@id/nav_funds_available" />
+        <action
+            android:id="@+id/action_nav_home_to_nav_shield_final"
+            app:destination="@id/nav_shield_final" />
     </fragment>
     <fragment
         android:id="@+id/nav_balance_detail"
@@ -185,6 +191,17 @@
             app:destination="@id/nav_send"
             app:popUpTo="@id/nav_send"
             app:popUpToInclusive="false"/>
+    </fragment>
+
+    <fragment
+        android:id="@+id/nav_funds_available"
+        android:name="cash.z.ecc.android.ui.send.FundsAvailableFragment"
+        tools:layout="@layout/fragment_funds_available">
+        <action
+            android:id="@+id/action_nav_funds_available_to_nav_shield_final"
+            app:destination="@id/nav_shield_final"
+            app:popUpTo="@id/nav_home"
+            app:popUpToInclusive="false" />
     </fragment>
 
     <fragment

@@ -4,25 +4,42 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Toast
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import cash.z.ecc.android.R
 import cash.z.ecc.android.ZcashWalletApp
 import cash.z.ecc.android.databinding.FragmentBalanceDetailBinding
 import cash.z.ecc.android.di.viewmodel.viewModel
+import cash.z.ecc.android.ext.goneIf
 import cash.z.ecc.android.ext.onClickNavBack
 import cash.z.ecc.android.ext.toAppColor
 import cash.z.ecc.android.ext.toSplitColorSpan
 import cash.z.ecc.android.feedback.Report.Tap.RECEIVE_BACK
-import cash.z.ecc.android.sdk.ext.collectWith
 import cash.z.ecc.android.sdk.ext.convertZatoshiToZecString
 import cash.z.ecc.android.ui.base.BaseFragment
 import cash.z.ecc.android.ui.home.BalanceDetailViewModel.StatusModel
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 
 class BalanceDetailFragment : BaseFragment<FragmentBalanceDetailBinding>() {
 
     private val viewModel: BalanceDetailViewModel by viewModel()
+    private var lastSignal = -1
 
     override fun inflate(inflater: LayoutInflater): FragmentBalanceDetailBinding =
         FragmentBalanceDetailBinding.inflate(inflater)
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        lifecycleScope.launch {
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.balances.onEach { onBalanceUpdated(it) }.launchIn(this)
+                viewModel.statuses.onEach { onStatusUpdated(it) }.launchIn(this)
+            }
+        }
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -84,12 +101,6 @@ class BalanceDetailFragment : BaseFragment<FragmentBalanceDetailBinding>() {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        viewModel.balances.collectWith(resumedScope, ::onBalanceUpdated)
-        viewModel.statuses.collectWith(resumedScope, ::onStatusUpdated)
-    }
-
     private fun onBalanceUpdated(balanceModel: BalanceDetailViewModel.BalanceModel) {
         balanceModel.apply {
             if (balanceModel.hasData()) {
@@ -111,15 +122,36 @@ class BalanceDetailFragment : BaseFragment<FragmentBalanceDetailBinding>() {
 
     private fun onStatusUpdated(status: StatusModel) {
         binding.textStatus.text = status.toStatus()
-        val height = String.format("%,d", status.latestHeight)
-        binding.textBlockHeight.apply {
-            // if we got a new block
-            if (text.isNotEmpty() && text.toString() != height && isResumed) {
-                mainActivity?.vibrate(0, 100, 100, 300)
-                Toast.makeText(mainActivity, "New block!", Toast.LENGTH_SHORT).show()
+        if (status.missingBlocks > 100) {
+            binding.textBlockHeightPrefix.text = "Processing "
+            binding.textBlockHeight.text = String.format("%,d", status.info.lastScannedHeight) + " of " + String.format("%,d", status.info.networkBlockHeight)
+        } else {
+            status.info.lastScannedHeight.let { height ->
+                if (height < 1) {
+                    binding.textBlockHeightPrefix.text = "Processing..."
+                    binding.textBlockHeight.text = ""
+                } else {
+                    binding.textBlockHeightPrefix.text = "Balances as of block "
+                    binding.textBlockHeight.text = String.format("%,d", status.info.lastScannedHeight)
+                    sendNewBlockSignal(status.info.lastScannedHeight)
+                }
             }
-            binding.textBlockHeight.text = height
         }
+
+        status.balances.hasPending.let { hasPending ->
+            binding.switchFunds.goneIf(!hasPending)
+            binding.textSwitchTotal.goneIf(!hasPending)
+            binding.textSwitchAvailable.goneIf(!hasPending)
+        }
+    }
+
+    private fun sendNewBlockSignal(currentHeight: Int) {
+        // prevent a flood of signals while scanning blocks
+        if (lastSignal != -1 && currentHeight > lastSignal) {
+            mainActivity?.vibrate(0, 100, 100, 300)
+            Toast.makeText(mainActivity, "New block!", Toast.LENGTH_SHORT).show()
+        }
+        lastSignal = currentHeight
     }
 
     fun setBalances(shielded: String, transparent: String, total: String) {
@@ -147,7 +179,7 @@ class BalanceDetailFragment : BaseFragment<FragmentBalanceDetailBinding>() {
         var status = ""
         if (hasUnmined) {
             val count = pendingUnmined.count()
-            status += "Balance excludes $count unmined ${"transaction".plural(count)}. "
+            status += "Balance excludes $count unconfirmed ${"transaction".plural(count)}. "
         }
 
         status += when {

@@ -71,6 +71,7 @@ class AutoShieldFragment : BaseFragment<FragmentAutoShieldBinding>() {
             binding.backButton.goneIf(!showCloseIcon)
             binding.textTitle.text = title
             binding.lottieShielding.invisibleIf(!showShielding)
+            if (pauseShielding) binding.lottieShielding.pauseAnimation()
             binding.lottieSuccess.invisibleIf(!showSuccess)
             binding.textStatus.text = statusMessage
 
@@ -105,6 +106,7 @@ class AutoShieldFragment : BaseFragment<FragmentAutoShieldBinding>() {
         when {
             isCancelled() -> {
                 model.title = getString(R.string.send_final_result_cancelled)
+                model.pauseShielding = true
                 model.primaryButtonText = getString(R.string.send_final_button_primary_back)
                 model.primaryAction = { mainActivity?.navController?.popBackStack() }
             }
@@ -131,7 +133,7 @@ class AutoShieldFragment : BaseFragment<FragmentAutoShieldBinding>() {
                 model.primaryButtonText = getString(R.string.translated_button_back)
                 model.primaryAction = { mainActivity?.navController?.popBackStack() }
                 model.showMoreInfoButton = errorMessage != null
-                model.moreInfoButtonText = getString(R.string.more_info)
+                model.moreInfoButtonText = getString(R.string.send_more_info)
                 model.moreInfoAction = {
                     showMoreInfo(errorMessage ?: "No details available")
                 }
@@ -173,6 +175,7 @@ class AutoShieldFragment : BaseFragment<FragmentAutoShieldBinding>() {
         var showCloseIcon: Boolean = false,
         var title: String = "Shielding Now!",
         var showShielding: Boolean = true,
+        var pauseShielding: Boolean = false,
         var showSuccess: Boolean = false,
         var statusMessage: String = "",
         var statusDetails: String = "",

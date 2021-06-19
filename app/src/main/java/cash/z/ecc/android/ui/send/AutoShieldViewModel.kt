@@ -16,7 +16,6 @@ import cash.z.ecc.android.sdk.tool.DerivationTool
 import cash.z.ecc.android.sdk.type.WalletBalance
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combineTransform
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -31,18 +30,18 @@ class AutoShieldViewModel @Inject constructor() : ViewModel() {
 
     var latestBalance: BalanceModel? = null
 
-    val balances get() = synchronizer.balances.map { balance ->
-        val taddr = synchronizer.getTransparentAddress()
-        val transparentBalance = synchronizer.getTransparentBalance(taddr)
-        BalanceModel(
-            balance,
-            transparentBalance
-        ).also {
+    val balances get() = combineTransform(
+        synchronizer.orchardBalances,
+        synchronizer.saplingBalances,
+        synchronizer.transparentBalances,
+    ) { o, s, t ->
+        BalanceModel(o, s, t).let {
             latestBalance = it
+            emit(it)
         }
     }
 
-    val statuses get() = combineTransform(synchronizer.balances, synchronizer.pendingTransactions, synchronizer.processorInfo) { balance, pending, info ->
+    val statuses get() = combineTransform(synchronizer.saplingBalances, synchronizer.pendingTransactions, synchronizer.processorInfo) { balance, pending, info ->
         val unconfirmed = pending.filter { !it.isConfirmed(info.networkBlockHeight) }
         val unmined = pending.filter { it.isSubmitSuccess() && !it.isMined() }
         val pending = balance.pending
@@ -50,7 +49,7 @@ class AutoShieldViewModel @Inject constructor() : ViewModel() {
     }
 
     private fun PendingTransaction.isConfirmed(networkBlockHeight: Int): Boolean {
-        return isMined() && (networkBlockHeight - minedHeight) > 10
+        return isMined() && (networkBlockHeight - minedHeight + 1) > 10
     }
 
     fun cancel(id: Long) {
@@ -73,12 +72,13 @@ class AutoShieldViewModel @Inject constructor() : ViewModel() {
     }
 
     data class BalanceModel(
-        val shieldedBalance: WalletBalance = WalletBalance(),
+        val orchardBalance: WalletBalance = WalletBalance(),
+        val saplingBalance: WalletBalance = WalletBalance(),
         val transparentBalance: WalletBalance = WalletBalance(),
     ) {
-        val balanceShielded: String = shieldedBalance.availableZatoshi.toDisplay()
+        val balanceShielded: String = saplingBalance.availableZatoshi.toDisplay()
         val balanceTransparent: String = transparentBalance.availableZatoshi.toDisplay()
-        val balanceTotal: String = (shieldedBalance.availableZatoshi + transparentBalance.availableZatoshi).toDisplay()
+        val balanceTotal: String = (saplingBalance.availableZatoshi + transparentBalance.availableZatoshi).toDisplay()
         val canAutoShield: Boolean = transparentBalance.availableZatoshi > 0L
 
         val maxLength = maxOf(balanceShielded.length, balanceTransparent.length, balanceTotal.length)
@@ -113,7 +113,7 @@ class AutoShieldViewModel @Inject constructor() : ViewModel() {
 
         fun remainingConfirmations(latestHeight: Int, confirmationsRequired: Int = 10) =
             pendingUnconfirmed
-                .map { confirmationsRequired - (latestHeight - it.minedHeight) }
+                .map { confirmationsRequired - (latestHeight - it.minedHeight + 1) }
                 .filter { it > 0 }
                 .sortedDescending()
     }

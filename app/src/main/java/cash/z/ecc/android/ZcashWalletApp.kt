@@ -9,6 +9,7 @@ import cash.z.ecc.android.di.component.AppComponent
 import cash.z.ecc.android.di.component.DaggerAppComponent
 import cash.z.ecc.android.ext.tryWithWarning
 import cash.z.ecc.android.feedback.FeedbackCoordinator
+import cash.z.ecc.android.sdk.ext.ZcashSdk
 import cash.z.ecc.android.sdk.ext.twig
 import cash.z.ecc.android.sdk.type.ZcashNetwork
 import kotlinx.coroutines.CoroutineScope
@@ -29,6 +30,9 @@ class ZcashWalletApp : Application(), CameraXConfig.Provider {
         private set
 
     var creationMeasured: Boolean = false
+
+    /** The amount of transparent funds that need to accumulate before autoshielding is triggered */
+    val autoshieldThreshold: Long = ZcashSdk.ZATOSHI_PER_ZEC // 1 ZEC
 
     /**
      * Intentionally private Scope for use with launching Feedback jobs. The feedback object has the

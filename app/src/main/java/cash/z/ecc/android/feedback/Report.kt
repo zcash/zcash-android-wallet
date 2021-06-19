@@ -123,6 +123,7 @@ object Report {
         RESTORE,
         SCAN,
         AUTO_SHIELD_FINAL("autoshield.final"),
+        AUTO_SHIELD_AVAILABLE("autoshield.available"),
         SEND_ADDRESS("send.address"),
         SEND_CONFIRM("send.confirm"),
         SEND_FINAL("send.final"),

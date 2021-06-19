@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import cash.z.ecc.android.ext.pending
 import cash.z.ecc.android.lockbox.LockBox
 import cash.z.ecc.android.sdk.Synchronizer
+import cash.z.ecc.android.sdk.block.CompactBlockProcessor
 import cash.z.ecc.android.sdk.db.entity.PendingTransaction
 import cash.z.ecc.android.sdk.db.entity.isMined
 import cash.z.ecc.android.sdk.db.entity.isSubmitSuccess
@@ -31,15 +32,13 @@ class BalanceDetailViewModel @Inject constructor() : ViewModel() {
     var latestBalance: BalanceModel? = null
 
     val balances: Flow<BalanceModel>
-        get() = synchronizer.balances.map { balance ->
-            val taddr = synchronizer.getTransparentAddress()
-            val transparentBalance = synchronizer.getTransparentBalance(taddr)
-            BalanceModel(
-                balance,
-                transparentBalance,
-                showAvailable
-            ).also {
+        get() = combineTransform(
+            synchronizer.saplingBalances,
+            synchronizer.transparentBalances
+        ) { saplingBalance, transparentBalance ->
+            BalanceModel(saplingBalance, transparentBalance, showAvailable).let {
                 latestBalance = it
+                emit(it)
             }
         }
 
@@ -47,9 +46,9 @@ class BalanceDetailViewModel @Inject constructor() : ViewModel() {
         get() = combineTransform(
             balances,
             synchronizer.pendingTransactions,
-            synchronizer.networkHeight
-        ) { balances, pending, height ->
-            emit(StatusModel(balances, pending, height))
+            synchronizer.processorInfo
+        ) { balances, pending, info ->
+            emit(StatusModel(balances, pending, info))
         }
 
     data class BalanceModel(
@@ -83,7 +82,8 @@ class BalanceDetailViewModel @Inject constructor() : ViewModel() {
         val paddedTransparent get() = pad(balanceTransparent)
         val paddedTotal get() = pad(balanceTotal)
         val maxLength get() = maxOf(balanceShielded.length, balanceTransparent.length, balanceTotal.length)
-
+        val hasPending = shieldedBalance.availableZatoshi != shieldedBalance.totalZatoshi ||
+            transparentBalance.availableZatoshi != transparentBalance.totalZatoshi
         private fun Long.toDisplay(): String {
             return convertZatoshiToZecString(8, 8)
         }
@@ -110,9 +110,9 @@ class BalanceDetailViewModel @Inject constructor() : ViewModel() {
     data class StatusModel(
         val balances: BalanceModel,
         val pending: List<PendingTransaction>,
-        val latestHeight: Int,
+        val info: CompactBlockProcessor.ProcessorInfo,
     ) {
-        val pendingUnconfirmed = pending.filter { it.isSubmitSuccess() && it.isMined() && !it.isConfirmed(latestHeight) }
+        val pendingUnconfirmed = pending.filter { it.isSubmitSuccess() && it.isMined() && !it.isConfirmed(info.lastScannedHeight) }
         val pendingUnmined = pending.filter { it.isSubmitSuccess() && !it.isMined() }
         val pendingShieldedBalance = balances.shieldedBalance.pending
         val pendingTransparentBalance = balances.transparentBalance.pending
@@ -120,14 +120,15 @@ class BalanceDetailViewModel @Inject constructor() : ViewModel() {
         val hasUnmined = pendingUnmined.isNotEmpty()
         val hasPendingShieldedBalance = pendingShieldedBalance > 0L
         val hasPendingTransparentBalance = pendingTransparentBalance > 0L
+        val missingBlocks = (info.networkBlockHeight - info.lastScannedHeight).coerceAtLeast(0)
 
         private fun PendingTransaction.isConfirmed(networkBlockHeight: Int): Boolean {
-            return isMined() && (networkBlockHeight - minedHeight) > 10
+            return isMined() && (networkBlockHeight - minedHeight + 1) > 10 // fix: plus 1 because the mined block counts as the FIRST confirmation
         }
 
         fun remainingConfirmations(confirmationsRequired: Int = 10) =
             pendingUnconfirmed
-                .map { confirmationsRequired - (latestHeight - it.minedHeight) }
+                .map { confirmationsRequired - (info.lastScannedHeight - it.minedHeight + 1) } // fix: plus 1 because the mined block counts as the FIRST confirmation
                 .filter { it > 0 }
                 .sortedDescending()
     }

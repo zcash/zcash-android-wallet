@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.lifecycle.lifecycleScope
 import cash.z.ecc.android.R
+import cash.z.ecc.android.ZcashWalletApp
 import cash.z.ecc.android.databinding.DialogSolicitFeedbackRatingBinding
 import cash.z.ecc.android.databinding.FragmentHomeBinding
 import cash.z.ecc.android.di.viewmodel.activityViewModel
@@ -20,6 +21,7 @@ import cash.z.ecc.android.ext.goneIf
 import cash.z.ecc.android.ext.invisibleIf
 import cash.z.ecc.android.ext.onClickNavTo
 import cash.z.ecc.android.ext.showSharedLibraryCriticalError
+import cash.z.ecc.android.ext.toAppColor
 import cash.z.ecc.android.ext.toColoredSpan
 import cash.z.ecc.android.ext.transparentIf
 import cash.z.ecc.android.feedback.Report
@@ -33,6 +35,7 @@ import cash.z.ecc.android.feedback.Report.Tap.HOME_SEND
 import cash.z.ecc.android.sdk.Synchronizer.Status.DISCONNECTED
 import cash.z.ecc.android.sdk.Synchronizer.Status.STOPPED
 import cash.z.ecc.android.sdk.Synchronizer.Status.SYNCED
+import cash.z.ecc.android.sdk.ext.convertZatoshiToZecString
 import cash.z.ecc.android.sdk.ext.convertZecToZatoshi
 import cash.z.ecc.android.sdk.ext.onFirstWith
 import cash.z.ecc.android.sdk.ext.safelyConvertToBigDecimal
@@ -121,6 +124,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
             hitAreaProfile.onClickNavTo(R.id.action_nav_home_to_nav_profile) { tapped(HOME_PROFILE) }
             textHistory.onClickNavTo(R.id.action_nav_home_to_nav_history) { tapped(HOME_HISTORY) }
             textSendAmount.onClickNavTo(R.id.action_nav_home_to_nav_balance_detail) { tapped(HOME_BALANCE_DETAIL) }
+            hitAreaBalance.onClickNavTo(R.id.action_nav_home_to_nav_balance_detail) { tapped(HOME_BALANCE_DETAIL) }
             hitAreaReceive.onClickNavTo(R.id.action_nav_home_to_nav_receive) { tapped(HOME_RECEIVE) }
 
             textBannerAction.setOnClickListener {
@@ -132,6 +136,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
             setSendAmount("0", false)
 
             snake = MagicSnakeLoader(binding.lottieButtonLoading)
+
+            // fix: don't start up with just a black screen
+            buttonSendAmount.text = getString(R.string.home_button_send_disconnected)
+            buttonSendAmount.setTextColor(R.color.text_light.toAppColor())
         }
 
         binding.buttonNumberPadBack.setOnLongClickListener {
@@ -263,7 +271,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
         binding.buttonSendAmount.disabledIf(amount == "0")
     }
 
-    fun setAvailable(availableBalance: Long = -1L, totalBalance: Long = -1L, unminedCount: Int = 0) {
+    fun setAvailable(availableBalance: Long = -1L, totalBalance: Long = -1L, availableTransparentBalance: Long = -1L, unminedCount: Int = 0) {
         val missingBalance = availableBalance < 0
         val availableString = if (missingBalance) getString(R.string.home_button_send_updating) else WalletZecFormmatter.toZecStringFull(availableBalance)
         binding.textBalanceAvailable.text = availableString
@@ -272,7 +280,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
         binding.textBalanceDescription.apply {
             goneIf(missingBalance)
             text = when {
-                unminedCount > 0 -> "(excludes $unminedCount unmined ${if (unminedCount > 1) "transactions" else "transaction"})"
+                unminedCount > 0 -> "(excludes $unminedCount unconfirmed ${if (unminedCount > 1) "transactions" else "transaction"})"
                 availableBalance != -1L && (availableBalance < totalBalance) -> {
                     val change = WalletZecFormmatter.toZecStringFull(totalBalance - availableBalance)
                     val symbol = getString(R.string.symbol)
@@ -281,6 +289,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
                 else -> getString(R.string.home_instruction_enter_amount)
             }
         }
+        binding.imageTransparentAvailable.goneIf(availableTransparentBalance <= 0)
     }
 
     fun setBanner(message: String = "", action: BannerAction = CLEAR) {
@@ -332,8 +341,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
                         if (old.processorInfo.lastScanRange != new.processorInfo.lastScanRange) append("${innerComma()}lastScanRange=${new.processorInfo.lastScanRange}")
                         append(")")
                     }
-                    if (old.availableBalance != new.availableBalance) append("${maybeComma()}availableBalance=${new.availableBalance}")
-                    if (old.totalBalance != new.totalBalance) append("${maybeComma()}totalBalance=${new.totalBalance}")
+                    if (old.saplingBalance.availableZatoshi != new.saplingBalance.availableZatoshi) append("${maybeComma()}availableBalance=${new.saplingBalance.availableZatoshi}")
+                    if (old.saplingBalance.totalZatoshi != new.saplingBalance.totalZatoshi) append("${maybeComma()}totalBalance=${new.saplingBalance.totalZatoshi}")
                     if (old.pendingSend != new.pendingSend) append("${maybeComma()}pendingSend=${new.pendingSend}")
                     append(")")
                 }
@@ -348,11 +357,29 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
 
     private fun onSynced(uiModel: HomeViewModel.UiModel) {
         snake.isSynced = true
-        if (!uiModel.hasBalance) {
+        if (!uiModel.hasSaplingBalance) {
             onNoFunds()
         } else {
             setBanner("")
-            setAvailable(uiModel.availableBalance, uiModel.totalBalance, uiModel.unminedCount)
+            setAvailable(uiModel.saplingBalance.availableZatoshi, uiModel.saplingBalance.totalZatoshi, uiModel.transparentBalance.availableZatoshi, uiModel.unminedCount)
+        }
+        autoShield(uiModel)
+    }
+
+    private fun autoShield(uiModel: HomeViewModel.UiModel) {
+        if (uiModel.hasAutoshieldFunds && canAutoshield()) {
+            twig("Autoshielding is available! Let's do this!!!")
+            mainActivity?.lastAutoShieldTime = System.currentTimeMillis()
+            mainActivity?.safeNavigate(R.id.action_nav_home_to_nav_funds_available)
+        } else {
+            // troubleshooting logs
+            if (uiModel.transparentBalance.availableZatoshi > 0) {
+                twig("Transparent funds are available but not enough to autoshield. Available: ${uiModel.transparentBalance.availableZatoshi.convertZatoshiToZecString(10)}  Required: ${ZcashWalletApp.instance.autoshieldThreshold.convertZatoshiToZecString(8)}")
+            } else if (uiModel.transparentBalance.totalZatoshi > 0) {
+                twig("Transparent funds have been received but they require 10 confirmations for autoshielding.")
+            } else if (!canAutoshield()) {
+                twig("Could not autoshield probably because the last one occurred ${System.currentTimeMillis() - (mainActivity?.lastAutoShieldTime ?: 0)}ms ago which is less than the required cool off time of ${mainActivity?.maxAutoshieldFrequency}ms")
+            }
         }
     }
 
@@ -446,6 +473,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
     //
     // User Interruptions
     //
+
     // TODO: Expand this placeholder logic around when to interrupt the user.
     // For now, we just need to get this in the app so that we can BEGIN capturing ECC feedback.
     var hasInterrupted = false
@@ -464,6 +492,15 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>() {
                 it.show()
             }
         }
+    }
+
+    private fun canAutoshield(): Boolean {
+        return mainActivity?.let { main ->
+            System.currentTimeMillis().let { now ->
+                val delta = now - main.lastAutoShieldTime
+                return delta > main.maxAutoshieldFrequency
+            }
+        } ?: false
     }
 
     private fun feedbackPrompt(): Dialog {

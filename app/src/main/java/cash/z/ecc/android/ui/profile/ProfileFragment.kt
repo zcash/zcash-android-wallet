@@ -82,15 +82,23 @@ class ProfileFragment : BaseFragment<FragmentProfileBinding>() {
             onViewDevLogs()
             true
         }
-
         binding.iconProfile.setOnLongClickListener {
             tapped(AWESOME_OPEN)
             onEnterAwesomeMode()
             true
         }
+        binding.textBannerMessage.setOnClickListener {
+            openPlayStoreLink()
+        }
 
         if (viewModel.isEasterEggTriggered()) {
             binding.iconProfile.setImageResource(R.drawable.ic_profile_zebra_02)
+        }
+    }
+
+    private fun openPlayStoreLink() {
+        getString(R.string.play_store_url).takeUnless { it.isBlank() }?.let { url ->
+            mainActivity?.onLaunchUrl(url)
         }
     }
 

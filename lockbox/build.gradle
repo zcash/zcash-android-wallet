@@ -52,5 +52,4 @@ dependencies {
     implementation Deps.Misc.Plugins.SECURE_STORAGE
 
     androidTestImplementation Deps.Test.Android.JUNIT
-    androidTestImplementation Deps.Test.Android.ESPRESSO
 }

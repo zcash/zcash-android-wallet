@@ -5,7 +5,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: "androidx.navigation.safeargs.kotlin"
-//apply plugin: 'com.github.ben-manes.versions'
+apply plugin: 'com.github.ben-manes.versions'
 
 archivesBaseName = 'zcash-android-wallet'
 group = 'cash.z.ecc.android'
@@ -183,7 +183,6 @@ dependencies {
     testImplementation Deps.Test.MOKITO_KOTLIN
 
     androidTestImplementation Deps.Test.Android.JUNIT
-    androidTestImplementation Deps.Test.Android.ESPRESSO
 
 }
 

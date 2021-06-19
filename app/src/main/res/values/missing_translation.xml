@@ -116,7 +116,7 @@
     <string name="missing_transaction_story_outbound">You Sent</string>
     <string name="missing_transaction_story_outbound_total">Total Sent</string>
     <string name="missing_transaction_story_to_shielded">to your shielded wallet</string>
-    <string name="missing_transaction_timestamp_unavailable">Details Unavailable</string>
+    <string name="missing_transaction_timestamp_unavailable">Pending</string>
     <string name="missing_transaction_title">Transaction Details</string>
     <string name="missing_transaction_with_memo">with a memo</string>
 

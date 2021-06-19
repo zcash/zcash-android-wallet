@@ -139,6 +139,7 @@
     <string name="send_validation_error_too_much">@string/missing_send_validation_error_too_much</string>
     <string name="send_validation_error_unknown_funds">@string/missing_send_validation_error_unknown_funds</string>
     <string name="send_no_z_address_message">To add a memo, enter a shielded address.</string>
+    <string name="send_more_info">More Info</string>
 
     <!-- Screen: Settings-->
     <string name="settings_buttons_restore">@string/missing_settings_buttons_restore</string>
