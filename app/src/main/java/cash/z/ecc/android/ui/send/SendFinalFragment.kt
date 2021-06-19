@@ -61,31 +61,7 @@ class SendFinalFragment : BaseFragment<FragmentSendFinalBinding>() {
 
         try {
             tx.toUiModel().let { model ->
-                binding.apply {
-                    backButton.goneIf(!model.showCloseIcon)
-                    backButtonHitArea.goneIf(!model.showCloseIcon)
-
-                    textConfirmation.text = model.title
-                    lottieSending.goneIf(!model.showProgress)
-                    if (!model.showProgress) lottieSending.pauseAnimation() else lottieSending.playAnimation()
-                    errorMessage.text = model.errorMessage
-                    buttonPrimary.apply {
-                        text = model.primaryButtonText
-                        setOnClickListener { model.primaryAction() }
-                    }
-
-                    buttonMoreInfo.apply {
-                        setOnClickListener {
-                            val moreInfoMsg = """${getString(R.string.more_info)} : ${model.errorDescription}"""
-                            txtMoreInfo.run {
-                                text = moreInfoMsg
-                            }
-
-                            if (model.errorDescription.isNotEmpty())
-                                buttonMoreInfo.text = getString(R.string.translated_button_done)
-                        }
-                    }
-                }
+                updateUi(model)
             }
 
             // only hold onto the view model if the transaction failed so that the user can retry
@@ -120,6 +96,31 @@ class SendFinalFragment : BaseFragment<FragmentSendFinalBinding>() {
         mainActivity?.safeNavigate(R.id.action_nav_send_final_to_nav_history)
     }
 
+    private fun updateUi(model: UiModel) {
+        binding.apply {
+            backButton.goneIf(!model.showCloseIcon)
+            backButtonHitArea.goneIf(!model.showCloseIcon)
+
+            textConfirmation.text = model.title
+            lottieSending.goneIf(!model.showProgress)
+            if (!model.showProgress) lottieSending.pauseAnimation() else lottieSending.playAnimation()
+            errorMessage.text = model.errorMessage
+            buttonPrimary.apply {
+                text = model.primaryButtonText
+                setOnClickListener { model.primaryAction() }
+            }
+            buttonMoreInfo.apply {
+                goneIf(!model.showSecondaryButton)
+                text = getString(R.string.send_more_info)
+                setOnClickListener {
+                    binding.textMoreInfo.text = model.errorDescription
+                    text = getString(R.string.done)
+                    setOnClickListener { onExit() }
+                }
+            }
+        }
+    }
+
     private fun PendingTransaction.toUiModel() = UiModel().also { model ->
         when {
             isCancelled() -> {
@@ -140,6 +141,7 @@ class SendFinalFragment : BaseFragment<FragmentSendFinalBinding>() {
                 model.errorDescription = errorMessage.toString()
                 model.primaryButtonText = getString(R.string.send_final_button_primary_retry)
                 model.primaryAction = { onReturnToSend() }
+                model.showSecondaryButton = true
             }
             else -> {
                 model.title = "${getString(R.string.send_final_sending)} ${WalletZecFormmatter.toZecStringFull(value)} ${getString(R.string.symbol)} ${getString(R.string.send_final_to)}\n${toAddress.toAbbreviatedAddress()}"
@@ -164,6 +166,7 @@ class SendFinalFragment : BaseFragment<FragmentSendFinalBinding>() {
         var showProgress: Boolean = false,
         var errorMessage: String = "",
         var primaryButtonText: String = "See Details",
-        var primaryAction: () -> Unit = {}
+        var primaryAction: () -> Unit = {},
+        var showSecondaryButton: Boolean = false,
     )
 }

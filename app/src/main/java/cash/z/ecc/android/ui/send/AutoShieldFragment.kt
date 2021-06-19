@@ -133,7 +133,7 @@ class AutoShieldFragment : BaseFragment<FragmentAutoShieldBinding>() {
                 model.primaryButtonText = getString(R.string.translated_button_back)
                 model.primaryAction = { mainActivity?.navController?.popBackStack() }
                 model.showMoreInfoButton = errorMessage != null
-                model.moreInfoButtonText = getString(R.string.more_info)
+                model.moreInfoButtonText = getString(R.string.send_more_info)
                 model.moreInfoAction = {
                     showMoreInfo(errorMessage ?: "No details available")
                 }
