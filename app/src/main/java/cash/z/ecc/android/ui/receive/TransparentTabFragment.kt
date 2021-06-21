@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.TextView
 import cash.z.android.qrecycler.QRecycler
+import cash.z.ecc.android.BuildConfig
 import cash.z.ecc.android.databinding.FragmentTabReceiveTransparentBinding
 import cash.z.ecc.android.di.viewmodel.viewModel
 import cash.z.ecc.android.ext.distribute
@@ -36,6 +37,13 @@ class TransparentTabFragment :
             binding.textAddressPart1,
             binding.textAddressPart2
         )
+        binding.iconQrLogo.setOnLongClickListener {
+            mainActivity?.takeIf { BuildConfig.FLAVOR.lowercase().contains("testnet") }?.let {
+                it.copyTransparentAddress(null)
+                it.onLaunchUrl("https://faucet.zecpages.com/")
+                true
+            } ?: false
+        }
     }
 
     override fun onAttach(context: Context) {

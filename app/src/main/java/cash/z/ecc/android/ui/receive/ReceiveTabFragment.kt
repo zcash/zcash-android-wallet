@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.TextView
 import cash.z.android.qrecycler.QRecycler
+import cash.z.ecc.android.BuildConfig
 import cash.z.ecc.android.databinding.FragmentTabReceiveShieldedBinding
 import cash.z.ecc.android.di.viewmodel.viewModel
 import cash.z.ecc.android.ext.distribute
@@ -42,6 +43,13 @@ class ReceiveTabFragment :
             binding.textAddressPart7,
             binding.textAddressPart8
         )
+        binding.iconQrLogo.setOnLongClickListener {
+            mainActivity?.takeIf { BuildConfig.FLAVOR.lowercase().contains("testnet") }?.let {
+                it.copyAddress(null)
+                it.onLaunchUrl("https://faucet.testnet.z.cash/")
+                true
+            } ?: false
+        }
     }
 
     override fun onAttach(context: Context) {
