@@ -1,15 +1,17 @@
 Change Log
 ==========
 
-Version 1.0.0-alpha73 *(2021-06-21)*
+Version 1.0.0-alpha74 *(2021-06-21)*
 ------------------------------------
-New: Added workflow for automatically shielding funds.
-New: Automatically recover from more network failure states.
-New: Link to play store from the build number.
-New: Hide available/total toggle when there are no pending funds.
-Fix: Expand tappable area for showing the balance details.
-Fix: Off by one error when calculating confirmations.
-Fix: Do not show time in transaction details for pending transactions.
+- New: Added workflow for automatically shielding funds.
+- New: Automatically recover from more network failure states.
+- New: Link to play store from the build number.
+- New: Hide available/total toggle when there are no pending funds.
+- New: Easter Egg to access the testnet faucets.
+- New: Updated checkpoints for mainnet and testnet.
+- Fix: Expand tappable area for showing the balance details.
+- Fix: Off by one error when calculating confirmations.
+- Fix: Do not show time in transaction details for pending transactions.
 
 Version 1.0.0-alpha72 *(2021-06-07)*
 ------------------------------------
