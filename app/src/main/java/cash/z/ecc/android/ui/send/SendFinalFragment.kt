@@ -22,6 +22,7 @@ import cash.z.ecc.android.sdk.db.entity.isSubmitSuccess
 import cash.z.ecc.android.sdk.ext.toAbbreviatedAddress
 import cash.z.ecc.android.sdk.ext.twig
 import cash.z.ecc.android.ui.base.BaseFragment
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
@@ -50,7 +51,7 @@ class SendFinalFragment : BaseFragment<FragmentSendFinalBinding>() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mainActivity?.apply {
-            sendViewModel.send().onEach {
+            sendViewModel.send().filter { it.isFailure() }.onEach {
                 onPendingTxUpdated(it)
             }.launchIn((sendViewModel.synchronizer as SdkSynchronizer).coroutineScope)
         }

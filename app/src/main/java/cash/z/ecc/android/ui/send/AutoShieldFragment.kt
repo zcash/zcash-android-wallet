@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import cash.z.ecc.android.R
@@ -73,6 +74,7 @@ class AutoShieldFragment : BaseFragment<FragmentAutoShieldBinding>() {
             binding.lottieShielding.invisibleIf(!showShielding)
             if (pauseShielding) binding.lottieShielding.pauseAnimation()
             binding.lottieSuccess.invisibleIf(!showSuccess)
+            binding.imageFailed.invisibleIf(!isFailure)
             binding.textStatus.text = statusMessage
 
             binding.textStatus.text = when {
@@ -87,6 +89,15 @@ class AutoShieldFragment : BaseFragment<FragmentAutoShieldBinding>() {
             binding.buttonMoreInfo.text = moreInfoButtonText
             binding.buttonMoreInfo.goneIf(!showMoreInfoButton)
             binding.buttonMoreInfo.setOnClickListener { moreInfoAction() }
+
+            if (showSuccess) {
+                if (viewModel.updateAutoshieldAchievement()) {
+                    mainActivity?.showSnackbar("Achievement unlocked! Golden Zebra.", "View") {
+                        mainActivity?.safeNavigate(R.id.action_nav_shield_final_to_profile)
+                        Toast.makeText(mainActivity, "Your Zebra is now yellow because you are great", Toast.LENGTH_LONG).show()
+                    }
+                }
+            }
         }
     }
 
@@ -129,6 +140,7 @@ class AutoShieldFragment : BaseFragment<FragmentAutoShieldBinding>() {
                     )
                 model.showShielding = false
                 model.showSuccess = false
+                model.isFailure = true
                 model.showStatusDetails = false
                 model.primaryButtonText = getString(R.string.translated_button_back)
                 model.primaryAction = { mainActivity?.navController?.popBackStack() }
@@ -177,6 +189,7 @@ class AutoShieldFragment : BaseFragment<FragmentAutoShieldBinding>() {
         var showShielding: Boolean = true,
         var pauseShielding: Boolean = false,
         var showSuccess: Boolean = false,
+        var isFailure: Boolean = false,
         var statusMessage: String = "",
         var statusDetails: String = "",
         var showStatusDetails: Boolean = false,
